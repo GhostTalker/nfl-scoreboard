@@ -57,38 +57,34 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
     };
   }, [type, hideCelebration, videoVolume, videoConfig, placeholderVideos]);
 
-  // Allow tap to dismiss
-  const handleTap = () => {
+  // Allow tap/click to dismiss
+  const handleDismiss = () => {
     hideCelebration();
   };
 
+  // Also allow keyboard dismiss
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === ' ') {
+        hideCelebration();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [hideCelebration]);
+
   return (
     <div 
-      className="video-overlay flex items-center justify-center cursor-pointer"
-      onClick={handleTap}
+      className="video-overlay cursor-pointer"
+      onClick={handleDismiss}
     >
-      {/* Score Type Badge */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10">
-        <div className={`
-          px-8 py-4 rounded-xl text-4xl font-bold text-white animate-bounce
-          ${type === 'touchdown' ? 'bg-green-600' : 'bg-yellow-600'}
-        `}>
-          {type === 'touchdown' ? 'TOUCHDOWN!' : 'FIELD GOAL!'}
-        </div>
-      </div>
-
-      {/* Video */}
+      {/* Video - fullscreen, no overlay text */}
       <video
         ref={videoRef}
         className="w-full h-full object-cover"
         playsInline
         muted={false}
       />
-
-      {/* Tap to dismiss hint */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm">
-        Tap anywhere to dismiss
-      </div>
     </div>
   );
 }

@@ -8,23 +8,38 @@ export function useScoreChange() {
   const updateScores = useGameStore((state) => state.updateScores);
   const showCelebration = useUIStore((state) => state.showCelebration);
   
-  // Track if this is the initial load
-  const isInitialLoad = useRef(true);
+  // Track the current game ID to detect game changes
+  const currentGameId = useRef<string | null>(null);
   const lastProcessedScores = useRef({ home: 0, away: 0 });
+  const isFirstUpdateForGame = useRef(true);
 
   useEffect(() => {
     if (!currentGame) {
-      isInitialLoad.current = true;
+      // Reset everything when no game
+      currentGameId.current = null;
       lastProcessedScores.current = { home: 0, away: 0 };
+      isFirstUpdateForGame.current = true;
       return;
     }
 
     const newHomeScore = currentGame.homeTeam.score;
     const newAwayScore = currentGame.awayTeam.score;
 
-    // Skip on initial load to prevent celebration on page load
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false;
+    // Check if this is a different game than before
+    if (currentGameId.current !== currentGame.id) {
+      console.log('Game changed:', currentGameId.current, '->', currentGame.id);
+      
+      // New game - reset tracking, don't trigger celebration
+      currentGameId.current = currentGame.id;
+      lastProcessedScores.current = { home: newHomeScore, away: newAwayScore };
+      isFirstUpdateForGame.current = true;
+      updateScores(newHomeScore, newAwayScore);
+      return;
+    }
+
+    // Skip the very first update after game change to avoid false triggers
+    if (isFirstUpdateForGame.current) {
+      isFirstUpdateForGame.current = false;
       lastProcessedScores.current = { home: newHomeScore, away: newAwayScore };
       updateScores(newHomeScore, newAwayScore);
       return;
@@ -37,20 +52,26 @@ export function useScoreChange() {
       return; // No change
     }
 
-    // Detect the score change
-    const scoreEvent = detectScoreChange(
-      lastHome,
-      lastAway,
-      newHomeScore,
-      newAwayScore
-    );
+    // Only trigger celebration for score INCREASES (not decreases or corrections)
+    const homeIncreased = newHomeScore > lastHome;
+    const awayIncreased = newAwayScore > lastAway;
+    
+    if (homeIncreased || awayIncreased) {
+      // Detect the score change type
+      const scoreEvent = detectScoreChange(
+        lastHome,
+        lastAway,
+        newHomeScore,
+        newAwayScore
+      );
 
-    if (scoreEvent) {
-      console.log('Score change detected:', scoreEvent);
+      if (scoreEvent) {
+        console.log('Score change detected:', scoreEvent);
 
-      // Trigger celebration if we have a video for this score type
-      if (scoreEvent.video) {
-        showCelebration(scoreEvent.video);
+        // Trigger celebration if we have a video for this score type
+        if (scoreEvent.video) {
+          showCelebration(scoreEvent.video);
+        }
       }
     }
 
