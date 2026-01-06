@@ -4,7 +4,7 @@ import path from 'path';
 import { apiRouter } from './routes/api';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 
 // Middleware
 app.use(cors());
@@ -24,15 +24,15 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Start server
-app.listen(PORT, () => {
+// Start server on all interfaces (0.0.0.0) for network access
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔════════════════════════════════════════════════════════╗
 ║                                                        ║
 ║   NFL Scoreboard Server                               ║
-║   Running on http://localhost:${PORT}                    ║
+║   Running on http://0.0.0.0:${PORT}                      ║
 ║                                                        ║
-║   API Proxy: http://localhost:${PORT}/api                ║
+║   API Proxy: http://<your-ip>:${PORT}/api                ║
 ║                                                        ║
 ║   For iPad access, use your local IP:                 ║
 ║   http://<your-ip>:${PORT}                               ║
