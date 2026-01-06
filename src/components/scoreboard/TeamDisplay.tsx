@@ -5,9 +5,9 @@ interface TeamDisplayProps {
   isHome: boolean;
 }
 
-export function TeamDisplay({ team, isHome }: TeamDisplayProps) {
+export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
   return (
-    <div className={`flex flex-col items-center gap-4 ${isHome ? 'order-2' : 'order-0'}`}>
+    <div className="flex flex-col items-center gap-4">
       {/* Team Logo with Glow Effect */}
       <div 
         className="relative w-44 h-44 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-105"

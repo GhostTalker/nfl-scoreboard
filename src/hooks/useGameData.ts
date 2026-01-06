@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { useSettingsStore } from '../stores/settingsStore';
 import { fetchScoreboard, fetchGameDetails } from '../services/espnApi';
 import { POLLING_INTERVALS } from '../constants/api';
 
@@ -13,21 +12,12 @@ export function useGameData() {
     setLoading, 
     setError,
     isLive,
+    manuallySelectedGameId,
   } = useGameStore();
   
-  const primaryTeamId = useSettingsStore((state) => state.primaryTeamId);
   const intervalRef = useRef<number | null>(null);
 
-  // Find game for primary team
-  const findPrimaryTeamGame = useCallback((games: any[]) => {
-    return games.find(
-      (game) =>
-        game.homeTeam.id === primaryTeamId ||
-        game.awayTeam.id === primaryTeamId
-    );
-  }, [primaryTeamId]);
-
-  // Fetch all games and set current game
+  // Fetch all games and update current game
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -37,10 +27,15 @@ export function useGameData() {
       const games = await fetchScoreboard();
       setAvailableGames(games);
 
-      // Find game for primary team
-      let gameToShow = findPrimaryTeamGame(games);
+      // Determine which game to show
+      let gameToShow = null;
 
-      // If no game for primary team, try to find any live game
+      // If user manually selected a game, find and update it
+      if (manuallySelectedGameId) {
+        gameToShow = games.find((g) => g.id === manuallySelectedGameId);
+      }
+      
+      // If no manual selection or game not found, find any live game
       if (!gameToShow) {
         gameToShow = games.find((g) => g.status === 'in_progress');
       }
@@ -73,7 +68,7 @@ export function useGameData() {
     } finally {
       setLoading(false);
     }
-  }, [findPrimaryTeamGame, setAvailableGames, setCurrentGame, setGameStats, setLoading, setError]);
+  }, [manuallySelectedGameId, setAvailableGames, setCurrentGame, setGameStats, setLoading, setError]);
 
   // Set up polling interval
   useEffect(() => {
@@ -97,11 +92,6 @@ export function useGameData() {
       }
     };
   }, [fetchData, currentGame?.status, isLive]);
-
-  // Re-fetch when primary team changes
-  useEffect(() => {
-    fetchData();
-  }, [primaryTeamId, fetchData]);
 
   return {
     refetch: fetchData,

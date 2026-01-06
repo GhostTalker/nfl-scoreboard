@@ -46,6 +46,9 @@ export function MainScoreboard() {
         }}
       />
 
+      {/* Season/Round Header */}
+      <SeasonHeader seasonName={currentGame.seasonName} />
+
       {/* Main Score Display */}
       <div className="flex items-center justify-center gap-6 w-full max-w-6xl px-8">
         {/* Away Team */}
@@ -272,6 +275,65 @@ function StatusBadge({ status, startTime }: { status: string; startTime?: string
       }}
     >
       <span className="text-white font-bold text-xl tracking-wider">{getStatusText()}</span>
+    </div>
+  );
+}
+
+function SeasonHeader({ seasonName }: { seasonName?: string }) {
+  if (!seasonName) return null;
+  
+  // Determine style based on round importance
+  const isPlayoffs = seasonName !== 'GAME DAY' && seasonName !== 'PRESEASON';
+  const isSuperBowl = seasonName === 'SUPER BOWL';
+  const isConference = seasonName === 'CONFERENCE CHAMPIONSHIP';
+  
+  return (
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
+      <div 
+        className="relative px-8 py-2 rounded-lg"
+        style={{
+          background: isSuperBowl 
+            ? 'linear-gradient(180deg, rgba(212,175,55,0.9) 0%, rgba(170,140,40,0.8) 100%)'
+            : isConference
+            ? 'linear-gradient(180deg, rgba(180,180,180,0.9) 0%, rgba(140,140,140,0.8) 100%)'
+            : isPlayoffs
+            ? 'linear-gradient(180deg, rgba(50,100,200,0.9) 0%, rgba(30,70,150,0.8) 100%)'
+            : 'linear-gradient(180deg, rgba(40,60,80,0.8) 0%, rgba(30,45,60,0.7) 100%)',
+          boxShadow: isSuperBowl
+            ? '0 0 40px rgba(212,175,55,0.6), inset 0 1px 0 rgba(255,255,255,0.3)'
+            : isPlayoffs
+            ? '0 0 30px rgba(50,100,200,0.5), inset 0 1px 0 rgba(255,255,255,0.2)'
+            : '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+          border: isSuperBowl
+            ? '2px solid rgba(255,215,0,0.8)'
+            : isConference
+            ? '2px solid rgba(200,200,200,0.6)'
+            : '1px solid rgba(255,255,255,0.2)',
+        }}
+      >
+        {/* Glow effect for important games */}
+        {isSuperBowl && (
+          <div 
+            className="absolute inset-0 rounded-lg animate-pulse opacity-50"
+            style={{
+              background: 'radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)',
+            }}
+          />
+        )}
+        
+        <span 
+          className={`relative text-lg font-black uppercase tracking-[0.3em] ${
+            isSuperBowl ? 'text-white' : isPlayoffs ? 'text-white' : 'text-white/80'
+          }`}
+          style={{
+            textShadow: isSuperBowl 
+              ? '0 0 20px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.5)'
+              : '0 2px 4px rgba(0,0,0,0.5)',
+          }}
+        >
+          {seasonName}
+        </span>
+      </div>
     </div>
   );
 }

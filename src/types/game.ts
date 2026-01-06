@@ -34,6 +34,9 @@ export interface Game {
   venue?: string;
   broadcast?: string;
   startTime?: string;
+  seasonType?: number; // 1=pre, 2=regular, 3=post
+  week?: number;
+  seasonName?: string; // "Wild Card", "Divisional", "Conference", "Super Bowl"
 }
 
 export type GameStatus = 

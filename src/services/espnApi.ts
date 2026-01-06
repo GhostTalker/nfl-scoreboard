@@ -37,6 +37,12 @@ export async function fetchGameDetails(gameId: string): Promise<{ game: Game; st
 function parseScoreboardResponse(data: any): Game[] {
   if (!data?.events) return [];
   
+  // Get season info from the top level
+  const seasonType = data.season?.type || data.leagues?.[0]?.season?.type || 2;
+  const week = data.week?.number || data.leagues?.[0]?.calendarType === 'list' 
+    ? data.leagues?.[0]?.calendar?.findIndex((c: any) => c.value === data.week?.value) + 1 
+    : 1;
+  
   return data.events.map((event: any) => {
     const competition = event.competitions?.[0];
     if (!competition) return null;
@@ -47,6 +53,7 @@ function parseScoreboardResponse(data: any): Game[] {
     if (!homeCompetitor || !awayCompetitor) return null;
 
     const status = parseGameStatus(event.status);
+    const seasonName = getSeasonName(seasonType, week, event.season?.slug);
     
     return {
       id: event.id,
@@ -62,8 +69,43 @@ function parseScoreboardResponse(data: any): Game[] {
       venue: competition.venue?.fullName,
       broadcast: competition.broadcasts?.[0]?.names?.[0],
       startTime: event.date,
+      seasonType,
+      week,
+      seasonName,
     } as Game;
   }).filter(Boolean);
+}
+
+// Get display name for season/round
+function getSeasonName(seasonType: number, week: number, slug?: string): string {
+  // Check if slug contains specific round info
+  if (slug) {
+    const slugLower = slug.toLowerCase();
+    if (slugLower.includes('super-bowl')) return 'SUPER BOWL';
+    if (slugLower.includes('conference')) return 'CONFERENCE CHAMPIONSHIP';
+    if (slugLower.includes('divisional')) return 'DIVISIONAL ROUND';
+    if (slugLower.includes('wild-card')) return 'WILD CARD';
+  }
+  
+  // Preseason
+  if (seasonType === 1) return 'PRESEASON';
+  
+  // Regular season
+  if (seasonType === 2) return 'GAME DAY';
+  
+  // Postseason - determine round by week
+  if (seasonType === 3) {
+    switch (week) {
+      case 1: return 'WILD CARD';
+      case 2: return 'DIVISIONAL ROUND';
+      case 3: return 'CONFERENCE CHAMPIONSHIP';
+      case 4: return 'PRO BOWL';
+      case 5: return 'SUPER BOWL';
+      default: return 'PLAYOFFS';
+    }
+  }
+  
+  return 'GAME DAY';
 }
 
 function parseTeam(competitor: any, _homeAway: 'home' | 'away') {

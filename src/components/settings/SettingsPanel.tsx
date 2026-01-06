@@ -1,6 +1,5 @@
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUIStore } from '../../stores/uiStore';
-import { TeamSelector } from './TeamSelector';
 import { GameSelector } from './GameSelector';
 import { DebugControls } from './DebugControls';
 
@@ -19,13 +18,13 @@ export function SettingsPanel() {
       </div>
 
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Primary Team Selection */}
+        {/* Game Selection - Now the primary control */}
         <section className="bg-slate-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Primary Team</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Select Game</h3>
           <p className="text-white/50 text-sm mb-4">
-            Select your favorite team. The scoreboard will automatically show their games.
+            Choose which game to display on the scoreboard
           </p>
-          <TeamSelector />
+          <GameSelector />
         </section>
 
         {/* Sound Settings */}
@@ -51,15 +50,6 @@ export function SettingsPanel() {
               />
             </button>
           </div>
-        </section>
-
-        {/* Game Selection */}
-        <section className="bg-slate-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Current Games</h3>
-          <p className="text-white/50 text-sm mb-4">
-            Select a different game to watch
-          </p>
-          <GameSelector />
         </section>
 
         {/* Debug Mode */}
@@ -89,9 +79,9 @@ export function SettingsPanel() {
         </section>
       </div>
 
-      {/* Swipe hint */}
+      {/* Navigation hint */}
       <div className="text-center mt-8 text-white/30 text-sm">
-        Swipe right to return to scoreboard
+        Press Arrow Right or Escape to return
       </div>
     </div>
   );
