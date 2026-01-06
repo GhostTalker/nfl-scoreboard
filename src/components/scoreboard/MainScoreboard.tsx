@@ -251,40 +251,59 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast }: GameHea
   const isLive = status === 'in_progress' || status === 'halftime';
   const isScheduled = status === 'scheduled';
 
+  // Format date for German locale
+  const formatDateGerman = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    
+    const time = date.toLocaleTimeString('de-DE', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    if (isToday) {
+      return { date: 'HEUTE', time };
+    } else if (isYesterday) {
+      return { date: 'GESTERN', time };
+    } else if (isTomorrow) {
+      return { date: 'MORGEN', time };
+    } else {
+      const dateFormatted = date.toLocaleDateString('de-DE', { 
+        weekday: 'short',
+        day: 'numeric',
+        month: 'numeric',
+      }).toUpperCase();
+      return { date: dateFormatted, time };
+    }
+  };
+
   // Format date/time for display
   const getDateTimeDisplay = () => {
-    if (isFinal) {
-      return 'FINAL';
-    }
-    if (isLive) {
-      return 'LIVE';
-    }
-    if (isScheduled && startTime) {
-      const date = new Date(startTime);
-      const now = new Date();
-      const isToday = date.toDateString() === now.toDateString();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    if (startTime) {
+      const { date, time } = formatDateGerman(startTime);
       
-      const time = date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit' 
-      });
-      
-      if (isToday) {
-        return `TODAY ${time}`;
-      } else if (isTomorrow) {
-        return `TOMORROW ${time}`;
-      } else {
-        const dateStr = date.toLocaleDateString('en-US', { 
-          weekday: 'short',
-          month: 'short', 
-          day: 'numeric' 
-        }).toUpperCase();
-        return `${dateStr} ${time}`;
+      if (isFinal) {
+        return `FINAL • ${date}`;
+      }
+      if (isLive) {
+        return 'LIVE';
+      }
+      if (isScheduled) {
+        return `${date} ${time}`;
       }
     }
+    
+    // Fallback if no startTime
+    if (isFinal) return 'FINAL';
+    if (isLive) return 'LIVE';
+    
     return null;
   };
 

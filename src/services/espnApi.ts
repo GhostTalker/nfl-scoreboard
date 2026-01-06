@@ -20,21 +20,22 @@ export async function fetchScoreboard(): Promise<Game[]> {
     
     // Check if we have upcoming games - if not, try to fetch next week(s)
     const hasUpcoming = games.some(g => g.status === 'scheduled');
+    const hasLive = games.some(g => g.status === 'in_progress' || g.status === 'halftime');
     
-    if (!hasUpcoming) {
+    if (!hasUpcoming && !hasLive) {
       // Get current season info
       const seasonType = data.season?.type || data.leagues?.[0]?.season?.type || 2;
       const currentWeek = data.week?.number || 1;
-      const year = new Date().getFullYear();
+      const year = data.season?.year || new Date().getFullYear();
       
-      console.log('[ESPN API] No upcoming games, fetching future weeks. Season:', seasonType, 'Week:', currentWeek);
+      console.log('[ESPN API] No upcoming/live games. Season type:', seasonType, 'Week:', currentWeek, 'Year:', year);
       
       // For playoffs (seasonType 3), try to fetch upcoming rounds
       if (seasonType === 3) {
         // Try fetching next few playoff weeks
         for (let week = currentWeek + 1; week <= 5; week++) {
           try {
-            const futureGames = await fetchScheduleWeek(year, seasonType, week);
+            const futureGames = await fetchScheduleWeek(year, 3, week);
             if (futureGames.length > 0) {
               console.log(`[ESPN API] Found ${futureGames.length} games for playoff week ${week}`);
               games = [...games, ...futureGames];
@@ -42,6 +43,20 @@ export async function fetchScoreboard(): Promise<Game[]> {
           } catch (err) {
             console.warn(`[ESPN API] Failed to fetch playoff week ${week}:`, err);
           }
+        }
+      }
+      
+      // If regular season week 18 and all games final, fetch playoff week 1 (Wild Card)
+      if (seasonType === 2 && currentWeek >= 18) {
+        console.log('[ESPN API] Regular season complete, fetching Wild Card games...');
+        try {
+          const playoffGames = await fetchScheduleWeek(year, 3, 1);
+          if (playoffGames.length > 0) {
+            console.log(`[ESPN API] Found ${playoffGames.length} Wild Card games`);
+            games = [...games, ...playoffGames];
+          }
+        } catch (err) {
+          console.warn('[ESPN API] Failed to fetch Wild Card games:', err);
         }
       }
     }
@@ -56,15 +71,18 @@ export async function fetchScoreboard(): Promise<Game[]> {
 // Fetch games for a specific week
 async function fetchScheduleWeek(year: number, seasonType: number, week: number): Promise<Game[]> {
   try {
-    const url = `${API_ENDPOINTS.scoreboard}?dates=${year}&seasontype=${seasonType}&week=${week}`;
+    const url = `${API_ENDPOINTS.schedule}?year=${year}&seasonType=${seasonType}&week=${week}`;
     console.log('[ESPN API] Fetching schedule:', url);
     
     const response = await fetch(url);
     if (!response.ok) {
+      console.warn('[ESPN API] Schedule fetch failed:', response.status);
       return [];
     }
     const data = await response.json();
-    return parseScoreboardResponse(data);
+    const games = parseScoreboardResponse(data);
+    console.log(`[ESPN API] Schedule week ${week} returned ${games.length} games`);
+    return games;
   } catch (error) {
     console.warn('Error fetching schedule week:', error);
     return [];
