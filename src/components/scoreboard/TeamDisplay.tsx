@@ -6,17 +6,34 @@ interface TeamDisplayProps {
 }
 
 export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
+  // Check if the primary color is too dark (for glow visibility)
+  // Convert hex to brightness: if R+G+B < 150, it's too dark
+  const hexToRgbSum = (hex: string) => {
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    return r + g + b;
+  };
+  
+  const primaryColor = team.color;
+  const altColor = team.alternateColor || 'ffffff';
+  const isPrimaryDark = hexToRgbSum(primaryColor) < 180;
+  
+  // Use alternate color for glow if primary is too dark
+  const glowColor = isPrimaryDark ? altColor : primaryColor;
+  const ringColor = primaryColor; // Keep ring in primary color
+  
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Team Logo with Glow Effect */}
       <div 
         className="relative w-44 h-44 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-105"
         style={{
-          background: `radial-gradient(circle, #${team.color}50 0%, #${team.color}20 50%, transparent 70%)`,
+          background: `radial-gradient(circle, #${glowColor}50 0%, #${glowColor}20 50%, transparent 70%)`,
           boxShadow: `
-            0 0 60px #${team.color}50,
-            0 0 100px #${team.color}30,
-            inset 0 0 30px #${team.color}20
+            0 0 60px #${glowColor}50,
+            0 0 100px #${glowColor}30,
+            inset 0 0 30px #${glowColor}20
           `,
         }}
       >
@@ -24,10 +41,10 @@ export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
         <div 
           className="absolute inset-2 rounded-full"
           style={{
-            border: `4px solid #${team.color}`,
+            border: `4px solid #${ringColor}`,
             boxShadow: `
-              0 0 20px #${team.color}80,
-              inset 0 0 20px #${team.color}40
+              0 0 20px #${glowColor}80,
+              inset 0 0 20px #${glowColor}40
             `,
           }}
         />
@@ -36,7 +53,7 @@ export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
         <div 
           className="absolute inset-4 rounded-full opacity-50"
           style={{
-            border: `2px solid #${team.alternateColor || 'ffffff'}`,
+            border: `2px solid #${altColor}`,
           }}
         />
         
@@ -45,7 +62,7 @@ export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
           alt={team.displayName}
           className="w-28 h-28 object-contain drop-shadow-2xl relative z-10"
           style={{
-            filter: `drop-shadow(0 0 15px #${team.color}80)`,
+            filter: `drop-shadow(0 0 15px #${glowColor}80)`,
           }}
           onError={(e) => {
             e.currentTarget.style.display = 'none';
