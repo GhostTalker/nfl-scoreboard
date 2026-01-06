@@ -57,7 +57,7 @@ export function MainScoreboard() {
       />
 
       {/* Main Score Display */}
-      <div className="flex items-center justify-center gap-6 w-full max-w-6xl px-8">
+      <div className="flex items-center justify-center gap-12 w-full max-w-7xl px-8">
         {/* Away Team */}
         <TeamDisplay team={currentGame.awayTeam} isHome={false} />
 
