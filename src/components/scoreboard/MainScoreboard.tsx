@@ -60,60 +60,76 @@ export function MainScoreboard() {
         {/* Away Team */}
         <TeamDisplay team={currentGame.awayTeam} isHome={false} />
 
-        {/* Center Score Section */}
-        <div className="flex flex-col items-center gap-4">
-          {/* Score Display */}
-          <div className="flex items-center gap-3">
-            {/* Away Score */}
-            <ScoreBox score={currentGame.awayTeam.score} teamColor={currentGame.awayTeam.color} />
-            
-            {/* Separator */}
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-white/40" />
-              <div className="w-3 h-3 rounded-full bg-white/40" />
-            </div>
-            
-            {/* Home Score */}
-            <ScoreBox score={currentGame.homeTeam.score} teamColor={currentGame.homeTeam.color} />
-          </div>
-
-          {/* Game Clock */}
-          <div 
-            className="flex items-center gap-4 px-6 py-3 rounded-xl"
-            style={{
-              background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
-              border: '1px solid rgba(255,255,255,0.1)',
-            }}
-          >
-            {/* Quarter */}
+        {/* Center Section - Score or Start Time */}
+        {currentGame.status === 'scheduled' ? (
+          // Show start time for upcoming games
+          <div className="flex flex-col items-center gap-2">
             <div className="flex flex-col items-center">
-              <span className="text-xs text-white/50 uppercase tracking-wider">Quarter</span>
-              <span className="text-3xl font-black text-white">
-                {currentGame.clock.periodName || '-'}
+              <span className="text-xs text-white/50 uppercase tracking-wider mb-2">Kickoff</span>
+              <span className="text-5xl font-black text-white font-mono">
+                {currentGame.startTime ? new Date(currentGame.startTime).toLocaleTimeString('de-DE', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                }) : 'TBD'}
               </span>
             </div>
-            
-            {/* Divider */}
-            <div className="w-px h-12 bg-white/20" />
-            
-            {/* Time */}
-            <div className="flex flex-col items-center">
-              <span className="text-xs text-white/50 uppercase tracking-wider">Time</span>
-              <div className="flex items-center gap-2">
-                <span className="text-3xl font-black text-white font-mono">
-                  {currentGame.clock.displayValue || '0:00'}
+          </div>
+        ) : (
+          // Show score and clock for live/final games
+          <div className="flex flex-col items-center gap-4">
+            {/* Score Display */}
+            <div className="flex items-center gap-3">
+              {/* Away Score */}
+              <ScoreBox score={currentGame.awayTeam.score} teamColor={currentGame.awayTeam.color} />
+              
+              {/* Separator */}
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-white/40" />
+                <div className="w-3 h-3 rounded-full bg-white/40" />
+              </div>
+              
+              {/* Home Score */}
+              <ScoreBox score={currentGame.homeTeam.score} teamColor={currentGame.homeTeam.color} />
+            </div>
+
+            {/* Game Clock */}
+            <div 
+              className="flex items-center gap-4 px-6 py-3 rounded-xl"
+              style={{
+                background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
+              {/* Quarter */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-white/50 uppercase tracking-wider">Quarter</span>
+                <span className="text-3xl font-black text-white">
+                  {currentGame.clock.periodName || '-'}
                 </span>
-                {currentGame.status === 'in_progress' && (
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+              </div>
+              
+              {/* Divider */}
+              <div className="w-px h-12 bg-white/20" />
+              
+              {/* Time */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-white/50 uppercase tracking-wider">Time</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-black text-white font-mono">
+                    {currentGame.clock.displayValue || '0:00'}
                   </span>
-                )}
+                  {currentGame.status === 'in_progress' && (
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Home Team */}
         <TeamDisplay team={currentGame.homeTeam} isHome={true} />
