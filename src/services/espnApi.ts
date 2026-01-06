@@ -123,10 +123,14 @@ function parseScoreboardResponse(data: any): Game[] {
 
     if (!homeCompetitor || !awayCompetitor) return null;
 
-    const status = parseGameStatus(event.status);
-    const seasonName = getSeasonName(seasonType, week, event.season?.slug);
+    // Use event-specific week if available, fallback to top-level week
+    const eventWeek = event.week?.number || week;
+    const eventSeasonType = event.season?.type || seasonType;
     
-    console.log(`[ESPN API] Game ${event.id}: seasonType=${seasonType}, week=${week}, slug=${event.season?.slug}, seasonName=${seasonName}`);
+    const status = parseGameStatus(event.status);
+    const seasonName = getSeasonName(eventSeasonType, eventWeek, event.season?.slug);
+    
+    console.log(`[ESPN API] Game ${event.id}: seasonType=${eventSeasonType}, week=${eventWeek}, slug=${event.season?.slug}, seasonName=${seasonName}`);
     
     return {
       id: event.id,
@@ -142,8 +146,8 @@ function parseScoreboardResponse(data: any): Game[] {
       venue: competition.venue?.fullName,
       broadcast: competition.broadcasts?.[0]?.names?.[0],
       startTime: event.date,
-      seasonType,
-      week,
+      seasonType: eventSeasonType,
+      week: eventWeek,
       seasonName,
     } as Game;
   }).filter(Boolean);
