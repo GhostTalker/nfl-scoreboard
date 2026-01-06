@@ -15,7 +15,13 @@ const PORT = Number(process.env.PORT) || 3001;
 app.use(cors());
 app.use(express.json());
 
-// API Routes (proxy to ESPN)
+// Log all requests in production for debugging
+app.use((req, _res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  next();
+});
+
+// API Routes (proxy to ESPN) - MUST be before static files
 app.use('/api', apiRouter);
 
 // Serve static files in production
