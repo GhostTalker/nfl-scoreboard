@@ -395,7 +395,7 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast, hideDateT
       {/* Season/Round Name */}
       {seasonName && (
         <div 
-          className="relative px-6 py-1.5 rounded-lg"
+          className="relative px-8 py-2.5 rounded-xl"
           style={{
             background: isSuperBowl 
               ? 'linear-gradient(180deg, rgba(212,175,55,0.9) 0%, rgba(170,140,40,0.8) 100%)'
@@ -405,21 +405,23 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast, hideDateT
               ? 'linear-gradient(180deg, rgba(50,100,200,0.9) 0%, rgba(30,70,150,0.8) 100%)'
               : 'linear-gradient(180deg, rgba(40,60,80,0.8) 0%, rgba(30,45,60,0.7) 100%)',
             boxShadow: isSuperBowl
-              ? '0 0 40px rgba(212,175,55,0.6), inset 0 1px 0 rgba(255,255,255,0.3)'
+              ? '0 0 50px rgba(212,175,55,0.7), inset 0 1px 0 rgba(255,255,255,0.3)'
               : isPlayoffs
-              ? '0 0 30px rgba(50,100,200,0.5), inset 0 1px 0 rgba(255,255,255,0.2)'
+              ? '0 0 40px rgba(50,100,200,0.6), inset 0 1px 0 rgba(255,255,255,0.2)'
               : '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
             border: isSuperBowl
-              ? '2px solid rgba(255,215,0,0.8)'
+              ? '3px solid rgba(255,215,0,0.9)'
               : isConference
-              ? '2px solid rgba(200,200,200,0.6)'
+              ? '2px solid rgba(200,200,200,0.7)'
+              : isPlayoffs
+              ? '2px solid rgba(70,120,220,0.6)'
               : '1px solid rgba(255,255,255,0.2)',
           }}
         >
           {/* Glow effect for important games */}
           {isSuperBowl && (
             <div 
-              className="absolute inset-0 rounded-lg animate-pulse opacity-50"
+              className="absolute inset-0 rounded-xl animate-pulse opacity-50"
               style={{
                 background: 'radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)',
               }}
@@ -427,12 +429,14 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast, hideDateT
           )}
           
           <span 
-            className={`relative text-base font-black uppercase tracking-[0.25em] ${
+            className={`relative text-xl font-black uppercase tracking-[0.3em] ${
               isSuperBowl ? 'text-white' : isPlayoffs ? 'text-white' : 'text-white/80'
             }`}
             style={{
               textShadow: isSuperBowl 
-                ? '0 0 20px rgba(255,215,0,0.8), 0 2px 4px rgba(0,0,0,0.5)'
+                ? '0 0 25px rgba(255,215,0,0.9), 0 3px 6px rgba(0,0,0,0.6)'
+                : isPlayoffs
+                ? '0 0 15px rgba(100,150,255,0.5), 0 2px 4px rgba(0,0,0,0.5)'
                 : '0 2px 4px rgba(0,0,0,0.5)',
             }}
           >
