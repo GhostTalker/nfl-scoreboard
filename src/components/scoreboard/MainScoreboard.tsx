@@ -546,8 +546,8 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast, hideDateT
               alt={seasonName}
               className="relative w-auto object-contain drop-shadow-2xl"
               style={{
-                height: '280px',
-                maxWidth: '800px',
+                height: isSuperBowl ? '280px' : '350px',
+                maxWidth: '900px',
                 filter: isSuperBowl 
                   ? 'drop-shadow(0 0 30px rgba(255,215,0,0.8)) drop-shadow(0 8px 20px rgba(0,0,0,0.9))'
                   : isPlayoffs
