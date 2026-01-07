@@ -2,10 +2,9 @@ import type { Team } from '../../types/game';
 
 interface TeamDisplayProps {
   team: Team;
-  isHome: boolean;
 }
 
-export function TeamDisplay({ team, isHome: _isHome }: TeamDisplayProps) {
+export function TeamDisplay({ team }: TeamDisplayProps) {
   // Check if the primary color is too dark (for glow visibility)
   // Convert hex to brightness: if R+G+B < 150, it's too dark
   const hexToRgbSum = (hex: string) => {

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { espnProxy, CacheKeys } from '../services/espnProxy';
+import { espnProxy } from '../services/espnProxy';
 
 export const apiRouter = Router();
 

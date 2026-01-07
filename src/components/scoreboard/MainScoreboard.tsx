@@ -1,6 +1,7 @@
 import { useGameStore } from '../../stores/gameStore';
 import { TeamDisplay } from './TeamDisplay';
 import { GameSituation } from './GameSituation';
+import { getTitleGraphic } from '../../constants/titleGraphics';
 
 export function MainScoreboard() {
   const currentGame = useGameStore((state) => state.currentGame);
@@ -131,7 +132,7 @@ export function MainScoreboard() {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full max-w-7xl px-8 gap-12">
         {/* Away Team - Right aligned */}
         <div className="flex justify-end">
-          <TeamDisplay team={currentGame.awayTeam} isHome={false} />
+          <TeamDisplay team={currentGame.awayTeam} />
         </div>
 
         {/* Center Section - Score or Start Time - Always centered */}
@@ -267,7 +268,7 @@ export function MainScoreboard() {
 
         {/* Home Team */}
         <div className="flex justify-start">
-          <TeamDisplay team={currentGame.homeTeam} isHome={true} />
+          <TeamDisplay team={currentGame.homeTeam} />
         </div>
       </div>
 
@@ -465,58 +466,131 @@ function GameHeader({ seasonName, status, startTime, venue, broadcast, hideDateT
   // Build venue/broadcast info line
   const venueInfo = [broadcast, venue].filter(Boolean).join(' • ');
   
+  // Format date as DD.MM.YYYY
+  const getFormattedDate = () => {
+    if (!startTime) return null;
+    const date = new Date(startTime);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
+  const titleGraphic = getTitleGraphic(seasonName);
+
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
-      {/* Season/Round Name */}
-      {seasonName && (
-        <div 
-          className="relative px-8 py-2.5 rounded-xl"
-          style={{
-            background: isSuperBowl 
-              ? 'linear-gradient(180deg, rgba(212,175,55,0.9) 0%, rgba(170,140,40,0.8) 100%)'
-              : isConference
-              ? 'linear-gradient(180deg, rgba(180,180,180,0.9) 0%, rgba(140,140,140,0.8) 100%)'
-              : isPlayoffs
-              ? 'linear-gradient(180deg, rgba(50,100,200,0.9) 0%, rgba(30,70,150,0.8) 100%)'
-              : 'linear-gradient(180deg, rgba(40,60,80,0.8) 0%, rgba(30,45,60,0.7) 100%)',
-            boxShadow: isSuperBowl
-              ? '0 0 50px rgba(212,175,55,0.7), inset 0 1px 0 rgba(255,255,255,0.3)'
-              : isPlayoffs
-              ? '0 0 40px rgba(50,100,200,0.6), inset 0 1px 0 rgba(255,255,255,0.2)'
-              : '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
-            border: isSuperBowl
-              ? '3px solid rgba(255,215,0,0.9)'
-              : isConference
-              ? '2px solid rgba(200,200,200,0.7)'
-              : isPlayoffs
-              ? '2px solid rgba(70,120,220,0.6)'
-              : '1px solid rgba(255,255,255,0.2)',
-          }}
-        >
-          {/* Glow effect for important games */}
-          {isSuperBowl && (
-            <div 
-              className="absolute inset-0 rounded-xl animate-pulse opacity-50"
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+      {/* Season/Round Name - Title Graphic */}
+      {seasonName && titleGraphic && (
+        <div className="flex flex-col items-center gap-2">
+          {/* Title Graphic with Glow Effect */}
+          <div className="relative">
+            {/* Glow effect for important games */}
+            {isSuperBowl && (
+              <div 
+                className="absolute inset-0 animate-pulse opacity-60 blur-2xl"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255,215,0,0.8) 0%, transparent 70%)',
+                }}
+              />
+            )}
+            {isConference && (
+              <div 
+                className="absolute inset-0 animate-pulse opacity-50 blur-2xl"
+                style={{
+                  background: 'radial-gradient(circle, rgba(200,200,220,0.7) 0%, transparent 70%)',
+                }}
+              />
+            )}
+            {isPlayoffs && !isSuperBowl && !isConference && (
+              <div 
+                className="absolute inset-0 blur-2xl opacity-40"
+                style={{
+                  background: 'radial-gradient(circle, rgba(59,130,246,0.6) 0%, transparent 70%)',
+                }}
+              />
+            )}
+            
+            {/* Title Image */}
+            <img
+              src={titleGraphic}
+              alt={seasonName}
+              className="relative h-32 w-auto object-contain drop-shadow-2xl"
               style={{
-                background: 'radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%)',
+                filter: isSuperBowl 
+                  ? 'drop-shadow(0 0 30px rgba(255,215,0,0.8)) drop-shadow(0 8px 20px rgba(0,0,0,0.9))'
+                  : isPlayoffs
+                  ? 'drop-shadow(0 0 20px rgba(100,150,255,0.6)) drop-shadow(0 6px 15px rgba(0,0,0,0.8))'
+                  : 'drop-shadow(0 6px 15px rgba(0,0,0,0.7))',
+              }}
+              onError={(e) => {
+                // Fallback to text if image fails to load
+                const img = e.currentTarget;
+                img.style.display = 'none';
+                const fallback = img.nextElementSibling as HTMLElement;
+                if (fallback) fallback.classList.remove('hidden');
               }}
             />
-          )}
+            
+            {/* Fallback Text (hidden by default) */}
+            <div 
+              className="hidden relative px-20 py-6 rounded-2xl"
+              style={{
+                background: isSuperBowl 
+                  ? 'linear-gradient(180deg, rgba(212,175,55,0.95) 0%, rgba(170,140,40,0.85) 100%)'
+                  : isConference
+                  ? 'linear-gradient(180deg, rgba(180,180,180,0.95) 0%, rgba(140,140,140,0.85) 100%)'
+                  : isPlayoffs
+                  ? 'linear-gradient(180deg, rgba(50,100,200,0.95) 0%, rgba(30,70,150,0.85) 100%)'
+                  : 'linear-gradient(180deg, rgba(40,60,80,0.9) 0%, rgba(30,45,60,0.8) 100%)',
+                boxShadow: isSuperBowl
+                  ? '0 0 80px rgba(212,175,55,0.9), inset 0 3px 0 rgba(255,255,255,0.5)'
+                  : isPlayoffs
+                  ? '0 0 60px rgba(50,100,200,0.8), inset 0 3px 0 rgba(255,255,255,0.4)'
+                  : '0 8px 40px rgba(0,0,0,0.7), inset 0 3px 0 rgba(255,255,255,0.2)',
+                border: isSuperBowl
+                  ? '5px solid rgba(255,215,0,0.95)'
+                  : isConference
+                  ? '4px solid rgba(200,200,200,0.8)'
+                  : isPlayoffs
+                  ? '4px solid rgba(70,120,220,0.7)'
+                  : '3px solid rgba(255,255,255,0.25)',
+              }}
+            >
+              <span 
+                className={`relative text-5xl font-black uppercase tracking-[0.35em] ${
+                  isSuperBowl ? 'text-white' : isPlayoffs ? 'text-white' : 'text-white/90'
+                }`}
+                style={{
+                  fontFamily: 'Impact, "Arial Black", sans-serif',
+                  textShadow: isSuperBowl 
+                    ? '0 0 40px rgba(255,215,0,1), 0 6px 12px rgba(0,0,0,0.8), 3px 3px 0 rgba(0,0,0,0.6)'
+                    : isPlayoffs
+                    ? '0 0 30px rgba(100,150,255,0.7), 0 4px 8px rgba(0,0,0,0.7), 3px 3px 0 rgba(0,0,0,0.5)'
+                    : '0 4px 8px rgba(0,0,0,0.7), 3px 3px 0 rgba(0,0,0,0.5)',
+                  letterSpacing: '0.15em',
+                }}
+              >
+                {seasonName}
+              </span>
+            </div>
+          </div>
           
-          <span 
-            className={`relative text-xl font-black uppercase tracking-[0.3em] ${
-              isSuperBowl ? 'text-white' : isPlayoffs ? 'text-white' : 'text-white/80'
-            }`}
-            style={{
-              textShadow: isSuperBowl 
-                ? '0 0 25px rgba(255,215,0,0.9), 0 3px 6px rgba(0,0,0,0.6)'
-                : isPlayoffs
-                ? '0 0 15px rgba(100,150,255,0.5), 0 2px 4px rgba(0,0,0,0.5)'
-                : '0 2px 4px rgba(0,0,0,0.5)',
-            }}
-          >
-            {seasonName}
-          </span>
+          {/* Date in DD.MM.YYYY format */}
+          {startTime && (
+            <div 
+              className="px-8 py-3 rounded-lg"
+              style={{
+                background: 'rgba(0,0,0,0.7)',
+                border: '2px solid rgba(255,255,255,0.3)',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+              }}
+            >
+              <span className="text-3xl font-bold text-white tracking-wider">
+                {getFormattedDate()}
+              </span>
+            </div>
+          )}
         </div>
       )}
       

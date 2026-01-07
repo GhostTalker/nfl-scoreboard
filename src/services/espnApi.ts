@@ -135,14 +135,14 @@ function parseScoreboardResponse(data: any): Game[] {
     return {
       id: event.id,
       status,
-      homeTeam: parseTeam(homeCompetitor, 'home'),
-      awayTeam: parseTeam(awayCompetitor, 'away'),
+      homeTeam: parseTeam(homeCompetitor),
+      awayTeam: parseTeam(awayCompetitor),
       clock: {
         displayValue: event.status?.displayClock || '0:00',
         period: event.status?.period || 0,
         periodName: getPeriodName(event.status?.period || 0),
       },
-      situation: parseSituation(competition.situation, homeCompetitor.id, awayCompetitor.id),
+      situation: parseSituation(competition.situation),
       venue: competition.venue?.fullName,
       broadcast: competition.broadcasts?.[0]?.names?.[0],
       startTime: event.date,
@@ -185,7 +185,7 @@ function getSeasonName(seasonType: number, week: number, slug?: string): string 
   return 'GAME DAY';
 }
 
-function parseTeam(competitor: any, _homeAway: 'home' | 'away') {
+function parseTeam(competitor: any) {
   const team = competitor.team;
   const teamData = getTeamById(team.id);
   
@@ -228,7 +228,7 @@ function getPeriodName(period: number): string {
   }
 }
 
-function parseSituation(situation: any, _homeTeamId: string, _awayTeamId: string) {
+function parseSituation(situation: any) {
   if (!situation) return undefined;
   
   const possessionId = situation.possession;
@@ -261,14 +261,14 @@ function parseGameDetailsResponse(data: any): { game: Game; stats: GameStats } |
   const game: Game = {
     id: header.id,
     status: parseGameStatus(header.status),
-    homeTeam: parseTeam(homeCompetitor, 'home'),
-    awayTeam: parseTeam(awayCompetitor, 'away'),
+    homeTeam: parseTeam(homeCompetitor),
+    awayTeam: parseTeam(awayCompetitor),
     clock: {
       displayValue: header.status?.displayClock || '0:00',
       period: header.status?.period || 0,
       periodName: getPeriodName(header.status?.period || 0),
     },
-    situation: parseSituation(data.situation, homeCompetitor.team.id, awayCompetitor.team.id),
+    situation: parseSituation(data.situation),
     venue: competition?.venue?.fullName,
   };
 
@@ -335,7 +335,7 @@ function parseTeamStats(playerStats: any, teamStats: any, teamId: string): TeamS
 
 function parseEfficiencyPercentage(efficiency: string): number {
   // Parse "3-5" or "3/5" format
-  const match = efficiency.match(/(\d+)[-\/](\d+)/);
+  const match = efficiency.match(/(\d+)[-/](\d+)/);
   if (!match) return 0;
   
   const [, made, attempts] = match;

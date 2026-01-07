@@ -87,27 +87,3 @@ function getVideoType(diff: number): 'touchdown' | 'fieldgoal' | null {
   // These are usually part of a larger play or minor scoring
   return null;
 }
-
-/**
- * Get a human-readable description of the score event
- */
-export function getScoreDescription(event: ScoreEvent): string {
-  switch (event.type) {
-    case 'TOUCHDOWN':
-      return 'TOUCHDOWN!';
-    case 'TOUCHDOWN_PAT':
-      return 'TOUCHDOWN!';
-    case 'TOUCHDOWN_2PT':
-      return 'TOUCHDOWN + 2PT!';
-    case 'FIELD_GOAL':
-      return 'FIELD GOAL!';
-    case 'SAFETY':
-      return 'SAFETY!';
-    case 'EXTRA_POINT':
-      return 'EXTRA POINT';
-    case 'TWO_POINT_CONVERSION':
-      return '2-POINT CONVERSION!';
-    default:
-      return 'SCORE!';
-  }
-}

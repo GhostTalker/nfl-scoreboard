@@ -61,6 +61,6 @@ export function useSwipe() {
 export function getAvailableDirections(view: View): string[] {
   const nav = NAVIGATION[view];
   return Object.entries(nav)
-    .filter(([_, target]) => target !== null)
+    .filter(([, target]) => target !== null)
     .map(([direction]) => direction);
 }
