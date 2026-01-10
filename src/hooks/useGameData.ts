@@ -135,8 +135,13 @@ export function useGameData() {
       } else {
         // No game selected - clear current game to show picker
         console.log('[DEBUG] No game selected, clearing currentGame');
-        setCurrentGame(null);
-        setGameStats(null);
+        // CRITICAL: Use setState directly to bypass guards in setCurrentGame
+        useGameStore.setState({
+          currentGame: null,
+          isLive: false,
+          gameStats: null,
+          manuallySelectedGameId: null, // Clear this too!
+        });
       }
     } catch (error) {
       console.error('Error fetching game data:', error);
