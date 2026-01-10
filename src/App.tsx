@@ -13,8 +13,7 @@ import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 function App() {
   const currentView = useUIStore((state) => state.currentView);
   const celebrationOverlay = useUIStore((state) => state.celebrationOverlay);
-  const currentGameId = useGameStore((state) => state.currentGame?.id);
-  
+
   // Initialize game data polling
   useGameData();
   
