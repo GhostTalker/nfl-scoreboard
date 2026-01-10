@@ -110,8 +110,12 @@ export function useGameData() {
           setCurrentGame(gameToShow);
           setGameStats(null);
         }
+      } else {
+        // No game selected - clear current game to show picker
+        console.log('[DEBUG] No game selected, clearing currentGame');
+        setCurrentGame(null);
+        setGameStats(null);
       }
-      // Don't set null if we have a manual selection - keep showing the selected game
     } catch (error) {
       console.error('Error fetching game data:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch game data');

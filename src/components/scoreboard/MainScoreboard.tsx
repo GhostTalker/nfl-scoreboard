@@ -422,24 +422,173 @@ function ErrorState({ message }: { message: string }) {
 }
 
 function NoGameState() {
+  const availableGames = useGameStore((state) => state.availableGames);
+  const selectGame = useGameStore((state) => state.selectGame);
+
+  // Group games by status
+  const liveGames = availableGames.filter(g => g.status === 'in_progress' || g.status === 'halftime');
+  const scheduledGames = availableGames.filter(g => g.status === 'scheduled');
+  const finishedGames = availableGames.filter(g => g.status === 'final');
+
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return { date: '', time: 'TBD' };
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+
+    const time = date.toLocaleTimeString('de-DE', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    if (isToday) return { date: 'HEUTE', time };
+
+    const dateFormatted = date.toLocaleDateString('de-DE', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'numeric',
+    }).toUpperCase();
+    return { date: dateFormatted, time };
+  };
+
   return (
-    <div className="h-full w-full flex items-center justify-center bg-slate-900">
-      <div className="flex flex-col items-center gap-6 text-center p-8 max-w-md">
-        <div className="w-24 h-24 rounded-full bg-blue-500/20 flex items-center justify-center animate-pulse">
-          <svg className="w-14 h-14 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-          </svg>
+    <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-8 overflow-y-auto">
+      <div className="w-full max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black text-white mb-2">🏈 NFL Scoreboard</h1>
+          <p className="text-white/60 text-lg">Wählen Sie ein Spiel aus</p>
         </div>
-        <div>
-          <p className="text-white text-2xl font-bold mb-2">Kein Spiel ausgewählt</p>
-          <p className="text-white/60 text-lg">Bitte wählen Sie ein Spiel aus</p>
-        </div>
-        <div className="flex items-center gap-2 text-blue-400 text-sm font-medium">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          <span>Pfeil nach links für Spielauswahl</span>
-        </div>
+
+        {/* Live Games */}
+        {liveGames.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3 px-4">
+              <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+              <span className="text-red-400 text-lg font-bold uppercase tracking-wider">Live</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {liveGames.map((game) => (
+                <button
+                  key={game.id}
+                  onClick={() => selectGame(game)}
+                  className="bg-gradient-to-br from-red-900/40 to-red-800/30 hover:from-red-800/50 hover:to-red-700/40 border-2 border-red-500/50 hover:border-red-400 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-red-400 text-sm font-bold">{game.clock.periodName} {game.clock.displayValue}</span>
+                    <span className="text-xs text-white/40">{game.seasonName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <img src={game.awayTeam.logo} alt={game.awayTeam.abbreviation} className="w-12 h-12" />
+                      <div>
+                        <div className="text-white font-bold">{game.awayTeam.abbreviation}</div>
+                        <div className="text-2xl font-black text-white">{game.awayTeam.score}</div>
+                      </div>
+                    </div>
+                    <div className="text-white/50 text-lg mx-4">@</div>
+                    <div className="flex items-center gap-3 flex-1 justify-end">
+                      <div className="text-right">
+                        <div className="text-white font-bold">{game.homeTeam.abbreviation}</div>
+                        <div className="text-2xl font-black text-white">{game.homeTeam.score}</div>
+                      </div>
+                      <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-12 h-12" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Scheduled Games */}
+        {scheduledGames.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3 px-4">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-blue-400 text-lg font-bold uppercase tracking-wider">Anstehend</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {scheduledGames.map((game) => {
+                const dateTime = formatDateTime(game.startTime);
+                return (
+                  <button
+                    key={game.id}
+                    onClick={() => selectGame(game)}
+                    className="bg-slate-800/50 hover:bg-slate-700/50 border-2 border-slate-700 hover:border-blue-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-blue-400 text-sm font-bold">{dateTime.date} {dateTime.time}</span>
+                      <span className="text-xs text-white/40">{game.seasonName}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <img src={game.awayTeam.logo} alt={game.awayTeam.abbreviation} className="w-10 h-10" />
+                        <span className="text-white font-bold">{game.awayTeam.abbreviation}</span>
+                      </div>
+                      <span className="text-white/50">@</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-white font-bold">{game.homeTeam.abbreviation}</span>
+                        <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-10 h-10" />
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Finished Games */}
+        {finishedGames.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3 px-4">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-gray-400 text-lg font-bold uppercase tracking-wider">Beendet</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {finishedGames.map((game) => (
+                <button
+                  key={game.id}
+                  onClick={() => selectGame(game)}
+                  className="bg-slate-800/30 hover:bg-slate-700/30 border-2 border-slate-700/50 hover:border-gray-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-gray-400 text-sm font-bold">FINAL</span>
+                    <span className="text-xs text-white/40">{game.seasonName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <img src={game.awayTeam.logo} alt={game.awayTeam.abbreviation} className="w-10 h-10" />
+                      <div>
+                        <div className="text-white/80 font-bold">{game.awayTeam.abbreviation}</div>
+                        <div className="text-xl font-black text-white">{game.awayTeam.score}</div>
+                      </div>
+                    </div>
+                    <div className="text-white/50 mx-4">@</div>
+                    <div className="flex items-center gap-3 flex-1 justify-end">
+                      <div className="text-right">
+                        <div className="text-white/80 font-bold">{game.homeTeam.abbreviation}</div>
+                        <div className="text-xl font-black text-white">{game.homeTeam.score}</div>
+                      </div>
+                      <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-10 h-10" />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {availableGames.length === 0 && (
+          <div className="text-center text-white/50 py-12">
+            <p>Keine Spiele verfügbar</p>
+          </div>
+        )}
       </div>
     </div>
   );
