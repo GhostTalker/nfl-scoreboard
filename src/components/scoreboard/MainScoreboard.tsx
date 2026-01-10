@@ -424,14 +424,22 @@ function ErrorState({ message }: { message: string }) {
 function NoGameState() {
   return (
     <div className="h-full w-full flex items-center justify-center bg-slate-900">
-      <div className="flex flex-col items-center gap-4 text-center p-8">
-        <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
-          <svg className="w-10 h-10 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      <div className="flex flex-col items-center gap-6 text-center p-8 max-w-md">
+        <div className="w-24 h-24 rounded-full bg-blue-500/20 flex items-center justify-center animate-pulse">
+          <svg className="w-14 h-14 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
           </svg>
         </div>
-        <p className="text-white text-xl">No games available</p>
-        <p className="text-white/50 text-sm">Press Arrow Left for Settings</p>
+        <div>
+          <p className="text-white text-2xl font-bold mb-2">Kein Spiel ausgewählt</p>
+          <p className="text-white/60 text-lg">Bitte wählen Sie ein Spiel aus</p>
+        </div>
+        <div className="flex items-center gap-2 text-blue-400 text-sm font-medium">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>Pfeil nach links für Spielauswahl</span>
+        </div>
       </div>
     </div>
   );

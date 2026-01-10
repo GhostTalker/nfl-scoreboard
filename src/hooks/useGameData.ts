@@ -56,19 +56,8 @@ export function useGameData() {
         }
       }
 
-      // If no manual selection, find any live game
-      if (!gameToShow && !manuallySelectedGameId) {
-        gameToShow = games.find((g) => g.status === 'in_progress');
-        console.log('[DEBUG] Auto-selected live game:', gameToShow ? `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}` : 'NONE');
-      }
-
-      // If still no game, show first available (but only if no manual selection)
-      if (!gameToShow && !manuallySelectedGameId && games.length > 0) {
-        gameToShow = games[0];
-        console.log('[DEBUG] Auto-selected first game:', `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}`);
-      }
-
-      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}` : 'NONE');
+      // NO AUTO SELECTION - User must manually select a game
+      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}` : 'NONE - User must select a game');
 
       if (gameToShow) {
         // Fetch details for live AND final games (for stats)
