@@ -29,7 +29,11 @@ export function useGameData() {
 
       // Fetch scoreboard (all games)
       const games = await fetchScoreboard();
-      console.log('[DEBUG] Fetched games:', games.map(g => ({ id: g.id, name: g.shortName, status: g.status })));
+      console.log('[DEBUG] Fetched games:', games.map(g => ({
+        id: g.id,
+        name: `${g.awayTeam.abbreviation} @ ${g.homeTeam.abbreviation}`,
+        status: g.status
+      })));
       setAvailableGames(games);
 
       // Determine which game to show
@@ -40,14 +44,14 @@ export function useGameData() {
       // If user manually selected a game, ALWAYS use that game
       if (manuallySelectedGameId) {
         gameToShow = games.find((g) => g.id === manuallySelectedGameId);
-        console.log('[DEBUG] Found manually selected game:', gameToShow ? `${gameToShow.id} ${gameToShow.shortName}` : 'NOT FOUND');
+        console.log('[DEBUG] Found manually selected game:', gameToShow ? `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}` : 'NOT FOUND');
 
         // If manual selection not found in current games, keep showing it anyway
         if (!gameToShow) {
           const { currentGame } = useGameStore.getState();
           if (currentGame && currentGame.id === manuallySelectedGameId) {
             gameToShow = currentGame;
-            console.log('[DEBUG] Using cached manually selected game:', `${gameToShow.id} ${gameToShow.shortName}`);
+            console.log('[DEBUG] Using cached manually selected game:', `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}`);
           }
         }
       }
@@ -55,16 +59,16 @@ export function useGameData() {
       // If no manual selection, find any live game
       if (!gameToShow && !manuallySelectedGameId) {
         gameToShow = games.find((g) => g.status === 'in_progress');
-        console.log('[DEBUG] Auto-selected live game:', gameToShow ? `${gameToShow.id} ${gameToShow.shortName}` : 'NONE');
+        console.log('[DEBUG] Auto-selected live game:', gameToShow ? `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}` : 'NONE');
       }
 
       // If still no game, show first available (but only if no manual selection)
       if (!gameToShow && !manuallySelectedGameId && games.length > 0) {
         gameToShow = games[0];
-        console.log('[DEBUG] Auto-selected first game:', `${gameToShow.id} ${gameToShow.shortName}`);
+        console.log('[DEBUG] Auto-selected first game:', `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`}`);
       }
 
-      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${gameToShow.shortName} ${gameToShow.awayTeam.abbreviation}@${gameToShow.homeTeam.abbreviation}` : 'NONE');
+      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${`${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}`} ${gameToShow.awayTeam.abbreviation}@${gameToShow.homeTeam.abbreviation}` : 'NONE');
 
       if (gameToShow) {
         // Fetch details for live AND final games (for stats)
