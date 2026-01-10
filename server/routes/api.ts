@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import { espnProxy } from '../services/espnProxy';
 
+// Force stdout/stderr for PM2
+const logError = (msg: string, ...args: any[]) => {
+  process.stderr.write(msg + ' ' + args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') + '\n');
+};
+
 export const apiRouter = Router();
 
 // GET /api/scoreboard - Get all current games
@@ -9,9 +14,9 @@ apiRouter.get('/scoreboard', async (_req, res) => {
     const data = await espnProxy.fetchScoreboard();
     res.json(data);
   } catch (error) {
-    console.error('❌ [API Error] Scoreboard failed:', error instanceof Error ? error.message : error);
+    logError('❌ [API Error] Scoreboard failed:', error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {
-      console.error('Stack trace:', error.stack);
+      logError('Stack trace:', error.stack);
     }
     res.status(500).json({
       error: 'Failed to fetch scoreboard',
@@ -27,9 +32,9 @@ apiRouter.get('/game/:gameId', async (req, res) => {
     const data = await espnProxy.fetchGameDetails(gameId);
     res.json(data);
   } catch (error) {
-    console.error(`❌ [API Error] Game ${req.params.gameId} failed:`, error instanceof Error ? error.message : error);
+    logError(`❌ [API Error] Game ${req.params.gameId} failed:`, error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {
-      console.error('Stack trace:', error.stack);
+      logError('Stack trace:', error.stack);
     }
     res.status(500).json({
       error: 'Failed to fetch game details',
@@ -49,9 +54,9 @@ apiRouter.get('/schedule', async (req, res) => {
     );
     res.json(data);
   } catch (error) {
-    console.error('❌ [API Error] Schedule failed:', error instanceof Error ? error.message : error);
+    logError('❌ [API Error] Schedule failed:', error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {
-      console.error('Stack trace:', error.stack);
+      logError('Stack trace:', error.stack);
     }
     res.status(500).json({
       error: 'Failed to fetch schedule',
@@ -67,7 +72,7 @@ apiRouter.get('/team/:teamId', async (req, res) => {
     const data = await espnProxy.fetchTeam(teamId);
     res.json(data);
   } catch (error) {
-    console.error('Error fetching team:', error);
+    logError('Error fetching team:', error);
     res.status(500).json({ 
       error: 'Failed to fetch team',
       message: error instanceof Error ? error.message : 'Unknown error'

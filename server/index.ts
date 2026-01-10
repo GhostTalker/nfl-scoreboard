@@ -11,6 +11,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
 
+// Force stdout/stderr for PM2 logging
+const log = (msg: string) => process.stdout.write(msg + '\n');
+const logError = (msg: string) => process.stderr.write(msg + '\n');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -21,14 +25,14 @@ app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
 
   // Log request
-  console.log(`[${timestamp}] → ${req.method} ${req.path}`);
+  log(`[${timestamp}] → ${req.method} ${req.path}`);
 
   // Capture response
   res.on('finish', () => {
     const duration = Date.now() - start;
     const status = res.statusCode;
     const statusEmoji = status >= 500 ? '❌' : status >= 400 ? '⚠️' : '✅';
-    console.log(`[${timestamp}] ${statusEmoji} ${req.method} ${req.path} - ${status} (${duration}ms)`);
+    log(`[${timestamp}] ${statusEmoji} ${req.method} ${req.path} - ${status} (${duration}ms)`);
   });
 
   next();
@@ -40,9 +44,9 @@ app.use('/api', apiRouter);
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../dist');
-  console.log('[Server] Serving static files from:', distPath);
+  log('[Server] Serving static files from: ' + distPath);
   app.use(express.static(distPath));
-  
+
   // SPA fallback - but NOT for /api routes
   app.get('*', (req, res) => {
     // Skip API routes (they should be handled above)
@@ -55,7 +59,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server on all interfaces (0.0.0.0) for network access
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
+  log(`
 ╔════════════════════════════════════════════════════════╗
 ║                                                        ║
 ║   NFL Scoreboard Server                               ║

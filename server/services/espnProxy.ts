@@ -2,6 +2,9 @@
 
 const ESPN_BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl';
 
+// Force stdout for PM2
+const log = (msg: string) => process.stdout.write(msg + '\n');
+
 interface CacheEntry {
   data: any;
   timestamp: number;
@@ -62,15 +65,15 @@ class ESPNProxy {
     const cacheKey = CacheKeys.SCOREBOARD;
     const cached = this.getCached(cacheKey, this.TTL.scoreboard);
     if (cached) {
-      console.log('[Cache HIT] Scoreboard');
+      log('[Cache HIT] Scoreboard');
       return cached;
     }
 
-    console.log('[Cache MISS] Fetching scoreboard from ESPN...');
+    log('[Cache MISS] Fetching scoreboard from ESPN...');
     const start = Date.now();
     const data = await this.fetch(`${ESPN_BASE_URL}/scoreboard`);
     const duration = Date.now() - start;
-    console.log(`[ESPN API] Scoreboard fetched in ${duration}ms`);
+    log(`[ESPN API] Scoreboard fetched in ${duration}ms`);
     this.setCache(cacheKey, data);
     return data;
   }
@@ -79,15 +82,15 @@ class ESPNProxy {
     const cacheKey = CacheKeys.GAME(gameId);
     const cached = this.getCached(cacheKey, this.TTL.game);
     if (cached) {
-      console.log(`[Cache HIT] Game ${gameId}`);
+      log(`[Cache HIT] Game ${gameId}`);
       return cached;
     }
 
-    console.log(`[Cache MISS] Fetching game ${gameId} from ESPN...`);
+    log(`[Cache MISS] Fetching game ${gameId} from ESPN...`);
     const start = Date.now();
     const data = await this.fetch(`${ESPN_BASE_URL}/summary?event=${gameId}`);
     const duration = Date.now() - start;
-    console.log(`[ESPN API] Game ${gameId} fetched in ${duration}ms`);
+    log(`[ESPN API] Game ${gameId} fetched in ${duration}ms`);
     this.setCache(cacheKey, data);
     return data;
   }
@@ -104,11 +107,11 @@ class ESPNProxy {
     const cacheKey = CacheKeys.SCHEDULE(currentYear, currentWeek, currentType);
     const cached = this.getCached(cacheKey, this.TTL.schedule);
     if (cached) {
-      console.log(`[Cache HIT] Schedule ${currentYear}/${currentWeek}`);
+      log(`[Cache HIT] Schedule ${currentYear}/${currentWeek}`);
       return cached;
     }
 
-    console.log(`[Cache MISS] Fetching schedule from ESPN...`);
+    log(`[Cache MISS] Fetching schedule from ESPN...`);
     const url = `${ESPN_BASE_URL}/scoreboard?dates=${currentYear}&seasontype=${currentType}&week=${currentWeek}`;
     const data = await this.fetch(url);
     this.setCache(cacheKey, data);
@@ -119,11 +122,11 @@ class ESPNProxy {
     const cacheKey = CacheKeys.TEAM(teamId);
     const cached = this.getCached(cacheKey, this.TTL.team);
     if (cached) {
-      console.log(`[Cache HIT] Team ${teamId}`);
+      log(`[Cache HIT] Team ${teamId}`);
       return cached;
     }
 
-    console.log(`[Cache MISS] Fetching team ${teamId} from ESPN...`);
+    log(`[Cache MISS] Fetching team ${teamId} from ESPN...`);
     const data = await this.fetch(`${ESPN_BASE_URL}/teams/${teamId}`);
     this.setCache(cacheKey, data);
     return data;
@@ -138,7 +141,7 @@ class ESPNProxy {
 
   clearCache(): void {
     this.cache.clear();
-    console.log('[Cache] Cleared');
+    log('[Cache] Cleared');
   }
 }
 
