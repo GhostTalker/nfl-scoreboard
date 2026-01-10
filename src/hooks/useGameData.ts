@@ -9,6 +9,33 @@ export function useGameData() {
   const isFetching = useRef(false);
   const hasInitialized = useRef(false);
 
+  // FIX 3: On mount, ALWAYS clear any orphaned state
+  useEffect(() => {
+    const store = useGameStore.getState();
+    console.log('[MOUNT] Checking for orphaned state:', {
+      hasCurrentGame: !!store.currentGame,
+      currentGameId: store.currentGame?.id,
+      manuallySelectedGameId: store.manuallySelectedGameId
+    });
+
+    // Clear orphaned game (game exists but no manual selection)
+    if (store.currentGame && !store.manuallySelectedGameId) {
+      console.log('[MOUNT] Clearing orphaned game state');
+      useGameStore.setState({
+        currentGame: null,
+        isLive: false,
+        gameStats: null,
+        manuallySelectedGameId: null
+      });
+    }
+
+    // Clear orphaned manual selection (manual selection exists but no game)
+    if (!store.currentGame && store.manuallySelectedGameId) {
+      console.log('[MOUNT] Clearing orphaned manual selection');
+      useGameStore.setState({ manuallySelectedGameId: null });
+    }
+  }, []); // Empty deps - only on mount
+
   const fetchData = useCallback(async () => {
     // CRITICAL: Initialize and clear phantom state FIRST (before any fetching)
     if (!hasInitialized.current) {
@@ -191,6 +218,7 @@ export function useGameData() {
         clearInterval(intervalRef.current);
       }
       unsubscribe();
+      hasInitialized.current = false; // FIX 1: Reset on unmount to fix StrictMode double-mount
     };
   }, [fetchData]);
 
