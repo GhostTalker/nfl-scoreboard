@@ -334,7 +334,7 @@ export function MainScoreboard() {
 
       {/* Navigation hint - very subtle */}
       <div className="absolute bottom-3 left-0 right-0 text-center text-white/20 text-xs">
-        Arrow Keys to navigate | v2.9
+        Arrow Keys to navigate | v3.0
       </div>
       
       {/* Debug Panel */}
@@ -430,38 +430,60 @@ function NoGameState() {
   const availableGames = useGameStore((state) => state.availableGames);
   const selectGame = useGameStore((state) => state.selectGame);
 
-  // Track when component mounted to prevent immediate automated clicks
-  const mountTimeRef = useRef<number>(Date.now());
-  const CLICK_GUARD_DELAY_MS = 150; // Minimum time before clicks are accepted
+  // USER GESTURE DETECTION: Track if real user activity has occurred
+  // Extensions can fake clicks but typically don't simulate mouse movement
+  const [hasUserGesture, setHasUserGesture] = useState(false);
+  const gestureCountRef = useRef(0); // Track number of gesture events for debugging
 
-  console.log('[NOGAMESTATE] Rendering NoGameState, availableGames:', availableGames.length);
+  // Listen for real user activity (mouse move, touch, keyboard)
+  useEffect(() => {
+    const handleUserGesture = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
+      if (!hasUserGesture) {
+        gestureCountRef.current++;
+        console.log('[NOGAMESTATE] User gesture detected:', e.type, 'count:', gestureCountRef.current);
 
-  // Wrapped selectGame with click guard against browser extensions
-  const handleSelectGame = (event: React.MouseEvent, game: any, source: string) => {
-    const timeSinceMount = Date.now() - mountTimeRef.current;
+        // Require multiple gesture events to be extra safe
+        // A real user moving mouse will generate MANY mousemove events
+        if (gestureCountRef.current >= 3) {
+          console.log('[NOGAMESTATE] User gesture CONFIRMED after', gestureCountRef.current, 'events');
+          setHasUserGesture(true);
+        }
+      }
+    };
 
+    // Listen on document to catch all user activity
+    document.addEventListener('mousemove', handleUserGesture);
+    document.addEventListener('touchstart', handleUserGesture);
+    document.addEventListener('touchmove', handleUserGesture);
+    document.addEventListener('keydown', handleUserGesture);
+
+    return () => {
+      document.removeEventListener('mousemove', handleUserGesture);
+      document.removeEventListener('touchstart', handleUserGesture);
+      document.removeEventListener('touchmove', handleUserGesture);
+      document.removeEventListener('keydown', handleUserGesture);
+    };
+  }, [hasUserGesture]);
+
+  console.log('[NOGAMESTATE] Rendering NoGameState, availableGames:', availableGames.length, 'hasUserGesture:', hasUserGesture);
+
+  // Click handler with user gesture protection
+  const handleSelectGame = (_event: React.MouseEvent, game: any, source: string) => {
     console.log('[NOGAMESTATE] ===== BUTTON CLICKED =====');
     console.log('[NOGAMESTATE] Source:', source);
     console.log('[NOGAMESTATE] Game:', game.id, `${game.awayTeam.abbreviation} @ ${game.homeTeam.abbreviation}`);
-    console.log('[NOGAMESTATE] event.isTrusted:', event.isTrusted);
-    console.log('[NOGAMESTATE] Time since mount:', timeSinceMount, 'ms');
+    console.log('[NOGAMESTATE] hasUserGesture:', hasUserGesture);
+    console.log('[NOGAMESTATE] gestureCount:', gestureCountRef.current);
 
-    // CLICK GUARD: Block automated/synthetic clicks from browser extensions
-    // 1. event.isTrusted is false for programmatic clicks
-    // 2. Clicks within 150ms of mount are likely automated
-    if (!event.isTrusted) {
-      console.log('[NOGAMESTATE] BLOCKED: Synthetic click detected (isTrusted=false)');
+    // CLICK GUARD: Only accept clicks after proven user activity
+    if (!hasUserGesture) {
+      console.log('[NOGAMESTATE] BLOCKED: No user gesture detected yet!');
+      console.log('[NOGAMESTATE] Extension cannot fake mouse movement on document');
       console.log('[NOGAMESTATE] ===========================');
       return;
     }
 
-    if (timeSinceMount < CLICK_GUARD_DELAY_MS) {
-      console.log('[NOGAMESTATE] BLOCKED: Click too soon after render (', timeSinceMount, 'ms <', CLICK_GUARD_DELAY_MS, 'ms)');
-      console.log('[NOGAMESTATE] ===========================');
-      return;
-    }
-
-    console.log('[NOGAMESTATE] ACCEPTED: Valid user click');
+    console.log('[NOGAMESTATE] ACCEPTED: User gesture was confirmed');
     console.log('[NOGAMESTATE] ===========================');
     selectGame(game);
   };
