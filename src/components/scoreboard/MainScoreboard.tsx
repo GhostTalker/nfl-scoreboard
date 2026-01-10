@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { TeamDisplay } from './TeamDisplay';
 import { GameSituation } from './GameSituation';
@@ -334,7 +334,7 @@ export function MainScoreboard() {
 
       {/* Navigation hint - very subtle */}
       <div className="absolute bottom-3 left-0 right-0 text-center text-white/20 text-xs">
-        Arrow Keys to navigate | v3.1
+        Arrow Keys to navigate | v3.2
       </div>
       
       {/* Debug Panel */}
@@ -426,135 +426,6 @@ function ErrorState({ message }: { message: string }) {
   );
 }
 
-// Long-press button component to prevent automated extension clicks
-interface LongPressButtonProps {
-  onSelect: () => void;
-  game: any;
-  className: string;
-  children: React.ReactNode;
-  holdDuration?: number;
-}
-
-function LongPressButton({ onSelect, game, className, children, holdDuration = 400 }: LongPressButtonProps) {
-  const [isHolding, setIsHolding] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const holdStartRef = useRef<number | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const hasTriggeredRef = useRef(false);
-
-  const updateProgress = () => {
-    if (holdStartRef.current === null) return;
-
-    const elapsed = Date.now() - holdStartRef.current;
-    const newProgress = Math.min((elapsed / holdDuration) * 100, 100);
-    setProgress(newProgress);
-
-    if (elapsed >= holdDuration && !hasTriggeredRef.current) {
-      hasTriggeredRef.current = true;
-      console.log('[LONGPRESS] Hold completed for game:', game.id);
-      onSelect();
-      cancelHold();
-      return;
-    }
-
-    if (holdStartRef.current !== null) {
-      animationFrameRef.current = requestAnimationFrame(updateProgress);
-    }
-  };
-
-  const startHold = () => {
-    console.log('[LONGPRESS] Hold started for game:', game.id);
-    holdStartRef.current = Date.now();
-    hasTriggeredRef.current = false;
-    setIsHolding(true);
-    setProgress(0);
-    animationFrameRef.current = requestAnimationFrame(updateProgress);
-  };
-
-  const cancelHold = () => {
-    if (holdStartRef.current !== null) {
-      const duration = Date.now() - holdStartRef.current;
-      console.log('[LONGPRESS] Hold cancelled after', duration, 'ms (needed', holdDuration, 'ms)');
-    }
-    holdStartRef.current = null;
-    setIsHolding(false);
-    setProgress(0);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-  };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
-
-  return (
-    <button
-      className={`${className} relative overflow-hidden select-none`}
-      onMouseDown={startHold}
-      onMouseUp={cancelHold}
-      onMouseLeave={cancelHold}
-      onTouchStart={startHold}
-      onTouchEnd={cancelHold}
-      onTouchCancel={cancelHold}
-      onClick={(e) => {
-        // Block regular clicks - only long-press works
-        e.preventDefault();
-        console.log('[LONGPRESS] Regular click blocked - hold button to select');
-      }}
-    >
-      {/* Progress overlay */}
-      {isHolding && (
-        <div
-          className="absolute inset-0 bg-white/20 transition-none pointer-events-none"
-          style={{
-            width: `${progress}%`,
-            transition: 'none'
-          }}
-        />
-      )}
-
-      {/* Button content */}
-      <div className="relative z-10">
-        {children}
-      </div>
-
-      {/* Hold indicator - shows when holding */}
-      {isHolding && (
-        <div className="absolute top-2 right-2 z-20">
-          <svg className="w-6 h-6" viewBox="0 0 24 24">
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              fill="none"
-              stroke="rgba(255,255,255,0.3)"
-              strokeWidth="2"
-            />
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray={`${progress * 0.628} 62.8`}
-              transform="rotate(-90 12 12)"
-            />
-          </svg>
-        </div>
-      )}
-    </button>
-  );
-}
-
 function NoGameState() {
   const availableGames = useGameStore((state) => state.availableGames);
   const confirmGameSelection = useGameStore((state) => state.confirmGameSelection);
@@ -615,10 +486,9 @@ function NoGameState() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {liveGames.map((game) => (
-                <LongPressButton
+                <button
                   key={game.id}
-                  game={game}
-                  onSelect={() => handleSelectGame(game, 'LIVE_GAME_BUTTON')}
+                  onClick={() => handleSelectGame(game, 'LIVE_GAME_BUTTON')}
                   className="bg-gradient-to-br from-red-900/40 to-red-800/30 hover:from-red-800/50 hover:to-red-700/40 border-2 border-red-500/50 hover:border-red-400 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -642,7 +512,7 @@ function NoGameState() {
                       <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-12 h-12" />
                     </div>
                   </div>
-                </LongPressButton>
+                </button>
               ))}
             </div>
           </div>
@@ -661,10 +531,9 @@ function NoGameState() {
               {scheduledGames.map((game) => {
                 const dateTime = formatDateTime(game.startTime);
                 return (
-                  <LongPressButton
+                  <button
                     key={game.id}
-                    game={game}
-                    onSelect={() => handleSelectGame(game, 'SCHEDULED_GAME_BUTTON')}
+                    onClick={() => handleSelectGame(game, 'SCHEDULED_GAME_BUTTON')}
                     className="bg-slate-800/50 hover:bg-slate-700/50 border-2 border-slate-700 hover:border-blue-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -682,7 +551,7 @@ function NoGameState() {
                         <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-10 h-10" />
                       </div>
                     </div>
-                  </LongPressButton>
+                  </button>
                 );
               })}
             </div>
@@ -700,10 +569,9 @@ function NoGameState() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {finishedGames.map((game) => (
-                <LongPressButton
+                <button
                   key={game.id}
-                  game={game}
-                  onSelect={() => handleSelectGame(game, 'FINISHED_GAME_BUTTON')}
+                  onClick={() => handleSelectGame(game, 'FINISHED_GAME_BUTTON')}
                   className="bg-slate-800/30 hover:bg-slate-700/30 border-2 border-slate-700/50 hover:border-gray-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -727,7 +595,7 @@ function NoGameState() {
                       <img src={game.homeTeam.logo} alt={game.homeTeam.abbreviation} className="w-10 h-10" />
                     </div>
                   </div>
-                </LongPressButton>
+                </button>
               ))}
             </div>
           </div>
