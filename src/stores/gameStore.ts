@@ -82,12 +82,17 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   // Manual selection - always applies
   selectGame: (game) => {
+    console.log('[SELECT-GAME] selectGame called with:', {
+      gameId: game?.id,
+      teams: game ? `${game.awayTeam.abbreviation} @ ${game.homeTeam.abbreviation}` : 'null',
+      stack: new Error().stack // Show call stack to find WHO called this!
+    });
     const isLive = game?.status === 'in_progress' || game?.status === 'halftime';
-    set({ 
-      currentGame: game, 
+    set({
+      currentGame: game,
       isLive,
       manuallySelectedGameId: game?.id || null,
-      previousScores: game 
+      previousScores: game
         ? { home: game.homeTeam.score, away: game.awayTeam.score }
         : { home: 0, away: 0 },
     });

@@ -36,7 +36,7 @@ function App() {
       <SwipeContainer>
         {/* Main Views */}
         <div className="h-full w-full relative">
-          {currentView === 'scoreboard' && <MainScoreboard key={currentGameId} />}
+          {currentView === 'scoreboard' && <MainScoreboard />}
           {currentView === 'stats' && <StatsPanel />}
           {currentView === 'settings' && <SettingsPanel />}
         </div>
