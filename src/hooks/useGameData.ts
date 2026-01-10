@@ -129,7 +129,7 @@ export function useGameData() {
       }
 
       // NO AUTO SELECTION - User must select a game
-      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation}` : 'NONE - User must select a game');
+      console.log('[DEBUG] Final game to show:', gameToShow ? `${gameToShow.id} ${gameToShow.awayTeam.abbreviation} @ ${gameToShow.homeTeam.abbreviation} (status: ${gameToShow.status})` : 'NONE - User must select a game');
 
       if (gameToShow) {
         // Fetch details for live AND final games (for stats)
@@ -149,6 +149,12 @@ export function useGameData() {
             }
 
             if (details && details.game) {
+              console.log('[DEBUG] Game details fetched:', {
+                scoreboardStatus: gameToShow.status,
+                detailsStatus: details.game.status,
+                scoreboardScore: `${gameToShow.awayTeam.score}-${gameToShow.homeTeam.score}`,
+                detailsScore: `${details.game.awayTeam.score}-${details.game.homeTeam.score}`,
+              });
               // Merge with scoreboard data to preserve season info
               const gameWithSeasonInfo = {
                 ...details.game,
@@ -159,6 +165,7 @@ export function useGameData() {
                 venue: gameToShow.venue || details.game.venue,
                 broadcast: gameToShow.broadcast || details.game.broadcast,
               };
+              console.log('[DEBUG] Setting currentGame with status:', gameWithSeasonInfo.status);
               setCurrentGame(gameWithSeasonInfo);
               setGameStats(details.stats);
             } else {
