@@ -9,7 +9,28 @@ export function MainScoreboard() {
   const currentGame = useGameStore((state) => state.currentGame);
   const isLoading = useGameStore((state) => state.isLoading);
   const error = useGameStore((state) => state.error);
-  
+
+  // Debug logging for displayed game
+  useEffect(() => {
+    if (currentGame) {
+      console.log('[DEBUG DISPLAY] Current game being displayed:', {
+        id: currentGame.id,
+        awayTeam: {
+          id: currentGame.awayTeam.id,
+          name: currentGame.awayTeam.name,
+          abbr: currentGame.awayTeam.abbreviation,
+          logo: currentGame.awayTeam.logo
+        },
+        homeTeam: {
+          id: currentGame.homeTeam.id,
+          name: currentGame.homeTeam.name,
+          abbr: currentGame.homeTeam.abbreviation,
+          logo: currentGame.homeTeam.logo
+        }
+      });
+    }
+  }, [currentGame]);
+
   // Debug mode state
   const [debugMode, setDebugMode] = useState(false);
   const [debugSeason, setDebugSeason] = useState<string | null>(null);
