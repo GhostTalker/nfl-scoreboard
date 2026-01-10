@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { TeamDisplay } from './TeamDisplay';
 import { GameSituation } from './GameSituation';
@@ -334,7 +334,7 @@ export function MainScoreboard() {
 
       {/* Navigation hint - very subtle */}
       <div className="absolute bottom-3 left-0 right-0 text-center text-white/20 text-xs">
-        Arrow Keys to navigate | v2.8
+        Arrow Keys to navigate | v2.9
       </div>
       
       {/* Debug Panel */}
@@ -430,14 +430,38 @@ function NoGameState() {
   const availableGames = useGameStore((state) => state.availableGames);
   const selectGame = useGameStore((state) => state.selectGame);
 
+  // Track when component mounted to prevent immediate automated clicks
+  const mountTimeRef = useRef<number>(Date.now());
+  const CLICK_GUARD_DELAY_MS = 150; // Minimum time before clicks are accepted
+
   console.log('[NOGAMESTATE] Rendering NoGameState, availableGames:', availableGames.length);
 
-  // Wrapped selectGame with logging
-  const handleSelectGame = (game: any, source: string) => {
+  // Wrapped selectGame with click guard against browser extensions
+  const handleSelectGame = (event: React.MouseEvent, game: any, source: string) => {
+    const timeSinceMount = Date.now() - mountTimeRef.current;
+
     console.log('[NOGAMESTATE] ===== BUTTON CLICKED =====');
     console.log('[NOGAMESTATE] Source:', source);
     console.log('[NOGAMESTATE] Game:', game.id, `${game.awayTeam.abbreviation} @ ${game.homeTeam.abbreviation}`);
-    console.log('[NOGAMESTATE] Click stack:', new Error().stack);
+    console.log('[NOGAMESTATE] event.isTrusted:', event.isTrusted);
+    console.log('[NOGAMESTATE] Time since mount:', timeSinceMount, 'ms');
+
+    // CLICK GUARD: Block automated/synthetic clicks from browser extensions
+    // 1. event.isTrusted is false for programmatic clicks
+    // 2. Clicks within 150ms of mount are likely automated
+    if (!event.isTrusted) {
+      console.log('[NOGAMESTATE] BLOCKED: Synthetic click detected (isTrusted=false)');
+      console.log('[NOGAMESTATE] ===========================');
+      return;
+    }
+
+    if (timeSinceMount < CLICK_GUARD_DELAY_MS) {
+      console.log('[NOGAMESTATE] BLOCKED: Click too soon after render (', timeSinceMount, 'ms <', CLICK_GUARD_DELAY_MS, 'ms)');
+      console.log('[NOGAMESTATE] ===========================');
+      return;
+    }
+
+    console.log('[NOGAMESTATE] ACCEPTED: Valid user click');
     console.log('[NOGAMESTATE] ===========================');
     selectGame(game);
   };
@@ -488,7 +512,7 @@ function NoGameState() {
               {liveGames.map((game) => (
                 <button
                   key={game.id}
-                  onClick={() => handleSelectGame(game, 'LIVE_GAME_BUTTON')}
+                  onClick={(e) => handleSelectGame(e, game, 'LIVE_GAME_BUTTON')}
                   className="bg-gradient-to-br from-red-900/40 to-red-800/30 hover:from-red-800/50 hover:to-red-700/40 border-2 border-red-500/50 hover:border-red-400 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -533,7 +557,7 @@ function NoGameState() {
                 return (
                   <button
                     key={game.id}
-                    onClick={() => handleSelectGame(game, 'SCHEDULED_GAME_BUTTON')}
+                    onClick={(e) => handleSelectGame(e, game, 'SCHEDULED_GAME_BUTTON')}
                     className="bg-slate-800/50 hover:bg-slate-700/50 border-2 border-slate-700 hover:border-blue-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -571,7 +595,7 @@ function NoGameState() {
               {finishedGames.map((game) => (
                 <button
                   key={game.id}
-                  onClick={() => handleSelectGame(game, 'FINISHED_GAME_BUTTON')}
+                  onClick={(e) => handleSelectGame(e, game, 'FINISHED_GAME_BUTTON')}
                   className="bg-slate-800/30 hover:bg-slate-700/30 border-2 border-slate-700/50 hover:border-gray-500 rounded-xl p-4 transition-all hover:scale-[1.02] text-left"
                 >
                   <div className="flex items-center justify-between mb-3">
