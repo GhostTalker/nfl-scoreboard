@@ -7,6 +7,31 @@ export function useGameData() {
   const intervalRef = useRef<number | null>(null);
   const isFirstFetch = useRef(true);
   const isFetching = useRef(false);
+  const hasInitialized = useRef(false);
+
+  // CRITICAL: Clear phantom game on first mount if no manual selection was made
+  // This fixes HMR state persistence and browser cache issues
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      const store = useGameStore.getState();
+      console.log('[INIT] Checking for phantom state:', {
+        hasCurrentGame: !!store.currentGame,
+        currentGameId: store.currentGame?.id,
+        manuallySelectedGameId: store.manuallySelectedGameId
+      });
+      // If there's a currentGame but NO manual selection, it's phantom state - clear it!
+      if (store.currentGame && !store.manuallySelectedGameId) {
+        console.log('[INIT] CLEARING phantom game state - no manual selection exists!');
+        // Use Zustand's setState directly to bypass any guards
+        useGameStore.setState({
+          currentGame: null,
+          isLive: false,
+          gameStats: null
+        });
+      }
+    }
+  }, []);
 
   const fetchData = useCallback(async () => {
     // Prevent concurrent fetches
