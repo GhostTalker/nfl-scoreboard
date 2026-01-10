@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { fetchScoreboard, fetchGameDetails } from '../services/espnApi';
 import { POLLING_INTERVALS } from '../constants/api';
@@ -9,18 +9,20 @@ export function useGameData() {
   const isFetching = useRef(false);
   const hasInitialized = useRef(false);
 
-  // FIX 3: On mount, ALWAYS clear any orphaned state
-  useEffect(() => {
+  // ALFRED'S FIX: useLayoutEffect for SYNCHRONOUS reset BEFORE any rendering
+  // This prevents Zustand store from keeping state between StrictMode mounts
+  useLayoutEffect(() => {
     const store = useGameStore.getState();
-    console.log('[MOUNT] Checking for orphaned state:', {
+    console.log('[LAYOUT-MOUNT] Checking store state:', {
       hasCurrentGame: !!store.currentGame,
       currentGameId: store.currentGame?.id,
       manuallySelectedGameId: store.manuallySelectedGameId
     });
 
+    // ALWAYS clear orphaned state on mount (synchronously!)
     // Clear orphaned game (game exists but no manual selection)
     if (store.currentGame && !store.manuallySelectedGameId) {
-      console.log('[MOUNT] Clearing orphaned game state');
+      console.log('[LAYOUT-MOUNT] SYNC clearing orphaned game state');
       useGameStore.setState({
         currentGame: null,
         isLive: false,
@@ -31,12 +33,15 @@ export function useGameData() {
 
     // Clear orphaned manual selection (manual selection exists but no game)
     if (!store.currentGame && store.manuallySelectedGameId) {
-      console.log('[MOUNT] Clearing orphaned manual selection');
+      console.log('[LAYOUT-MOUNT] SYNC clearing orphaned manual selection');
       useGameStore.setState({ manuallySelectedGameId: null });
     }
   }, []); // Empty deps - only on mount
 
   const fetchData = useCallback(async () => {
+    const fetchId = Math.random().toString(36).substring(7);
+    console.log(`[FETCH-START ${fetchId}] Beginning fetch...`);
+
     // CRITICAL: Initialize and clear phantom state FIRST (before any fetching)
     if (!hasInitialized.current) {
       hasInitialized.current = true;
@@ -169,6 +174,13 @@ export function useGameData() {
           gameStats: null,
           manuallySelectedGameId: null, // Clear this too!
         });
+
+        // VERIFY the clear worked
+        const afterClear = useGameStore.getState();
+        console.log('[DEBUG] After setState clear:', {
+          currentGame: afterClear.currentGame,
+          manuallySelectedGameId: afterClear.manuallySelectedGameId
+        });
       }
     } catch (error) {
       console.error('Error fetching game data:', error);
@@ -177,6 +189,7 @@ export function useGameData() {
       setLoading(false);
       isFirstFetch.current = false;
       isFetching.current = false;
+      console.log(`[FETCH-END ${fetchId}] Fetch complete`);
     }
   }, []);
 
