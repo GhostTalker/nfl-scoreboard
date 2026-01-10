@@ -39,3 +39,6 @@ coverage/
 
 # Session files
 session-*.md
+
+# Claude Code
+.claude/
