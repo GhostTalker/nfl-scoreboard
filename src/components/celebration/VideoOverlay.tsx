@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { VIDEOS, PLACEHOLDER_VIDEOS } from '../../constants/videos';
+import { getCachedVideoUrl, isVideoCached } from '../../hooks/useVideoPreloader';
 import type { CelebrationType } from '../../types/game';
 
 interface VideoOverlayProps {
@@ -21,14 +22,20 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
     const video = videoRef.current;
     if (!video) return;
 
+    // Use cached video URL if available, otherwise use original source
+    const localVideoSrc = getCachedVideoUrl(videoConfig.src);
+    const isLocalCached = isVideoCached(videoConfig.src);
+
     // Try to play local video, fallback to placeholder
-    video.src = videoConfig.src;
+    video.src = localVideoSrc;
 
     video.onerror = () => {
       // Fallback to placeholder video
       if (placeholderVideos && placeholderVideos.length > 0) {
         const randomIndex = Math.floor(Math.random() * placeholderVideos.length);
-        video.src = placeholderVideos[randomIndex];
+        const placeholderSrc = placeholderVideos[randomIndex];
+        // Use cached placeholder if available
+        video.src = getCachedVideoUrl(placeholderSrc);
         video.play().catch(console.error);
       } else {
         // No video available, just close after duration
@@ -40,6 +47,7 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
       hideCelebration();
     };
 
+    // If video is cached (blob URL), it should be ready immediately
     // Video starts muted (required for autoplay), then try to unmute
     video.play()
       .then(() => {
@@ -48,6 +56,7 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
           video.volume = videoVolume;
           video.muted = false;
         }
+        console.log(`[VideoOverlay] Playing ${type} video (cached: ${isLocalCached})`);
       })
       .catch((err) => {
         console.error('Video playback failed:', err);

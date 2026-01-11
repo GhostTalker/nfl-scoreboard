@@ -9,10 +9,14 @@ import { useGameData } from './hooks/useGameData';
 import { useScoreChange } from './hooks/useScoreChange';
 import { usePlayByPlay } from './hooks/usePlayByPlay';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+import { useVideoPreloader } from './hooks/useVideoPreloader';
 
 function App() {
   const currentView = useUIStore((state) => state.currentView);
   const celebrationOverlay = useUIStore((state) => state.celebrationOverlay);
+
+  // Preload celebration videos at app start
+  const { isPreloading, progress } = useVideoPreloader();
 
   // Initialize game data polling
   useGameData();
@@ -47,6 +51,13 @@ function App() {
       {/* Celebration Video Overlay */}
       {celebrationOverlay.visible && celebrationOverlay.type && (
         <VideoOverlay type={celebrationOverlay.type} />
+      )}
+
+      {/* Video Preload Indicator */}
+      {isPreloading && (
+        <div className="fixed bottom-2 right-2 bg-slate-800/80 text-xs text-slate-400 px-2 py-1 rounded">
+          Videos laden... {progress}%
+        </div>
       )}
     </div>
   );
