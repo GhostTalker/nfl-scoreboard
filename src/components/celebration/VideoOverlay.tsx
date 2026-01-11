@@ -20,11 +20,9 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    video.volume = videoVolume;
-
     // Try to play local video, fallback to placeholder
     video.src = videoConfig.src;
-    
+
     video.onerror = () => {
       // Fallback to placeholder video
       if (placeholderVideos && placeholderVideos.length > 0) {
@@ -41,11 +39,20 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
       hideCelebration();
     };
 
-    video.play().catch((err) => {
-      console.error('Video playback failed:', err);
-      // Auto-close after duration if video fails
-      timeoutRef.current = window.setTimeout(hideCelebration, videoConfig.duration);
-    });
+    // Video starts muted (required for autoplay), then try to unmute
+    video.play()
+      .then(() => {
+        // Playback started - try to unmute if user has volume enabled
+        if (videoVolume > 0) {
+          video.volume = videoVolume;
+          video.muted = false;
+        }
+      })
+      .catch((err) => {
+        console.error('Video playback failed:', err);
+        // Auto-close after duration if video fails
+        timeoutRef.current = window.setTimeout(hideCelebration, videoConfig.duration);
+      });
 
     // Fallback timeout in case video doesn't trigger onended
     timeoutRef.current = window.setTimeout(hideCelebration, videoConfig.duration + 1000);
@@ -74,16 +81,19 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
   }, [hideCelebration]);
 
   return (
-    <div 
+    <div
       className="video-overlay cursor-pointer"
       onClick={handleDismiss}
     >
       {/* Video - fullscreen, no overlay text */}
+      {/* IMPORTANT: muted={true} is required for autoplay without user gesture */}
+      {/* Browser policy blocks autoplay with sound unless user has clicked */}
       <video
         ref={videoRef}
         className="w-full h-full object-cover"
         playsInline
-        muted={false}
+        muted
+        autoPlay
       />
     </div>
   );
