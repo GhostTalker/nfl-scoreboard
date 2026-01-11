@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useSettingsStore } from '../../stores/settingsStore';
-import { VIDEOS, PLACEHOLDER_VIDEOS } from '../../constants/videos';
+import { VIDEOS } from '../../constants/videos';
 import { getCachedVideoUrl, isVideoCached } from '../../hooks/useVideoPreloader';
 import type { CelebrationType } from '../../types/game';
 
@@ -16,7 +16,6 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
   const timeoutRef = useRef<number | null>(null);
 
   const videoConfig = VIDEOS[type];
-  const placeholderVideos = PLACEHOLDER_VIDEOS[type];
 
   useEffect(() => {
     const video = videoRef.current;
@@ -30,17 +29,9 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
     video.src = localVideoSrc;
 
     video.onerror = () => {
-      // Fallback to placeholder video
-      if (placeholderVideos && placeholderVideos.length > 0) {
-        const randomIndex = Math.floor(Math.random() * placeholderVideos.length);
-        const placeholderSrc = placeholderVideos[randomIndex];
-        // Use cached placeholder if available
-        video.src = getCachedVideoUrl(placeholderSrc);
-        video.play().catch(console.error);
-      } else {
-        // No video available, just close after duration
-        timeoutRef.current = window.setTimeout(hideCelebration, videoConfig.duration);
-      }
+      console.warn(`[VideoOverlay] Video failed to load: ${type}`);
+      // Close immediately if video fails - don't show white screen
+      hideCelebration();
     };
 
     video.onended = () => {
@@ -72,7 +63,7 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [type, hideCelebration, videoVolume, videoConfig, placeholderVideos]);
+  }, [type, hideCelebration, videoVolume, videoConfig]);
 
   // Allow tap/click to dismiss
   const handleDismiss = () => {
@@ -95,16 +86,17 @@ export function VideoOverlay({ type }: VideoOverlayProps) {
       className="video-overlay cursor-pointer"
       onClick={handleDismiss}
     >
-      {/* Video - fullscreen, no overlay text */}
-      {/* IMPORTANT: muted={true} is required for autoplay without user gesture */}
-      {/* Browser policy blocks autoplay with sound unless user has clicked */}
-      <video
-        ref={videoRef}
-        className="w-full h-full object-cover"
-        playsInline
-        muted
-        autoPlay
-      />
+      {/* Video in centered box overlay */}
+      <div className="video-overlay-box">
+        {/* IMPORTANT: muted={true} is required for autoplay without user gesture */}
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          playsInline
+          muted
+          autoPlay
+        />
+      </div>
     </div>
   );
 }

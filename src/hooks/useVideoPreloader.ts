@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { VIDEOS, PLACEHOLDER_VIDEOS, type CelebrationVideoType } from '../constants/videos';
+import { VIDEOS, type CelebrationVideoType } from '../constants/videos';
 
 // Global cache for preloaded video blob URLs
 const videoCache: Map<string, string> = new Map();
@@ -29,42 +29,29 @@ async function preloadVideo(src: string): Promise<string | null> {
   }
 }
 
-// Preload all videos
+// Preload all local videos
 async function preloadAllVideos(onProgress?: (loaded: number, total: number) => void) {
   if (preloadStarted) return;
   preloadStarted = true;
 
   const videoTypes = Object.keys(VIDEOS) as CelebrationVideoType[];
-  const allSources: string[] = [];
+  const localSources = videoTypes.map(type => VIDEOS[type].src);
 
-  // Collect all video sources (local + placeholders)
-  for (const type of videoTypes) {
-    // Local video
-    allSources.push(VIDEOS[type].src);
-    // Placeholder videos
-    const placeholders = PLACEHOLDER_VIDEOS[type];
-    if (placeholders) {
-      allSources.push(...placeholders);
-    }
-  }
-
-  // Remove duplicates
-  const uniqueSources = [...new Set(allSources)];
   let loaded = 0;
+  let successful = 0;
 
-  console.log(`[VideoPreloader] Starting preload of ${uniqueSources.length} videos...`);
+  console.log(`[VideoPreloader] Starting preload of ${localSources.length} videos...`);
 
-  // Preload in parallel with concurrency limit
-  const concurrency = 3;
-  for (let i = 0; i < uniqueSources.length; i += concurrency) {
-    const batch = uniqueSources.slice(i, i + concurrency);
-    await Promise.all(batch.map(src => preloadVideo(src)));
-    loaded += batch.length;
-    onProgress?.(loaded, uniqueSources.length);
+  // Preload all local videos
+  for (const src of localSources) {
+    const result = await preloadVideo(src);
+    loaded++;
+    if (result) successful++;
+    onProgress?.(loaded, localSources.length);
   }
 
   preloadComplete = true;
-  console.log(`[VideoPreloader] Preload complete! ${videoCache.size} videos cached.`);
+  console.log(`[VideoPreloader] Preload complete! ${successful}/${localSources.length} videos cached.`);
 }
 
 // Get cached blob URL for a video source
