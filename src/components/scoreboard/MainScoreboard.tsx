@@ -139,14 +139,14 @@ export function MainScoreboard() {
         }}
       />
 
-      {/* Season/Round Header with Date/Status and Venue */}
-      <GameHeader 
-        seasonName={effectiveSeason} 
+      {/* Season/Round Header - Title only, no LIVE/Venue info (shown below score) */}
+      <GameHeader
+        seasonName={effectiveSeason}
         status={currentGame.status}
         startTime={currentGame.startTime}
         venue={currentGame.venue}
         broadcast={currentGame.broadcast}
-        hideDateTime={currentGame.status === 'scheduled' || currentGame.status === 'final'}
+        hideDateTime={true}
       />
 
       {/* Main Score Display - Grid for perfect centering */}
@@ -304,11 +304,51 @@ export function MainScoreboard() {
         </div>
       )}
 
+      {/* Bottom Info Section - LIVE badge and Venue/Broadcast */}
+      <div className="absolute bottom-12 left-0 right-0 flex flex-col items-center gap-2">
+        {/* LIVE Badge for in-progress games */}
+        {(currentGame.status === 'in_progress' || currentGame.status === 'halftime') && (
+          <div
+            className="px-4 py-1 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
+            style={{ boxShadow: '0 0 20px rgba(220,38,38,0.5)' }}
+          >
+            <span className="inline-flex items-center gap-2">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+              LIVE
+            </span>
+          </div>
+        )}
 
+        {/* Venue & Broadcast Info */}
+        {(currentGame.broadcast || currentGame.venue) && (
+          <div className="flex items-center gap-3 text-sm text-white/40">
+            {currentGame.broadcast && (
+              <div className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>{currentGame.broadcast}</span>
+              </div>
+            )}
+            {currentGame.broadcast && currentGame.venue && (
+              <span className="text-white/20">•</span>
+            )}
+            {currentGame.venue && (
+              <div className="flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="truncate max-w-xs">{currentGame.venue}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Navigation hint - very subtle */}
       <div className="absolute bottom-3 left-0 right-0 text-center text-white/20 text-xs">
-        Arrow Keys to navigate | v4.0
+        Arrow Keys to navigate | v4.1
       </div>
       
       {/* Debug Panel */}
