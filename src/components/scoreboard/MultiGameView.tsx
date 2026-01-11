@@ -204,13 +204,13 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] text-left ${
+      className={`rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] text-left h-[180px] flex flex-col ${
         hasScoreChange ? 'animate-pulse' : ''
       }`}
       style={getCardStyle()}
     >
       {/* Status Badge */}
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-3">
         {isLive && !isHalftime && (
           <div
             className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
@@ -246,67 +246,58 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
       </div>
 
       {/* Teams and Score - Centered Layout */}
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex-1 flex items-center justify-center gap-4">
         {/* Away Team */}
         <TeamBadge team={game.awayTeam} isFinal={isFinal} isWinner={game.awayTeam.score > game.homeTeam.score} />
 
-        {/* Score Display - Centered */}
-        <div className="flex items-center gap-3">
-          {!isScheduled ? (
-            <>
-              {/* Away Score */}
-              <span
-                className={`text-5xl font-black min-w-[60px] text-right ${
-                  isFinal && game.awayTeam.score > game.homeTeam.score
-                    ? 'text-white'
-                    : isFinal
-                    ? 'text-white/50'
-                    : 'text-white'
-                }`}
-                style={{
-                  textShadow: `0 0 20px #${game.awayTeam.color}80`,
-                }}
-              >
-                {game.awayTeam.score}
-              </span>
+        {/* Score Display - Centered - Fixed width for consistency */}
+        <div className="flex items-center justify-center gap-2 min-w-[140px]">
+          {/* Away Score */}
+          <span
+            className={`text-4xl font-black min-w-[50px] text-right ${
+              isFinal && game.awayTeam.score > game.homeTeam.score
+                ? 'text-white'
+                : isFinal
+                ? 'text-white/50'
+                : isScheduled
+                ? 'text-white/30'
+                : 'text-white'
+            }`}
+            style={{
+              textShadow: isScheduled ? 'none' : `0 0 15px #${game.awayTeam.color}80`,
+            }}
+          >
+            {isScheduled ? '-' : game.awayTeam.score}
+          </span>
 
-              {/* Separator Dots */}
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
-                <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
-              </div>
+          {/* Separator Dots */}
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-white/40" />
+            <div className="w-2 h-2 rounded-full bg-white/40" />
+          </div>
 
-              {/* Home Score */}
-              <span
-                className={`text-5xl font-black min-w-[60px] text-left ${
-                  isFinal && game.homeTeam.score > game.awayTeam.score
-                    ? 'text-white'
-                    : isFinal
-                    ? 'text-white/50'
-                    : 'text-white'
-                }`}
-                style={{
-                  textShadow: `0 0 20px #${game.homeTeam.color}80`,
-                }}
-              >
-                {game.homeTeam.score}
-              </span>
-            </>
-          ) : (
-            <span className="text-white/30 text-3xl font-bold">@</span>
-          )}
+          {/* Home Score */}
+          <span
+            className={`text-4xl font-black min-w-[50px] text-left ${
+              isFinal && game.homeTeam.score > game.awayTeam.score
+                ? 'text-white'
+                : isFinal
+                ? 'text-white/50'
+                : isScheduled
+                ? 'text-white/30'
+                : 'text-white'
+            }`}
+            style={{
+              textShadow: isScheduled ? 'none' : `0 0 15px #${game.homeTeam.color}80`,
+            }}
+          >
+            {isScheduled ? '-' : game.homeTeam.score}
+          </span>
         </div>
 
         {/* Home Team */}
         <TeamBadge team={game.homeTeam} isFinal={isFinal} isWinner={game.homeTeam.score > game.awayTeam.score} />
       </div>
-
-      {/* Venue for scheduled games */}
-      {isScheduled && game.venue && (
-        <div className="mt-3 text-center text-white/40 text-xs truncate">
-          {game.venue}
-        </div>
-      )}
     </button>
   );
 }
@@ -335,26 +326,26 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
   const opacity = isFinal && !isWinner ? 0.5 : 1;
 
   return (
-    <div className="flex flex-col items-center gap-2" style={{ opacity }}>
+    <div className="flex flex-col items-center gap-1" style={{ opacity }}>
       {/* Team Logo with Glow Effect */}
       <div
-        className="relative w-20 h-20 rounded-full flex items-center justify-center"
+        className="relative w-16 h-16 rounded-full flex items-center justify-center"
         style={{
           background: `radial-gradient(circle, #${glowColor}40 0%, #${glowColor}15 50%, transparent 70%)`,
           boxShadow: `
-            0 0 30px #${glowColor}40,
-            0 0 50px #${glowColor}20
+            0 0 25px #${glowColor}40,
+            0 0 40px #${glowColor}20
           `,
         }}
       >
         {/* Outer ring */}
         <div
-          className="absolute inset-1 rounded-full"
+          className="absolute inset-0.5 rounded-full"
           style={{
-            border: `3px solid #${primaryColor}`,
+            border: `2px solid #${primaryColor}`,
             boxShadow: `
-              0 0 15px #${glowColor}60,
-              inset 0 0 15px #${glowColor}30
+              0 0 12px #${glowColor}60,
+              inset 0 0 12px #${glowColor}30
             `,
           }}
         />
@@ -362,9 +353,9 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
         <img
           src={team.logo}
           alt={team.abbreviation}
-          className="w-14 h-14 object-contain relative z-10"
+          className="w-11 h-11 object-contain relative z-10"
           style={{
-            filter: `drop-shadow(0 0 10px #${glowColor}80)`,
+            filter: `drop-shadow(0 0 8px #${glowColor}80)`,
           }}
         />
       </div>
@@ -373,23 +364,23 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
       <div className="relative">
         {/* Glow background */}
         <div
-          className="absolute inset-0 blur-lg opacity-50 rounded-lg"
+          className="absolute inset-0 blur-md opacity-50 rounded"
           style={{ backgroundColor: `#${team.color}` }}
         />
 
         {/* Name container */}
         <div
-          className="relative px-3 py-1 rounded-lg border"
+          className="relative px-2 py-0.5 rounded border"
           style={{
             background: `linear-gradient(180deg, #${team.color}cc 0%, #${team.color}88 100%)`,
             borderColor: `#${team.alternateColor || team.color}`,
-            boxShadow: `0 2px 15px #${team.color}50`,
+            boxShadow: `0 2px 10px #${team.color}50`,
           }}
         >
           <span
-            className="text-sm font-black text-white uppercase tracking-wider"
+            className="text-xs font-black text-white uppercase tracking-wider"
             style={{
-              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+              textShadow: '0 1px 3px rgba(0,0,0,0.5)',
             }}
           >
             {team.abbreviation}
