@@ -209,8 +209,11 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
       }`}
       style={getCardStyle()}
     >
+      {/* Spacer to push content to center */}
+      <div className="flex-1" />
+
       {/* Status Badge */}
-      <div className="flex justify-center mb-1">
+      <div className="flex justify-center mb-2">
         {isLive && !isHalftime && (
           <div
             className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
@@ -246,7 +249,7 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
       </div>
 
       {/* Teams and Score - Centered Layout */}
-      <div className="flex-1 flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4">
         {/* Away Team */}
         <TeamBadge team={game.awayTeam} isFinal={isFinal} isWinner={game.awayTeam.score > game.homeTeam.score} />
 
@@ -298,6 +301,9 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
         {/* Home Team */}
         <TeamBadge team={game.homeTeam} isFinal={isFinal} isWinner={game.homeTeam.score > game.awayTeam.score} />
       </div>
+
+      {/* Spacer to balance vertical centering */}
+      <div className="flex-1" />
     </button>
   );
 }
