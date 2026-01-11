@@ -1,9 +1,12 @@
 import { useGameStore } from '../../stores/gameStore';
+import { useSettingsStore } from '../../stores/settingsStore';
+import { getTitleGraphic } from '../../constants/titleGraphics';
 import type { Game } from '../../types/game';
 
 export function MultiGameView() {
   const availableGames = useGameStore((state) => state.availableGames);
   const confirmGameSelection = useGameStore((state) => state.confirmGameSelection);
+  const setViewMode = useSettingsStore((state) => state.setViewMode);
 
   // Group games by status
   const liveGames = availableGames.filter(g => g.status === 'in_progress' || g.status === 'halftime');
@@ -13,18 +16,13 @@ export function MultiGameView() {
   // Combine all games with live first, then scheduled, then finished
   const allGames = [...liveGames, ...scheduledGames, ...finishedGames];
 
-  // Calculate grid columns based on number of games
-  const getGridCols = () => {
-    const count = allGames.length;
-    if (count <= 2) return 'grid-cols-2';
-    if (count <= 4) return 'grid-cols-2';
-    if (count <= 6) return 'grid-cols-3';
-    if (count <= 9) return 'grid-cols-3';
-    return 'grid-cols-4';
-  };
+  // Get the season name from the first game for the header
+  const seasonName = allGames[0]?.seasonName || 'GAME DAY';
+  const titleGraphic = getTitleGraphic(seasonName);
 
   const handleSelectGame = (game: Game) => {
     confirmGameSelection(game);
+    setViewMode('single');
   };
 
   if (allGames.length === 0) {
@@ -36,11 +34,37 @@ export function MultiGameView() {
   }
 
   return (
-    <div className="h-full w-full bg-slate-900 p-4 overflow-hidden">
-      <div className={`grid ${getGridCols()} gap-3 h-full`}>
-        {allGames.map((game) => (
-          <GameCard key={game.id} game={game} onSelect={handleSelectGame} />
-        ))}
+    <div
+      className="h-full w-full flex flex-col overflow-hidden"
+      style={{
+        background: `
+          radial-gradient(ellipse at top, #1a2744 0%, transparent 50%),
+          radial-gradient(ellipse at bottom, #0d1f3c 0%, transparent 50%),
+          linear-gradient(180deg, #0a1628 0%, #152238 50%, #0a1628 100%)
+        `,
+      }}
+    >
+      {/* Title Graphic Header */}
+      <div className="flex-shrink-0 pt-4 pb-2 flex justify-center">
+        {titleGraphic && (
+          <img
+            src={titleGraphic}
+            alt={seasonName}
+            className="h-24 w-auto object-contain drop-shadow-2xl"
+            style={{
+              filter: 'drop-shadow(0 6px 15px rgba(0,0,0,0.7))',
+            }}
+          />
+        )}
+      </div>
+
+      {/* Games Grid - 2 columns */}
+      <div className="flex-1 overflow-y-auto px-6 pb-6">
+        <div className="grid grid-cols-2 gap-6 max-w-6xl mx-auto">
+          {allGames.map((game) => (
+            <GameCard key={game.id} game={game} onSelect={handleSelectGame} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -65,86 +89,167 @@ function GameCard({ game, onSelect }: GameCardProps) {
     });
   };
 
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    if (isToday) return 'HEUTE';
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.toDateString() === tomorrow.toDateString()) return 'MORGEN';
+    return date.toLocaleDateString('de-DE', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'numeric',
+    }).toUpperCase();
+  };
+
+  // Get background style based on game status
+  const getCardStyle = () => {
+    if (isLive) {
+      return {
+        background: `
+          radial-gradient(ellipse at top, rgba(220,38,38,0.3) 0%, transparent 60%),
+          linear-gradient(180deg, rgba(30,15,15,0.95) 0%, rgba(20,10,10,0.98) 100%)
+        `,
+        border: '2px solid rgba(220,38,38,0.5)',
+        boxShadow: '0 0 40px rgba(220,38,38,0.2), 0 8px 32px rgba(0,0,0,0.4)',
+      };
+    }
+    if (isFinal) {
+      return {
+        background: 'linear-gradient(180deg, rgba(30,35,45,0.95) 0%, rgba(20,25,35,0.98) 100%)',
+        border: '2px solid rgba(100,100,120,0.3)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+      };
+    }
+    // Scheduled
+    return {
+      background: 'linear-gradient(180deg, rgba(25,35,55,0.95) 0%, rgba(15,25,45,0.98) 100%)',
+      border: '2px solid rgba(59,130,246,0.3)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+    };
+  };
+
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`
-        relative rounded-xl p-3 flex flex-col justify-between
-        transition-all duration-200 hover:scale-[1.02]
-        ${isLive ? 'bg-gradient-to-br from-red-900/60 to-red-800/40 border-2 border-red-500/50' : ''}
-        ${isFinal ? 'bg-slate-800/40 border border-slate-700/50' : ''}
-        ${isScheduled ? 'bg-slate-800/60 border border-slate-600/50' : ''}
-      `}
+      className="rounded-2xl p-5 transition-all duration-200 hover:scale-[1.02] text-left"
+      style={getCardStyle()}
     >
       {/* Status Badge */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-center mb-4">
         {isLive && !isHalftime && (
-          <span className="flex items-center gap-1.5 text-xs font-bold text-red-400">
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            {game.clock.periodName} {game.clock.displayValue}
-          </span>
+          <div
+            className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
+            style={{ boxShadow: '0 0 20px rgba(220,38,38,0.5)' }}
+          >
+            <span className="inline-flex items-center gap-2">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              {game.clock.periodName} {game.clock.displayValue}
+            </span>
+          </div>
         )}
         {isHalftime && (
-          <span className="text-xs font-bold text-yellow-400">Halftime</span>
+          <div
+            className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider"
+            style={{
+              background: 'linear-gradient(180deg, rgba(234,179,8,0.8) 0%, rgba(202,138,4,0.6) 100%)',
+              boxShadow: '0 0 15px rgba(234,179,8,0.3)',
+            }}
+          >
+            <span className="text-white">HALFTIME</span>
+          </div>
         )}
         {isFinal && (
-          <span className="text-xs font-bold text-gray-400">FINAL</span>
+          <div className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-gray-600/80 text-white/90">
+            FINAL
+          </div>
         )}
         {isScheduled && (
-          <span className="text-xs font-bold text-blue-400">{formatTime(game.startTime)}</span>
+          <div className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-blue-600/80 text-white/90">
+            {formatDate(game.startTime)} {formatTime(game.startTime)}
+          </div>
         )}
-        <span className="text-xs text-white/40">{game.seasonName}</span>
       </div>
 
       {/* Teams and Score */}
-      <div className="flex-1 flex flex-col justify-center gap-2">
+      <div className="flex items-center justify-between gap-4">
         {/* Away Team */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img
-              src={game.awayTeam.logo}
-              alt={game.awayTeam.abbreviation}
-              className="w-8 h-8 object-contain"
-            />
-            <span className="text-white font-bold text-sm">
-              {game.awayTeam.abbreviation}
-            </span>
-          </div>
-          <span className={`text-2xl font-black ${
-            isFinal && game.awayTeam.score > game.homeTeam.score ? 'text-white' : 'text-white/70'
-          }`}>
-            {isScheduled ? '-' : game.awayTeam.score}
+        <div className="flex-1 flex flex-col items-center">
+          <img
+            src={game.awayTeam.logo}
+            alt={game.awayTeam.abbreviation}
+            className="w-16 h-16 object-contain mb-2"
+          />
+          <span className="text-white font-bold text-lg">
+            {game.awayTeam.abbreviation}
           </span>
+          {!isScheduled && (
+            <span
+              className={`text-4xl font-black mt-1 ${
+                isFinal && game.awayTeam.score > game.homeTeam.score
+                  ? 'text-white'
+                  : isFinal
+                  ? 'text-white/50'
+                  : 'text-white'
+              }`}
+              style={{
+                textShadow: `0 0 20px #${game.awayTeam.color}80`,
+              }}
+            >
+              {game.awayTeam.score}
+            </span>
+          )}
+        </div>
+
+        {/* VS / Score Separator */}
+        <div className="flex flex-col items-center gap-2">
+          {isScheduled ? (
+            <span className="text-white/30 text-2xl font-bold">@</span>
+          ) : (
+            <>
+              <div className="w-2 h-2 rounded-full bg-white/30" />
+              <div className="w-2 h-2 rounded-full bg-white/30" />
+            </>
+          )}
         </div>
 
         {/* Home Team */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img
-              src={game.homeTeam.logo}
-              alt={game.homeTeam.abbreviation}
-              className="w-8 h-8 object-contain"
-            />
-            <span className="text-white font-bold text-sm">
-              {game.homeTeam.abbreviation}
-            </span>
-          </div>
-          <span className={`text-2xl font-black ${
-            isFinal && game.homeTeam.score > game.awayTeam.score ? 'text-white' : 'text-white/70'
-          }`}>
-            {isScheduled ? '-' : game.homeTeam.score}
+        <div className="flex-1 flex flex-col items-center">
+          <img
+            src={game.homeTeam.logo}
+            alt={game.homeTeam.abbreviation}
+            className="w-16 h-16 object-contain mb-2"
+          />
+          <span className="text-white font-bold text-lg">
+            {game.homeTeam.abbreviation}
           </span>
+          {!isScheduled && (
+            <span
+              className={`text-4xl font-black mt-1 ${
+                isFinal && game.homeTeam.score > game.awayTeam.score
+                  ? 'text-white'
+                  : isFinal
+                  ? 'text-white/50'
+                  : 'text-white'
+              }`}
+              style={{
+                textShadow: `0 0 20px #${game.homeTeam.color}80`,
+              }}
+            >
+              {game.homeTeam.score}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Live indicator glow */}
-      {isLive && (
-        <div
-          className="absolute inset-0 rounded-xl pointer-events-none"
-          style={{
-            boxShadow: 'inset 0 0 30px rgba(220,38,38,0.2)',
-          }}
-        />
+      {/* Venue for scheduled games */}
+      {isScheduled && game.venue && (
+        <div className="mt-3 text-center text-white/40 text-xs truncate">
+          {game.venue}
+        </div>
       )}
     </button>
   );
