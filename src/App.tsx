@@ -7,6 +7,7 @@ import { VideoOverlay } from './components/celebration/VideoOverlay';
 import { useUIStore } from './stores/uiStore';
 import { useGameData } from './hooks/useGameData';
 import { useScoreChange } from './hooks/useScoreChange';
+import { usePlayByPlay } from './hooks/usePlayByPlay';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 
 function App() {
@@ -15,9 +16,12 @@ function App() {
 
   // Initialize game data polling
   useGameData();
-  
-  // Watch for score changes
+
+  // Watch for score changes (touchdowns, field goals, safeties)
   useScoreChange();
+
+  // Watch for play-by-play events (interceptions, sacks, fumbles)
+  usePlayByPlay();
 
   // Keyboard navigation for desktop browsers
   useKeyboardNavigation();

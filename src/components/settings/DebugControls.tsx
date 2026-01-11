@@ -1,5 +1,15 @@
 import { useUIStore } from '../../stores/uiStore';
 import { useGameStore } from '../../stores/gameStore';
+import type { CelebrationType } from '../../types/game';
+
+const CELEBRATION_BUTTONS: Array<{ type: CelebrationType; label: string; color: string }> = [
+  { type: 'touchdown', label: 'Touchdown', color: 'bg-green-600 hover:bg-green-700' },
+  { type: 'fieldgoal', label: 'Field Goal', color: 'bg-yellow-600 hover:bg-yellow-700' },
+  { type: 'interception', label: 'Interception', color: 'bg-blue-600 hover:bg-blue-700' },
+  { type: 'sack', label: 'Sack', color: 'bg-red-600 hover:bg-red-700' },
+  { type: 'fumble', label: 'Fumble', color: 'bg-orange-600 hover:bg-orange-700' },
+  { type: 'safety', label: 'Safety', color: 'bg-purple-600 hover:bg-purple-700' },
+];
 
 export function DebugControls() {
   const showCelebration = useUIStore((state) => state.showCelebration);
@@ -8,24 +18,21 @@ export function DebugControls() {
   return (
     <div className="border-t border-slate-600 pt-4 mt-4">
       <h4 className="text-sm font-semibold text-orange-400 mb-3">Debug Controls</h4>
-      
+
       <div className="space-y-4">
         {/* Trigger Celebrations */}
         <div>
           <p className="text-white/50 text-sm mb-2">Trigger Celebration Videos</p>
-          <div className="flex gap-3">
-            <button
-              onClick={() => showCelebration('touchdown')}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-            >
-              Touchdown
-            </button>
-            <button
-              onClick={() => showCelebration('fieldgoal')}
-              className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-            >
-              Field Goal
-            </button>
+          <div className="grid grid-cols-2 gap-2">
+            {CELEBRATION_BUTTONS.map(({ type, label, color }) => (
+              <button
+                key={type}
+                onClick={() => showCelebration(type)}
+                className={`${color} text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 

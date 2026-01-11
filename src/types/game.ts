@@ -48,14 +48,23 @@ export type GameStatus =
   | 'postponed'    // Postponed
   | 'delayed';     // Delayed
 
+// Celebration video types (must match keys in VIDEOS constant)
+export type CelebrationType =
+  | 'touchdown'
+  | 'fieldgoal'
+  | 'interception'
+  | 'sack'
+  | 'fumble'
+  | 'safety';
+
 export interface ScoreEvent {
   team: 'home' | 'away';
   type: ScoreType;
   points: number;
-  video: 'touchdown' | 'fieldgoal' | null;
+  video: CelebrationType | null;
 }
 
-export type ScoreType = 
+export type ScoreType =
   | 'TOUCHDOWN'           // +6
   | 'TOUCHDOWN_PAT'       // +7
   | 'TOUCHDOWN_2PT'       // +8
@@ -63,3 +72,47 @@ export type ScoreType =
   | 'SAFETY'              // +2
   | 'EXTRA_POINT'         // +1
   | 'TWO_POINT_CONVERSION';
+
+// Play-by-play types
+export interface Play {
+  id: string;
+  sequenceNumber: number;
+  type: PlayType;
+  text: string;
+  team?: 'home' | 'away';
+  clock?: string;
+  period?: number;
+  scoringPlay?: boolean;
+}
+
+export interface PlayType {
+  id: string;
+  text: string;
+}
+
+// ESPN Play Type IDs
+export const PLAY_TYPE_IDS = {
+  PASSING_TOUCHDOWN: '67',
+  RUSHING_TOUCHDOWN: '68',
+  FIELD_GOAL_GOOD: '59',
+  INTERCEPTION: '26',
+  SACK: '7',
+  FUMBLE: '36',
+  FUMBLE_RECOVERY: '30',
+  BLOCKED_PUNT: '17',
+  SAFETY: '20',
+  PENALTY: '8',
+} as const;
+
+// Map play type IDs to celebration videos
+export const PLAY_TYPE_TO_VIDEO: Record<string, CelebrationType> = {
+  [PLAY_TYPE_IDS.PASSING_TOUCHDOWN]: 'touchdown',
+  [PLAY_TYPE_IDS.RUSHING_TOUCHDOWN]: 'touchdown',
+  [PLAY_TYPE_IDS.FIELD_GOAL_GOOD]: 'fieldgoal',
+  [PLAY_TYPE_IDS.INTERCEPTION]: 'interception',
+  [PLAY_TYPE_IDS.SACK]: 'sack',
+  [PLAY_TYPE_IDS.FUMBLE]: 'fumble',
+  [PLAY_TYPE_IDS.FUMBLE_RECOVERY]: 'fumble',
+  [PLAY_TYPE_IDS.BLOCKED_PUNT]: 'fumble', // Use fumble video for blocked punts
+  [PLAY_TYPE_IDS.SAFETY]: 'safety',
+};

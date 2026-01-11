@@ -43,6 +43,21 @@ apiRouter.get('/game/:gameId', async (req, res) => {
   }
 });
 
+// GET /api/plays/:gameId - Get play-by-play data (faster polling for live events)
+apiRouter.get('/plays/:gameId', async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const data = await espnProxy.fetchPlays(gameId);
+    res.json(data);
+  } catch (error) {
+    logError(`❌ [API Error] Plays ${req.params.gameId} failed:`, error instanceof Error ? error.message : error);
+    res.status(500).json({
+      error: 'Failed to fetch plays',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // GET /api/schedule - Get schedule for specific week/season
 apiRouter.get('/schedule', async (req, res) => {
   try {

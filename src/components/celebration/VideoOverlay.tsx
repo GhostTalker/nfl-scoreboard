@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useUIStore } from '../../stores/uiStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { VIDEOS, PLACEHOLDER_VIDEOS } from '../../constants/videos';
+import type { CelebrationType } from '../../types/game';
 
 interface VideoOverlayProps {
-  type: 'touchdown' | 'fieldgoal';
+  type: CelebrationType;
 }
 
 export function VideoOverlay({ type }: VideoOverlayProps) {

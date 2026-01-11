@@ -1,4 +1,4 @@
-import type { ScoreEvent, ScoreType } from '../types/game';
+import type { ScoreEvent, ScoreType, CelebrationType } from '../types/game';
 
 /**
  * Detects the type of score based on point differential
@@ -29,7 +29,7 @@ export function detectScoreChange(
   // Edge case: both scores changed (shouldn't happen, but handle it)
   // This could happen if we missed an update
   console.warn('Both scores changed simultaneously - possible missed update');
-  
+
   // Prioritize the larger change
   if (homeDiff >= awayDiff) {
     return analyzeScore(homeDiff, 'home');
@@ -72,7 +72,7 @@ function getScoreType(diff: number): ScoreType {
   }
 }
 
-function getVideoType(diff: number): 'touchdown' | 'fieldgoal' | null {
+function getVideoType(diff: number): CelebrationType | null {
   // Touchdown scenarios: 6, 7, 8 points
   if (diff >= 6) {
     return 'touchdown';
@@ -83,7 +83,11 @@ function getVideoType(diff: number): 'touchdown' | 'fieldgoal' | null {
     return 'fieldgoal';
   }
 
-  // Safety (2 points) or Extra Point (1 point) - no video
-  // These are usually part of a larger play or minor scoring
+  // Safety: 2 points (defensive score)
+  if (diff === 2) {
+    return 'safety';
+  }
+
+  // Extra Point (1 point) - no video
   return null;
 }

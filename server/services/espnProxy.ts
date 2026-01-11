@@ -13,6 +13,7 @@ interface CacheEntry {
 export const CacheKeys = {
   SCOREBOARD: 'scoreboard',
   GAME: (id: string) => `game_${id}`,
+  PLAYS: (id: string) => `plays_${id}`,
   SCHEDULE: (year: number, week: number, type: number) => `schedule_${year}_${week}_${type}`,
   TEAM: (id: string) => `team_${id}`,
 } as const;
@@ -22,6 +23,7 @@ class ESPNProxy {
   private readonly TTL = {
     scoreboard: 15000,  // 15 seconds for live data
     game: 15000,        // 15 seconds for game details
+    plays: 10000,       // 10 seconds for play-by-play (more frequent)
     schedule: 300000,   // 5 minutes for schedule
     team: 3600000,      // 1 hour for team info
   };
@@ -93,6 +95,33 @@ class ESPNProxy {
     log(`[ESPN API] Game ${gameId} fetched in ${duration}ms`);
     this.setCache(cacheKey, data);
     return data;
+  }
+
+  async fetchPlays(gameId: string): Promise<any> {
+    const cacheKey = CacheKeys.PLAYS(gameId);
+    const cached = this.getCached(cacheKey, this.TTL.plays);
+    if (cached) {
+      log(`[Cache HIT] Plays ${gameId}`);
+      return cached;
+    }
+
+    log(`[Cache MISS] Fetching plays ${gameId} from ESPN...`);
+    const start = Date.now();
+    const data = await this.fetch(`${ESPN_BASE_URL}/summary?event=${gameId}`);
+    const duration = Date.now() - start;
+    log(`[ESPN API] Plays ${gameId} fetched in ${duration}ms`);
+
+    // Extract just the plays data to reduce payload size
+    const playsData = {
+      drives: data.drives || [],
+      plays: data.plays || [],
+      scoringPlays: data.scoringPlays || [],
+      lastPlay: data.situation?.lastPlay || null,
+      situation: data.situation || null,
+    };
+
+    this.setCache(cacheKey, playsData);
+    return playsData;
   }
 
   async fetchSchedule(
