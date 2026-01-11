@@ -10,7 +10,7 @@ export interface NFLTeam {
   logo: string;
 }
 
-// ESPN API Team IDs and Colors
+// ESPN API Team IDs and Colors (verified against ESPN API)
 export const NFL_TEAMS: Record<string, NFLTeam> = {
   '1': {
     id: '1',
@@ -31,7 +31,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Bills',
     city: 'Buffalo',
     color: '00338D',
-    alternateColor: 'C60C30',
+    alternateColor: 'D50A0A',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png',
   },
   '3': {
@@ -41,8 +41,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Chicago Bears',
     shortDisplayName: 'Bears',
     city: 'Chicago',
-    color: '0B162A',
-    alternateColor: 'C83803',
+    color: '0B1C3A',
+    alternateColor: 'E64100',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/chi.png',
   },
   '4': {
@@ -63,7 +63,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Cleveland Browns',
     shortDisplayName: 'Browns',
     city: 'Cleveland',
-    color: '311D00',
+    color: '472A08',
     alternateColor: 'FF3C00',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cle.png',
   },
@@ -74,8 +74,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Dallas Cowboys',
     shortDisplayName: 'Cowboys',
     city: 'Dallas',
-    color: '003594',
-    alternateColor: '869397',
+    color: '002A5C',
+    alternateColor: 'B0B7BC',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/dal.png',
   },
   '7': {
@@ -85,8 +85,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Denver Broncos',
     shortDisplayName: 'Broncos',
     city: 'Denver',
-    color: 'FB4F14',
-    alternateColor: '002244',
+    color: '0A2343',
+    alternateColor: 'FC4C02',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/den.png',
   },
   '8': {
@@ -97,7 +97,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Lions',
     city: 'Detroit',
     color: '0076B6',
-    alternateColor: 'B0B7BC',
+    alternateColor: 'BBBBBB',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/det.png',
   },
   '9': {
@@ -107,31 +107,20 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Green Bay Packers',
     shortDisplayName: 'Packers',
     city: 'Green Bay',
-    color: '203731',
+    color: '204E32',
     alternateColor: 'FFB612',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/gb.png',
   },
   '10': {
     id: '10',
-    name: '49ers',
-    abbreviation: 'SF',
-    displayName: 'San Francisco 49ers',
-    shortDisplayName: '49ers',
-    city: 'San Francisco',
-    color: 'AA0000',
-    alternateColor: 'B3995D',
-    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
-  },
-  '34': {
-    id: '34',
-    name: 'Texans',
-    abbreviation: 'HOU',
-    displayName: 'Houston Texans',
-    shortDisplayName: 'Texans',
-    city: 'Houston',
-    color: '03202F',
-    alternateColor: 'A71930',
-    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png',
+    name: 'Titans',
+    abbreviation: 'TEN',
+    displayName: 'Tennessee Titans',
+    shortDisplayName: 'Titans',
+    city: 'Tennessee',
+    color: '4B92DB',
+    alternateColor: '002A5C',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
   },
   '11': {
     id: '11',
@@ -140,8 +129,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Indianapolis Colts',
     shortDisplayName: 'Colts',
     city: 'Indianapolis',
-    color: '002C5F',
-    alternateColor: 'A2AAAD',
+    color: '003B75',
+    alternateColor: 'FFFFFF',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ind.png',
   },
   '12': {
@@ -152,7 +141,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Chiefs',
     city: 'Kansas City',
     color: 'E31837',
-    alternateColor: 'FFB81C',
+    alternateColor: 'FFB612',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png',
   },
   '13': {
@@ -174,7 +163,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Rams',
     city: 'Los Angeles',
     color: '003594',
-    alternateColor: 'FFA300',
+    alternateColor: 'FFD100',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png',
   },
   '15': {
@@ -206,7 +195,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'New England Patriots',
     shortDisplayName: 'Patriots',
     city: 'New England',
-    color: '002244',
+    color: '002A5C',
     alternateColor: 'C60C30',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ne.png',
   },
@@ -218,7 +207,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Saints',
     city: 'New Orleans',
     color: 'D3BC8D',
-    alternateColor: '101820',
+    alternateColor: '000000',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/no.png',
   },
   '19': {
@@ -228,8 +217,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'New York Giants',
     shortDisplayName: 'Giants',
     city: 'New York',
-    color: '0B2265',
-    alternateColor: 'A71930',
+    color: '003C7F',
+    alternateColor: 'C9243F',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png',
   },
   '20': {
@@ -239,8 +228,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'New York Jets',
     shortDisplayName: 'Jets',
     city: 'New York',
-    color: '125740',
-    alternateColor: '000000',
+    color: '115740',
+    alternateColor: 'FFFFFF',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png',
   },
   '21': {
@@ -250,8 +239,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Philadelphia Eagles',
     shortDisplayName: 'Eagles',
     city: 'Philadelphia',
-    color: '004C54',
-    alternateColor: 'A5ACAF',
+    color: '06424D',
+    alternateColor: '000000',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/phi.png',
   },
   '22': {
@@ -261,8 +250,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Arizona Cardinals',
     shortDisplayName: 'Cardinals',
     city: 'Arizona',
-    color: '97233F',
-    alternateColor: '000000',
+    color: 'A40227',
+    alternateColor: 'FFFFFF',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ari.png',
   },
   '23': {
@@ -272,8 +261,8 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Pittsburgh Steelers',
     shortDisplayName: 'Steelers',
     city: 'Pittsburgh',
-    color: 'FFB612',
-    alternateColor: '101820',
+    color: '000000',
+    alternateColor: 'FFB612',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/pit.png',
   },
   '24': {
@@ -289,36 +278,36 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
   },
   '25': {
     id: '25',
+    name: '49ers',
+    abbreviation: 'SF',
+    displayName: 'San Francisco 49ers',
+    shortDisplayName: '49ers',
+    city: 'San Francisco',
+    color: 'AA0000',
+    alternateColor: 'B3995D',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sf.png',
+  },
+  '26': {
+    id: '26',
     name: 'Seahawks',
     abbreviation: 'SEA',
     displayName: 'Seattle Seahawks',
     shortDisplayName: 'Seahawks',
     city: 'Seattle',
-    color: '002244',
+    color: '002A5C',
     alternateColor: '69BE28',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/sea.png',
   },
-  '26': {
-    id: '26',
+  '27': {
+    id: '27',
     name: 'Buccaneers',
     abbreviation: 'TB',
     displayName: 'Tampa Bay Buccaneers',
     shortDisplayName: 'Buccaneers',
     city: 'Tampa Bay',
-    color: 'D50A0A',
-    alternateColor: '34302B',
+    color: 'BD1C36',
+    alternateColor: '3E3A35',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/tb.png',
-  },
-  '27': {
-    id: '27',
-    name: 'Titans',
-    abbreviation: 'TEN',
-    displayName: 'Tennessee Titans',
-    shortDisplayName: 'Titans',
-    city: 'Tennessee',
-    color: '0C2340',
-    alternateColor: '4B92DB',
-    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/ten.png',
   },
   '28': {
     id: '28',
@@ -339,7 +328,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     shortDisplayName: 'Panthers',
     city: 'Carolina',
     color: '0085CA',
-    alternateColor: '101820',
+    alternateColor: '000000',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/car.png',
   },
   '30': {
@@ -349,7 +338,7 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Jacksonville Jaguars',
     shortDisplayName: 'Jaguars',
     city: 'Jacksonville',
-    color: '006778',
+    color: '007487',
     alternateColor: 'D7A22A',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/jax.png',
   },
@@ -360,9 +349,20 @@ export const NFL_TEAMS: Record<string, NFLTeam> = {
     displayName: 'Baltimore Ravens',
     shortDisplayName: 'Ravens',
     city: 'Baltimore',
-    color: '241773',
+    color: '29126F',
     alternateColor: '000000',
     logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png',
+  },
+  '34': {
+    id: '34',
+    name: 'Texans',
+    abbreviation: 'HOU',
+    displayName: 'Houston Texans',
+    shortDisplayName: 'Texans',
+    city: 'Houston',
+    color: '00143F',
+    alternateColor: 'C41230',
+    logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/hou.png',
   },
 };
 
@@ -371,7 +371,7 @@ export const getTeamById = (id: string): NFLTeam | undefined => {
 };
 
 export const getAllTeams = (): NFLTeam[] => {
-  return Object.values(NFL_TEAMS).sort((a, b) => 
+  return Object.values(NFL_TEAMS).sort((a, b) =>
     a.displayName.localeCompare(b.displayName)
   );
 };
