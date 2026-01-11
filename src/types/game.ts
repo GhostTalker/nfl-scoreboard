@@ -15,6 +15,7 @@ export interface GameSituation {
   distance: number;
   yardLine: number;
   possession: string; // Team ID
+  possessionText?: string; // "PHI 35", "SF 20", "50" (midfield)
   isRedZone: boolean;
   shortDownDistanceText?: string; // "1st & 10", "Kickoff", "PAT", etc.
   lastPlayType?: string; // "Kickoff", "Two-minute warning", "Punt", etc.

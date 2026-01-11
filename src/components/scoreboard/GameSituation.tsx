@@ -39,17 +39,19 @@ export function GameSituation({ situation, homeTeam, awayTeam }: GameSituationPr
 
   // Format field position
   const getFieldPosition = () => {
-    if (!situation.yardLine) return '';
-    
-    // Determine which side of the field
-    const yardLine = situation.yardLine;
-    
-    if (yardLine === 50) {
-      return '50 yard line';
+    // Use ESPN's possessionText which includes team side (e.g., "PHI 35", "SF 20")
+    if (situation.possessionText) {
+      return situation.possessionText;
     }
-    
-    // Simplified: just show the yard line
-    return `${yardLine} yard line`;
+
+    // Fallback to raw yardLine if possessionText not available
+    if (!situation.yardLine) return '';
+
+    if (situation.yardLine === 50) {
+      return 'Midfield';
+    }
+
+    return `${situation.yardLine} yard line`;
   };
 
   return (

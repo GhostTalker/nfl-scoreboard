@@ -230,6 +230,7 @@ function parseSituation(situation: any) {
     distance: situation.distance || 0,
     yardLine: situation.yardLine || 0,
     possession: possessionId || '',
+    possessionText: situation.possessionText || '', // "PHI 35", "SF 20"
     isRedZone: situation.isRedZone || false,
     shortDownDistanceText: situation.shortDownDistanceText || situation.downDistanceText || '',
     lastPlayType: lastPlayType,
