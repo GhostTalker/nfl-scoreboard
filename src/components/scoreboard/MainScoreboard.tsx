@@ -247,9 +247,23 @@ export function MainScoreboard() {
                   Final
                 </span>
               </div>
+            ) : currentGame.status === 'halftime' ? (
+              // Show Halftime badge
+              <div
+                className="px-8 py-3 rounded-xl"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(234,179,8,0.6) 0%, rgba(202,138,4,0.4) 100%)',
+                  boxShadow: '0 4px 20px rgba(234,179,8,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                  border: '1px solid rgba(234,179,8,0.5)',
+                }}
+              >
+                <span className="text-3xl font-black text-white uppercase tracking-wider">
+                  Halftime
+                </span>
+              </div>
             ) : (
               // Show game clock for live games
-              <div 
+              <div
                 className="flex items-center gap-4 px-6 py-3 rounded-xl"
                 style={{
                   background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
@@ -264,10 +278,10 @@ export function MainScoreboard() {
                     {currentGame.clock.periodName || '-'}
                   </span>
                 </div>
-                
+
                 {/* Divider */}
                 <div className="w-px h-12 bg-white/20" />
-                
+
                 {/* Time */}
                 <div className="flex flex-col items-center">
                   <span className="text-xs text-white/50 uppercase tracking-wider">Time</span>
