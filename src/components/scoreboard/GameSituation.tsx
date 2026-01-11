@@ -24,9 +24,14 @@ export function GameSituation({ situation, homeTeam, awayTeam }: GameSituationPr
       return `${down} & ${situation.distance}`;
     }
 
-    // Fallback to ESPN's shortDownDistanceText (e.g., "Kickoff", "PAT", "2PT")
+    // Fallback to ESPN's shortDownDistanceText (e.g., "1st & 10")
     if (situation.shortDownDistanceText) {
       return situation.shortDownDistanceText;
+    }
+
+    // Fallback to last play type (e.g., "Kickoff", "Punt", "PAT")
+    if (situation.lastPlayType) {
+      return situation.lastPlayType;
     }
 
     return '';

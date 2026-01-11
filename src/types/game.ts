@@ -17,6 +17,7 @@ export interface GameSituation {
   possession: string; // Team ID
   isRedZone: boolean;
   shortDownDistanceText?: string; // "1st & 10", "Kickoff", "PAT", etc.
+  lastPlayType?: string; // "Kickoff", "Two-minute warning", "Punt", etc.
 }
 
 export interface GameClock {

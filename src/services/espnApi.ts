@@ -223,6 +223,7 @@ function parseSituation(situation: any) {
   if (!situation) return undefined;
 
   const possessionId = situation.possession;
+  const lastPlayType = situation.lastPlay?.type?.text || '';
 
   return {
     down: situation.down || 0,
@@ -231,6 +232,7 @@ function parseSituation(situation: any) {
     possession: possessionId || '',
     isRedZone: situation.isRedZone || false,
     shortDownDistanceText: situation.shortDownDistanceText || situation.downDistanceText || '',
+    lastPlayType: lastPlayType,
   };
 }
 
