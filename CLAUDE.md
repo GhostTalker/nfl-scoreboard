@@ -206,7 +206,7 @@ The app uses German date/time formatting:
 
 ## Deployment
 
-The app is designed to run on a Linux server (e.g., 10.1.0.51):
+The app is designed to run on a Linux server:
 
 1. Clone repo to server (e.g., `/srv/GhostGit/nfl-scoreboard`)
 2. `npm install && npm run build`

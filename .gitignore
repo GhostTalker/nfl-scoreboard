@@ -42,3 +42,7 @@ session-*.md
 
 # Claude Code
 .claude/
+
+# Temp files
+*espn*.json
+C:Users*

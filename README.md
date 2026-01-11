@@ -157,7 +157,7 @@ Server läuft auf: `http://localhost:3001`
 
 ## 🌐 Deployment
 
-### Linux Server (z.B. 10.1.0.51)
+### Linux Server
 
 #### Initial Setup
 ```bash
@@ -205,8 +205,8 @@ pm2 save
 
 ### Zugriff
 - **Lokal**: `http://localhost:3001`
-- **Netzwerk**: `http://10.1.0.51:3001`
-- **iPad**: Browser auf `http://10.1.0.51:3001` öffnen
+- **Netzwerk**: `http://<YOUR-SERVER-IP>:3001`
+- **iPad**: Browser auf `http://<YOUR-SERVER-IP>:3001` öffnen
 
 ---
 

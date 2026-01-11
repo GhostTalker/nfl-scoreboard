@@ -28,4 +28,4 @@ echo "✅ Deployment complete!"
 echo ""
 pm2 list
 echo ""
-echo "🌐 App running at: http://10.1.0.51:3001"
+echo "🌐 App running at: http://<YOUR-SERVER-IP>:3001"
