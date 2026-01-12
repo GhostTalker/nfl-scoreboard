@@ -1,46 +1,46 @@
 # 🏈 NFL Scoreboard
 
-**Live NFL Scoreboard für iPad mini 6 und Video Wall Display**
+**Live NFL Scoreboard for iPad mini 6 and Video Wall Display**
 
-Eine moderne, responsive Web-Anwendung für die Anzeige von Live-NFL-Spielen mit dynamischen Hintergründen, Team-Logos, Statistiken, Celebration-Videos und deutscher Lokalisierung.
+A modern, responsive web application for displaying live NFL games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-1.2.9-blue)
+![Version](https://img.shields.io/badge/Version-1.3.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
 
-## 📋 Inhaltsverzeichnis
+## 📋 Table of Contents
 
 - [Screenshots](#-screenshots)
 - [Features](#-features)
-- [Bedienung](#-bedienung)
+- [Usage](#-usage)
 - [Tech Stack](#-tech-stack)
 - [Installation](#-installation)
-- [Verwendung](#-verwendung)
+- [Getting Started](#-getting-started)
 - [Deployment](#-deployment)
-- [Projektstruktur](#-projektstruktur)
-- [Konfiguration](#-konfiguration)
+- [Project Structure](#-project-structure)
+- [Configuration](#-configuration)
 - [Development](#-development)
 - [API](#-api)
-- [Lizenz](#-lizenz)
+- [License](#-license)
 
 ---
 
 ## 🖼 Screenshots
 
 ### SingleView - Live Game
-Detaillierte Ansicht eines laufenden Spiels mit Live-Indikator, Spieluhr und Spielsituation.
+Detailed view of an ongoing game with live indicator, game clock, and game situation.
 
 ![SingleView - Upcoming Game](public/screenshots/singleview_upcomming.png)
 
 ### SingleView - Final Game
-Endergebnis mit Gewinner-Hervorhebung und Zusammenfassung.
+Final result with winner highlighting and summary.
 
 ![SingleView - Final Game](public/screenshots/singleview_final.png)
 
 ### MultiView - All Games
-Übersicht aller Spiele mit dynamischer Kartengröße und Filtern.
+Overview of all games with dynamic card sizing and filters.
 
 ![MultiView](public/screenshots/multiview.png)
 
@@ -48,209 +48,214 @@ Endergebnis mit Gewinner-Hervorhebung und Zusammenfassung.
 
 ## ✨ Features
 
-### 🎮 Anzeigemodi
+### 🎮 Display Modes
 
 #### SingleView
-- **Vollbild-Ansicht** eines einzelnen Spiels
-- **Große Team-Logos** mit dynamischen Glow-Effekten basierend auf Team-Farben
-- **Team-Namen** in großer, gut lesbarer Schrift
-- **Live-Spieluhr** mit Quarter/Period-Anzeige und pulsierendem Indikator
-- **Spielsituation** - Down, Distance, Yard-Line, Ballbesitz mit Team-Logo
-- **Detaillierte Statistiken** - Team Stats, Player Stats, Drive Charts
-- **Dynamische Hintergründe** je nach Spielstatus und -typ
+- **Full-screen view** of a single game
+- **Large team logos** with dynamic glow effects based on team colors
+- **Team names** in large, readable font
+- **Live game clock** with quarter/period display and pulsing indicator
+- **Game situation** - Down, distance, yard line, possession with team logo
+- **Detailed statistics** - Team stats, player stats, drive charts
+- **Dynamic backgrounds** based on game status and type
 
 #### MultiView
-- **Alle Spiele auf einen Blick** in einem 2-Spalten-Grid
-- **Dynamische Kartengröße** - passt sich der Anzahl der Spiele an:
-  - 1-6 Spiele: Große Karten (165px) mit größeren Logos
-  - 7-10 Spiele: Mittlere Karten (150px)
-  - 11+ Spiele: Kompakte Karten (135px)
-- **Filter-Optionen** - Live, Upcoming, Final Games
-- **Score-Change-Erkennung** - Karten mit kürzlichen Änderungen leuchten rot
-- **Status-Badges** - Live, Halftime, Final, Scheduled
-- **Direkte Spielauswahl** - Klick auf Karte wechselt zu SingleView
+- **All games at a glance** in a 2-column grid
+- **Dynamic card sizing** - adapts to the number of games:
+  - 1-6 games: Large cards (165px) with bigger logos
+  - 7-10 games: Medium cards (150px)
+  - 11+ games: Compact cards (135px)
+- **Filter options** - Live, Upcoming, Final games
+- **Score change detection** - Cards with recent score changes glow red
+- **Scoring team highlight** - Logo and team name of scoring team glow in team colors for 30 seconds
+- **Status badges** - Live, Halftime, Final, Scheduled
+- **Direct game selection** - Click on card to switch to SingleView
 
 ### 🎉 Celebration Features
 
-- **Automatische Celebration-Videos** bei Score-Änderungen:
-  - 🏈 Touchdown (6, 7, 8 Punkte)
-  - 🥅 Field Goal (3 Punkte)
-  - 🛡️ Safety (2 Punkte)
+- **Automatic celebration videos** on score changes:
+  - 🏈 Touchdown (6, 7, 8 points)
+  - 🥅 Field Goal (3 points)
+  - 🛡️ Safety (2 points)
   - 🏃 Interception Return TD
   - 💥 Sack
   - 🎾 Fumble Recovery
-- **Individuelle Kontrolle** - Videos können einzeln aktiviert/deaktiviert werden
-- **Lautstärke-Regelung** - Einstellbarer Video-Sound (0-100%)
-- **Sound-Effekte** - Separate Audio-Effekte für große Plays
+- **Individual control** - Videos can be enabled/disabled individually
+- **Volume control** - Adjustable video sound (0-100%)
+- **Sound effects** - Separate audio effects for big plays
 
-### 🎨 Visuelle Features
+### 🎨 Visual Features
 
-#### Custom Title-Grafiken
-Professionelle PNG-Grafiken für jeden Spieltyp:
-- 🏆 **Super Bowl** mit goldenem Glow
-- 🥈 **Conference Championship** mit silbernem Glow
+#### Custom Title Graphics
+Professional PNG graphics for each game type:
+- 🏆 **Super Bowl** with golden glow
+- 🥈 **Conference Championship** with silver glow
 - 🔵 **Divisional Round**
 - 🃏 **Wild Card**
 - 🏈 **Game Day** (Regular Season)
 
-#### Dynamische Hintergründe
-Unterschiedliche Gradient-Designs je nach Spieltyp:
-- 🏆 **Super Bowl**: Gold/Champagner mit Konfetti-Animation
-- 🥈 **Championship**: Silber/Platin mit Partikeln
-- 🔴 **Live-Spiele**: Rote pulsierende Energie-Overlay
-- 🔵 **Playoffs**: Blaue Gradienten mit Partikel-Effekten
-- ⚫ **Final**: Gedämpfte dunkle Töne
-- 📅 **Geplant**: Professionelles Blau
+#### Dynamic Backgrounds
+Different gradient designs based on game type:
+- 🏆 **Super Bowl**: Gold/champagne with confetti animation
+- 🥈 **Championship**: Silver/platinum with particles
+- 🔴 **Live games**: Red pulsing energy overlay
+- 🔵 **Playoffs**: Blue gradients with particle effects
+- ⚫ **Final**: Dimmed dark tones
+- 📅 **Scheduled**: Professional blue
 
-#### Team-Darstellung
-- **Intelligente Glow-Effekte** - Automatische Erkennung dunkler Farben und Verwendung der Alternativ-Farbe
-- **Team-Farb-Boxen** - Namen in Team-Farben mit Glow-Hintergrund
-- **Gewinner-Hervorhebung** - Bei finalen Spielen wird das Gewinnerteam hervorgehoben
-- **Transparenz-Effekte** - Verlierer-Team wird bei finalen Spielen gedimmt
+#### Team Representation
+- **Intelligent glow effects** - Automatic detection of dark colors and use of alternate color
+- **Team color boxes** - Names in team colors with glow background
+- **Winner highlighting** - Winning team is highlighted in final games
+- **Transparency effects** - Losing team is dimmed in final games
+- **Scoring animations** - Team logo and name glow in team colors when scoring (30 seconds)
 
-### 🎯 Daten & Updates
+### 🎯 Data & Updates
 
-- **Live-Aktualisierung** von ESPN API:
-  - Live-Spiele: 10 Sekunden
-  - Geplante Spiele: 1 Minute
-  - Finale Spiele: 5 Minuten
-- **Automatische Playoff-Erkennung** - Wild Card, Divisional, Championship & Super Bowl
-- **Deutsche Lokalisierung** - Datum/Uhrzeit im Format DD.MM.YYYY und 24h
-- **Intelligente Wochenauswahl** - Automatisches Durchsuchen mehrerer Wochen bei leeren Spieltagen
-- **Server-Side Caching** - Reduziert API-Calls (15s TTL für Live-Daten, 5m für Spielpläne)
+- **Live updates** from ESPN API:
+  - Live games: 10 seconds
+  - Scheduled games: 1 minute
+  - Final games: 5 minutes
+- **Automatic playoff detection** - Wild Card, Divisional, Championship & Super Bowl
+- **German localization** - Date/time in DD.MM.YYYY and 24h format
+- **Intelligent week selection** - Automatically searches multiple weeks for empty game days
+- **Server-side caching** - Reduces API calls (15s TTL for live data, 5m for schedules)
 
-### ⚙️ Einstellungen & Anpassungen
+### ⚙️ Settings & Customization
 
 #### Game Selection
-- **Manuelle Spielauswahl** mit Vorschau-Karten
-- **Filter nach Status** - Live, Upcoming, Final
-- **2-Spalten-Layout** für bessere Übersicht
-- **Status-Anzeige** mit Icons und Zeitangaben
-- **Automatische Live-Erkennung** - Zeigt automatisch das erste Live-Spiel
+- **Manual game selection** with preview cards
+- **Filter by status** - Live, Upcoming, Final
+- **2-column layout** for better overview
+- **Status display** with icons and timestamps
+- **Automatic live detection** - Automatically shows first live game
 
 #### Display Options
-- **View Mode Toggle** - SingleView / MultiView
-- **MultiView Filters** - Separate Filter für Live/Upcoming/Final Games
-- **Celebration Videos** - Einzeln aktivierbar/deaktivierbar
-- **Sound Control** - Sound-Effekte und Video-Lautstärke
+- **View mode toggle** - SingleView / MultiView
+- **MultiView filters** - Separate filters for Live/Upcoming/Final games
+- **Celebration videos** - Individually enable/disable
+- **Sound control** - Sound effects and video volume
 
 #### Debug Mode
-- **Score Manipulation** - Für Testzwecke
-- **Status Changes** - Spielstatus ändern
-- **Quick Testing** - Schnelles Testen von Celebrations und UI-Änderungen
+- **Score manipulation** - For testing purposes
+- **Status changes** - Change game status
+- **Quick testing** - Fast testing of celebrations and UI changes
 
-### 📱 Navigation & Steuerung
+### 📱 Navigation & Controls
 
-- **Pfeiltasten-Navigation**:
-  - ⬅️ Links: Vorheriges Spiel / Zurück zu Scoreboard
-  - ➡️ Rechts: Nächstes Spiel / Zu Statistiken / Zu Settings
-  - ESC: Zurück zu Scoreboard
-- **Swipe-Gesten** für Touch-Geräte (iPad):
-  - Swipe Links: Vorheriges Spiel
-  - Swipe Rechts: Nächstes Spiel
-- **Klick/Touch-Navigation**:
-  - MultiView: Spiel-Karten anklicken
-  - Settings: Spiel-Auswahl, Filter, Optionen
+- **Arrow key navigation**:
+  - ⬅️ Left: Previous game / Back to scoreboard
+  - ➡️ Right: Next game / To statistics / To settings
+  - ESC: Back to scoreboard
+- **Swipe gestures** for touch devices (iPad):
+  - Swipe left: Previous game
+  - Swipe right: Next game
+- **Click/Touch navigation**:
+  - MultiView: Click game cards
+  - Settings: Game selection, filters, options
 
-### 🖥 Optimiert für
+### 🖥 Optimized for
 
-- **iPad mini 6** im Landscape-Modus (1024x768)
-- **Video Wall** - Hochwertige Grafiken für große Displays
-- **Alle modernen Browser** - Chrome, Safari, Firefox, Edge
-- **Touch-Optimiert** - Große Touch-Targets, Swipe-Gesten
-- **Performance** - Optimierte Rendering-Performance, Browser-Cache
+- **iPad mini 6** in landscape mode (1024x768)
+- **Video wall** - High-quality graphics for large displays
+- **All modern browsers** - Chrome, Safari, Firefox, Edge
+- **Touch-optimized** - Large touch targets, swipe gestures
+- **Performance** - Optimized rendering performance, browser cache
 
 ---
 
-## 🎮 Bedienung
+## 🎮 Usage
 
-### Erste Schritte
+### Getting Started
 
-1. **App öffnen** - Browser auf `http://<SERVER-IP>:3001` öffnen
-2. **Automatische Anzeige** - App zeigt automatisch das erste Live-Spiel oder das nächste anstehende Spiel
-3. **Navigation** - Verwende Pfeiltasten (Desktop) oder Swipe-Gesten (iPad) zum Wechseln zwischen Ansichten
+1. **Open app** - Browser to `http://<SERVER-IP>:3001`
+2. **Automatic display** - App automatically shows first live game or next upcoming game
+3. **Navigation** - Use arrow keys (desktop) or swipe gestures (iPad) to switch between views
 
 ### View Modes
 
-#### SingleView (Standard)
-- **Hauptansicht**: Zeigt ein einzelnes Spiel im Vollbild
+#### SingleView (Default)
+- **Main view**: Shows a single game in fullscreen
 - **Navigation**:
-  - Rechts-Taste → Statistik-Panel
-  - Rechts-Taste → Settings
-  - Links-Taste → Zurück
-- **Live-Updates**: Automatische Aktualisierung alle 10 Sekunden bei Live-Spielen
+  - Up arrow → Statistics panel
+  - Right arrow → Settings
+  - Left arrow → Back
+- **Live updates**: Automatic refresh every 10 seconds for live games
 
 #### MultiView
-- **Übersicht**: Alle Spiele auf einen Blick
-- **Filter**: Live, Upcoming, Final Games über Settings steuerbar
-- **Auswahl**: Klick auf Spiel-Karte wechselt zu SingleView
-- **Score Changes**: Karten mit kürzlichen Score-Änderungen leuchten rot
+- **Overview**: All games at a glance
+- **Filters**: Live, Upcoming, Final games controlled via settings
+- **Selection**: Click on game card to switch to SingleView
+- **Score changes**: Cards with recent score changes glow red
+- **Scoring highlights**: Logo and team name of scoring team glow in team colors
 
-### Settings-Menü
+### Settings Menu
 
-Zugriff über Pfeiltaste rechts (2x) oder Settings-Button:
+Access via right arrow (2x) or Settings button:
 
 #### View Mode
-- **SingleView**: Zeigt ein einzelnes Spiel detailliert
-- **MultiView**: Übersicht aller Spiele
+- **SingleView**: Shows a single game in detail
+- **MultiView**: Overview of all games
 
 #### MultiView Filters
-Nur für MultiView-Modus:
-- ✅ **Live**: Zeigt laufende Spiele und Halftime
-- ✅ **Upcoming**: Zeigt geplante, zukünftige Spiele
-- ✅ **Final**: Zeigt beendete Spiele
+For MultiView mode:
+- ✅ **Live**: Shows ongoing games and halftime
+- ✅ **Upcoming**: Shows scheduled, future games
+- ✅ **Final**: Shows completed games
 
 #### Select Game
-- **Spiel-Auswahl**: Liste aller verfügbaren Spiele
-- **2-Spalten-Layout**: Bessere Übersicht
-- **Filter**: Respektiert MultiView Filter-Einstellungen
-- **Status-Anzeige**: Live, Upcoming, Final mit Icons
-- **Direkte Anzeige**: Ausgewähltes Spiel wird sofort angezeigt
+- **Game selection**: List of all available games
+- **2-column layout**: Better overview
+- **Filter**: Respects MultiView filter settings
+- **Status display**: Live, Upcoming, Final with icons
+- **Direct display**: Selected game is immediately displayed
 
 #### Sound
-- **Sound Effects**: Aktiviert/Deaktiviert Audio-Effekte für Touchdowns, Field Goals
-- **Video Volume**: Lautstärke für Celebration-Videos (0-100%)
+- **Sound Effects**: Enable/disable audio effects for touchdowns, field goals
+- **Video Volume**: Volume for celebration videos (0-100%)
 
 #### Celebration Videos
-Individuelle Kontrolle für jedes Video:
-- 🏈 **Touchdown**: 6, 7, 8 Punkte
-- 🥅 **Field Goal**: 3 Punkte
-- 🛡️ **Safety**: 2 Punkte
+Individual control for each video:
+- 🏈 **Touchdown**: 6, 7, 8 points
+- 🥅 **Field Goal**: 3 points
+- 🛡️ **Safety**: 2 points
 - 🏃 **Interception**: Interception Return TD
 - 💥 **Sack**: Quarterback Sack
 - 🎾 **Fumble**: Fumble Recovery
 
 #### Debug Mode
-Für Entwickler und Testing:
-- **Score Manipulation**: +/- Punkte für Teams
-- **Status Changes**: Spielstatus ändern (Pre, Live, Final)
-- **Quick Testing**: Celebration-Videos und UI-Änderungen testen
+For developers and testing:
+- **Score manipulation**: +/- points for teams
+- **Status changes**: Change game status (Pre, Live, Final)
+- **Quick testing**: Test celebration videos and UI changes
 
 ### Keyboard Shortcuts
 
-| Taste | Funktion |
-|-------|----------|
-| ⬅️ | Vorheriges Spiel / Zurück |
-| ➡️ | Nächstes Spiel / Statistiken / Settings |
-| ESC | Zurück zu Scoreboard |
+| Key | Function |
+|-----|----------|
+| ⬅️ | Previous game / Back |
+| ➡️ | Next game / Settings |
+| ⬆️ | Statistics |
+| ESC | Back to scoreboard |
 
-### Touch Gesten (iPad)
+### Touch Gestures (iPad)
 
-| Geste | Funktion |
-|-------|----------|
-| Swipe Links | Vorheriges Spiel |
-| Swipe Rechts | Nächstes Spiel |
-| Tap Spiel-Karte | Spiel auswählen (MultiView) |
+| Gesture | Function |
+|---------|----------|
+| Swipe left | Previous game |
+| Swipe right | Next game |
+| Tap game card | Select game (MultiView) |
 
-### Tipps & Tricks
+### Tips & Tricks
 
-1. **Cache leeren**: Bei Problemen Hard-Refresh (CMD+Shift+R) oder Cache leeren
-2. **Automatische Live-Anzeige**: App wechselt automatisch zum ersten Live-Spiel
-3. **Manuelle Auswahl**: Über Settings → Select Game ein bestimmtes Spiel fixieren
-4. **MultiView für Übersicht**: Ideal um alle Spiele im Blick zu haben
-5. **SingleView für Details**: Beste Ansicht für ein einzelnes Spiel mit allen Details
-6. **Celebration Videos**: Bei Problemen einzelne Videos deaktivieren
-7. **Filter nutzen**: In MultiView nur relevante Spiele anzeigen (z.B. nur Live)
+1. **Clear cache**: On issues do hard refresh (CMD+Shift+R) or clear cache
+2. **Automatic live display**: App automatically switches to first live game
+3. **Manual selection**: Via Settings → Select Game to pin a specific game
+4. **MultiView for overview**: Ideal to keep track of all games
+5. **SingleView for details**: Best view for a single game with all details
+6. **Celebration videos**: Disable individual videos if problems occur
+7. **Use filters**: In MultiView show only relevant games (e.g., only Live)
+8. **Scoring highlights**: Watch for glowing team logos/names when teams score
 
 ---
 
@@ -261,7 +266,7 @@ Für Entwickler und Testing:
 - **TypeScript** - Type Safety
 - **Vite 6.0** - Build Tool & Dev Server
 - **Tailwind CSS 3.4** - Utility-First CSS
-- **Zustand 5.0** - State Management mit Persist Middleware
+- **Zustand 5.0** - State Management with Persist Middleware
 
 ### Backend
 - **Express 4.21** - Proxy Server
@@ -269,110 +274,110 @@ Für Entwickler und Testing:
 - **TSX** - TypeScript Execution
 
 ### APIs & Services
-- **ESPN API** - Live NFL Daten
-  - `/scoreboard` - Aktuelle Spielstände
-  - `/schedule` - Saisonplan & Playoff-Wochen
-  - `/summary` - Detaillierte Spiel-Statistiken
+- **ESPN API** - Live NFL data
+  - `/scoreboard` - Current scores
+  - `/schedule` - Season schedule & playoff weeks
+  - `/summary` - Detailed game statistics
 
 ### Tools & DevOps
 - **ESLint** - Code Linting
 - **PostCSS & Autoprefixer** - CSS Processing
-- **Concurrently** - Parallele Skript-Ausführung
+- **Concurrently** - Parallel script execution
 - **Git** - Version Control
-- **PM2** - Process Manager für Production
+- **PM2** - Process Manager for production
 
 ---
 
 ## 📦 Installation
 
-### Voraussetzungen
+### Prerequisites
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0
 - **Git**
 
-### Schritt 1: Repository klonen
+### Step 1: Clone repository
 ```bash
 git clone https://github.com/GhostTalker/nfl-scoreboard.git
 cd nfl-scoreboard
 ```
 
-### Schritt 2: Dependencies installieren
+### Step 2: Install dependencies
 ```bash
 npm install
 ```
 
 ---
 
-## 🚀 Verwendung
+## 🚀 Getting Started
 
-### Development-Modus
-Startet Vite Dev Server (Port 5173) + Express Proxy (Port 3001):
+### Development Mode
+Starts Vite Dev Server (Port 5173) + Express Proxy (Port 3001):
 
 ```bash
 npm run start
 ```
 
-Öffne Browser: `http://localhost:5173`
+Open browser: `http://localhost:5173`
 
 ### Production Build
 ```bash
 npm run build
 ```
 
-Output: `dist/` Verzeichnis
+Output: `dist/` directory
 
-### Production Server starten
+### Start Production Server
 ```bash
 NODE_ENV=production npm run start:prod
 ```
 
-Server läuft auf: `http://localhost:3001`
+Server runs on: `http://localhost:3001`
 
 ---
 
 ## 🌐 Deployment
 
-### Automatisches Deployment (Empfohlen)
+### Automatic Deployment (Recommended)
 
-Das Projekt enthält ein Deployment-Script für schnelle Updates:
+The project includes a deployment script for quick updates:
 
 ```bash
-# Auf dem Server
+# On the server
 cd /srv/GhostGit/nfl-scoreboard
 ./deploy.sh
 ```
 
-Das Script führt automatisch aus:
-1. `git pull origin master` - Neueste Änderungen holen
-2. `npm install` - Dependencies aktualisieren
-3. `npm run build` - Production Build erstellen
-4. `pm2 restart ecosystem.config.cjs` - Server neu starten
+The script automatically executes:
+1. `git pull origin master` - Fetch latest changes
+2. `npm install` - Update dependencies
+3. `npm run build` - Create production build
+4. `pm2 restart ecosystem.config.cjs` - Restart server
 
-### Manuelles Deployment
+### Manual Deployment
 
 #### Initial Setup
 ```bash
-# SSH zum Server
+# SSH to server
 ssh user@linux-server
 
-# Projekt klonen
+# Clone project
 cd /srv/GhostGit
 git clone https://github.com/GhostTalker/nfl-scoreboard.git
 cd nfl-scoreboard
 
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Build erstellen
+# Create build
 npm run build
 ```
 
-#### Production starten
+#### Start Production
 ```bash
 NODE_ENV=production npm run start:prod
 ```
 
-#### Update-Prozess
+#### Update Process
 ```bash
 cd /srv/GhostGit/nfl-scoreboard
 git pull
@@ -381,31 +386,31 @@ npm run build
 NODE_ENV=production npm run start:prod
 ```
 
-#### Mit PM2 (Empfohlen)
+#### With PM2 (Recommended)
 ```bash
-# PM2 installieren
+# Install PM2
 npm install -g pm2
 
-# App starten
+# Start app
 pm2 start npm --name "nfl-scoreboard" -- run start:prod
 
-# Auto-Start bei Server-Neustart
+# Auto-start on server restart
 pm2 startup
 pm2 save
 
-# Status prüfen
+# Check status
 pm2 list
 pm2 logs nfl-scoreboard
 ```
 
-### Zugriff
-- **Lokal**: `http://localhost:3001`
-- **Netzwerk**: `http://<YOUR-SERVER-IP>:3001`
-- **iPad**: Browser auf `http://<YOUR-SERVER-IP>:3001` öffnen
+### Access
+- **Local**: `http://localhost:3001`
+- **Network**: `http://<YOUR-SERVER-IP>:3001`
+- **iPad**: Browser to `http://<YOUR-SERVER-IP>:3001`
 
 ---
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 nfl-scoreboard/
@@ -433,7 +438,7 @@ nfl-scoreboard/
 │   ├── routes/
 │   │   └── api.ts           # API Routes
 │   └── services/
-│       └── espnProxy.ts     # ESPN API Proxy mit Caching
+│       └── espnProxy.ts     # ESPN API Proxy with Caching
 ├── src/                     # React Frontend
 │   ├── components/
 │   │   ├── scoreboard/      # Scoreboard Components
@@ -487,30 +492,30 @@ nfl-scoreboard/
 
 ---
 
-## ⚙️ Konfiguration
+## ⚙️ Configuration
 
 ### Environment Variables
-Keine Environment-Variablen erforderlich. Alle Konfigurationen sind in Code-Dateien.
+No environment variables required. All configurations are in code files.
 
 ### API Endpoints (server/routes/api.ts)
 ```typescript
-GET /api/scoreboard                    // Aktuelle Woche
-GET /api/scoreboard?week=X             // Spezifische Woche
-GET /api/schedule?year=Y&week=X        // Spielplan
-GET /api/game/:id                      // Game Details
-GET /api/health                        // Health Check + Cache Stats
+GET /api/scoreboard                    // Current week
+GET /api/scoreboard?week=X             // Specific week
+GET /api/schedule?year=Y&week=X        // Schedule
+GET /api/game/:id                      // Game details
+GET /api/health                        // Health check + cache stats
 ```
 
 ### Default Settings (src/types/settings.ts)
 ```typescript
 primaryTeamId: '17'               // New England Patriots
-soundEffectsEnabled: true         // Sound-Effekte aktiviert
-videoVolume: 0.8                  // 80% Lautstärke
-viewMode: 'single'                // SingleView als Standard
+soundEffectsEnabled: true         // Sound effects enabled
+videoVolume: 0.8                  // 80% volume
+viewMode: 'single'                // SingleView as default
 multiViewFilters: {
-  showLive: true,                 // Live-Spiele anzeigen
-  showUpcoming: true,             // Geplante Spiele anzeigen
-  showFinal: true                 // Finale Spiele anzeigen
+  showLive: true,                 // Show live games
+  showUpcoming: true,             // Show scheduled games
+  showFinal: true                 // Show final games
 }
 celebrationVideos: {
   touchdown: true,
@@ -524,26 +529,26 @@ celebrationVideos: {
 
 ### Cache Configuration (server/services/espnProxy.ts)
 ```typescript
-Live Data TTL: 15 Sekunden
-Schedule Data TTL: 5 Minuten
+Live Data TTL: 15 seconds
+Schedule Data TTL: 5 minutes
 ```
 
 ### Polling Intervals (src/hooks/useGameData.ts)
 ```typescript
-Live Games: 10 Sekunden
-Scheduled Games: 1 Minute
-Final Games: 5 Minuten
+Live Games: 10 seconds
+Scheduled Games: 1 minute
+Final Games: 5 minutes
 ```
 
 ---
 
 ## 💻 Development
 
-### Dev Server starten
+### Start Dev Server
 ```bash
 npm run dev
-# oder
-npm run start  # Startet auch Express Proxy
+# or
+npm run start  # Also starts Express Proxy
 ```
 
 ### Linting
@@ -563,11 +568,11 @@ npx tsc --noEmit
 
 ### Code Style Guidelines
 - **Imports**: Standard Library → Third-Party → Local
-- **Naming**: camelCase für Variablen/Funktionen, PascalCase für Components
-- **TypeScript**: Explizite Types, kein `any`
-- **Components**: Functional Components mit Hooks
-- **State**: Zustand für globalen State, useState für lokalen State
-- **Tailwind**: Utility-First, keine custom CSS außer absolut notwendig
+- **Naming**: camelCase for variables/functions, PascalCase for components
+- **TypeScript**: Explicit types, no `any`
+- **Components**: Functional components with hooks
+- **State**: Zustand for global state, useState for local state
+- **Tailwind**: Utility-first, no custom CSS unless absolutely necessary
 
 ---
 
@@ -575,7 +580,7 @@ npx tsc --noEmit
 
 ### ESPN API Integration
 
-Die App nutzt die ESPN API für Live-Daten. Der Express-Server fungiert als Proxy mit Server-Side Caching.
+The app uses the ESPN API for live data. The Express server acts as a proxy with server-side caching.
 
 #### Scoreboard Endpoint
 ```typescript
@@ -624,41 +629,41 @@ Response:
 
 ---
 
-## 🐛 Bekannte Issues & Lösungen
+## 🐛 Known Issues & Solutions
 
-### Browser Cache auf iPad
-- **Problem**: iPad cached manchmal alte Versionen aggressiv
-- **Lösung**:
-  1. Hard Refresh: Safari-Einstellungen → Verlauf löschen
-  2. Privater Modus nutzen
-  3. "Ohne Inhaltsblocker" beim Reload-Button (gedrückt halten)
+### Browser Cache on iPad
+- **Problem**: iPad sometimes aggressively caches old versions
+- **Solution**:
+  1. Hard refresh: Safari settings → Clear history
+  2. Use private mode
+  3. "Without content blockers" at reload button (hold)
 
-### Live-Updates verzögert
-- **Hinweis**: API aktualisiert sich basierend auf Spielstatus
-- **Normal**: 10 Sekunden für Live, 1 Minute für Scheduled
-- **Anpassung**: In `src/hooks/useGameData.ts` Intervall ändern
+### Delayed Live Updates
+- **Note**: API updates based on game status
+- **Normal**: 10 seconds for live, 1 minute for scheduled
+- **Adjustment**: Change interval in `src/hooks/useGameData.ts`
 
-### Celebration-Videos spielen nicht
-- **Mögliche Ursachen**:
-  1. Browser-Autoplay-Policy
-  2. Videos nicht im `public/videos/` Ordner
-  3. Video-Format nicht unterstützt
-- **Lösung**:
-  1. User-Interaktion erforderlich (erste Aktion)
-  2. Videos im richtigen Ordner ablegen
-  3. MP4-Format verwenden (H.264 Codec)
+### Celebration Videos Not Playing
+- **Possible causes**:
+  1. Browser autoplay policy
+  2. Videos not in `public/videos/` folder
+  3. Video format not supported
+- **Solution**:
+  1. User interaction required (first action)
+  2. Place videos in correct folder
+  3. Use MP4 format (H.264 codec)
 
 ---
 
 ## 🤝 Contributing
 
-Contributions sind willkommen! Bitte:
+Contributions are welcome! Please:
 
-1. Fork das Repository
-2. Erstelle einen Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit deine Changes (`git commit -m 'Add: AmazingFeature'`)
-4. Push zum Branch (`git push origin feature/AmazingFeature`)
-5. Öffne einen Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add: AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
 
 ### Commit Message Format
 ```
@@ -673,13 +678,13 @@ chore: update dependencies
 
 ---
 
-## 📄 Lizenz
+## 📄 License
 
-Dieses Projekt ist unter der **MIT License** lizenziert.
+This project is licensed under the **MIT License**.
 
 ---
 
-## 👤 Autor
+## 👤 Author
 
 **GhostTalker**
 
@@ -688,119 +693,131 @@ Dieses Projekt ist unter der **MIT License** lizenziert.
 
 ---
 
-## 🙏 Danksagungen
+## 🙏 Acknowledgments
 
-- **ESPN API** für die Live-Daten
-- **React Team** für das großartige Framework
-- **Tailwind CSS** für das Utility-First CSS Framework
-- **Vite** für den blitzschnellen Build-Prozess
-- **Zustand** für einfaches State Management
+- **ESPN API** for the live data
+- **React Team** for the great framework
+- **Tailwind CSS** for the utility-first CSS framework
+- **Vite** for the lightning-fast build process
+- **Zustand** for simple state management
 
 ---
 
 ## 📝 Changelog
 
-### v1.2.9 (2025-01-12)
+### v1.3.0 (2025-01-12)
 - 🎯 **MultiView Enhancements**
-  - ✅ Perfekte vertikale und horizontale Zentrierung auf allen Geräten (inkl. iPad)
-  - ✅ Filter immer sichtbar im Settings-Menü
-  - ✅ Größeres Title Graphic (h-48) für bessere Sichtbarkeit
+  - ✅ Perfect vertical and horizontal centering on all devices (incl. iPad)
+  - ✅ Filters always visible in settings menu
+  - ✅ Larger title graphic (h-48) for better visibility
+  - ✅ **Scoring team highlights** - Logo and team name glow in team colors when scoring (30 seconds)
 - 🔧 **Bug Fixes**
-  - ✅ Zentrierung auf iPad korrigiert
-  - ✅ MultiView-Filter jetzt immer sichtbar, nicht nur im Multi-Modus
+  - ✅ Centering on iPad corrected
+  - ✅ MultiView filters now always visible, not just in multi-mode
+- 📚 **Documentation**
+  - ✅ Complete README overhaul with comprehensive usage guide
+  - ✅ Added screenshots (SingleView, MultiView)
+  - ✅ English translation
+
+### v1.2.9 (2025-01-12)
+- 🎯 **MultiView Improvements**
+  - ✅ Perfect vertical and horizontal centering on all devices
+  - ✅ Filters always visible in settings menu
+  - ✅ Larger title graphic
 
 ### v1.2.8 (2025-01-12)
 - 🎯 **Layout Improvements**
-  - ✅ Vertikale Zentrierung in MultiView Game Cards
-  - ✅ Horizontale Skalierung beim Hover (scale-x)
-  - ✅ Optimierte Ausrichtung für iPad
+  - ✅ Vertical centering in MultiView game cards
+  - ✅ Horizontal scaling on hover (scale-x)
+  - ✅ Optimized alignment for iPad
 
 ### v1.2.7 (2025-01-12)
 - 🎨 **Visual Updates**
-  - ✅ Größeres Title Graphic in MultiView (h-40)
+  - ✅ Larger title graphic in MultiView (h-40)
 
 ### v1.2.6 (2025-01-12)
 - 🔧 **Game Selector Fixes**
-  - ✅ Einheitliche Boxgrößen für alle Spiele
-  - ✅ Horizontaler Scrollbalken verhindert
+  - ✅ Uniform box sizes for all games
+  - ✅ Horizontal scrollbar prevented
 
 ### v1.2.5 (2025-01-12)
 - 🎨 **Game Selector Improvements**
-  - ✅ Größere Logos (10x10) statt Abkürzungen
-  - ✅ Ausgeschriebene Team-Namen (shortDisplayName)
-  - ✅ Bessere Lesbarkeit durch mehr Padding
+  - ✅ Larger logos (10x10) instead of abbreviations
+  - ✅ Full team names (shortDisplayName)
+  - ✅ Better readability through more padding
 
 ### v1.2.4 (2025-01-12)
 - 🎯 **Filter & Layout**
-  - ✅ MultiView-Filter auf Game Selector angewendet
-  - ✅ "Single Game" zu "SingleView" umbenannt
-  - ✅ Kompakte 2-Spalten-Ansicht in Game Selector
+  - ✅ MultiView filters applied to game selector
+  - ✅ "Single Game" renamed to "SingleView"
+  - ✅ Compact 2-column view in game selector
 
 ### v1.2.3 (2025-01-12)
 - 🎨 **Naming & UX**
-  - ✅ "All Games" zu "MultiView" umbenannt
-  - ✅ Filter horizontal unter MultiView-Button angeordnet
+  - ✅ "All Games" renamed to "MultiView"
+  - ✅ Filters arranged horizontally below MultiView button
 
 ### v1.2.2 (2025-01-12)
 - 🎯 **MultiView Features**
-  - ✅ Filter in Settings verschoben (Live, Upcoming, Final)
-  - ✅ Dynamische Box-Größen basierend auf Spielanzahl
-  - ✅ Persistente Filter-Einstellungen
+  - ✅ Filters moved to settings (Live, Upcoming, Final)
+  - ✅ Dynamic box sizes based on game count
+  - ✅ Persistent filter settings
 
 ### v1.2.1 (2025-01-12)
 - 🎮 **MultiView Mode**
-  - ✅ Alle Spiele auf einen Blick
-  - ✅ 2-Spalten-Grid-Layout
-  - ✅ Kompaktes Design für bis zu 14 Spiele
-  - ✅ Score-Change-Erkennung mit roter Highlight
-  - ✅ Auto-Close Settings beim View-Mode-Wechsel
+  - ✅ All games at a glance
+  - ✅ 2-column grid layout
+  - ✅ Compact design for up to 14 games
+  - ✅ Score change detection with red highlight
+  - ✅ Auto-close settings on view mode change
 
 ### v1.0.1 (2025-01-07)
-- ✨ **Custom Title-Grafiken** - PNG-Grafiken ersetzen Text-Titel
-  - 🏆 Super Bowl mit goldenem Glow-Effekt
-  - 🥈 Conference Championship mit silbernem Glow
-  - 🔵 Divisional Round Grafik
-  - 🃏 Wild Card Grafik
-  - 🏈 Game Day Grafik für Regular Season
-- ✅ Fallback zu Text wenn Grafik nicht lädt
-- ✅ Automatische Grafik-Auswahl basierend auf Spieltyp
+- ✨ **Custom Title Graphics** - PNG graphics replace text titles
+  - 🏆 Super Bowl with golden glow effect
+  - 🥈 Conference Championship with silver glow
+  - 🔵 Divisional Round graphic
+  - 🃏 Wild Card graphic
+  - 🏈 Game Day graphic for Regular Season
+- ✅ Fallback to text if graphic doesn't load
+- ✅ Automatic graphic selection based on game type
 
 ### v1.0.0 (2025-01-07)
 - ✨ Initial Release
-- ✅ Live NFL Scoreboard mit ESPN API
-- ✅ Deutsche Lokalisierung (DD.MM.YYYY, 24h)
-- ✅ Playoff-Erkennung & automatische Wochenauswahl
-- ✅ Dynamische Hintergründe je nach Spieltyp
-- ✅ CSS Grid für perfekte Zentrierung
-- ✅ Vergrößerte Logos & Namen
-- ✅ Game Selector mit Swipe-Gesten
-- ✅ Statistik-Panel
-- ✅ Settings-Panel
-- ✅ Responsive Design für iPad mini 6
-- ✅ Production-optimierter Build
+- ✅ Live NFL Scoreboard with ESPN API
+- ✅ German localization (DD.MM.YYYY, 24h)
+- ✅ Playoff detection & automatic week selection
+- ✅ Dynamic backgrounds based on game type
+- ✅ CSS Grid for perfect centering
+- ✅ Enlarged logos & names
+- ✅ Game selector with swipe gestures
+- ✅ Statistics panel
+- ✅ Settings panel
+- ✅ Responsive design for iPad mini 6
+- ✅ Production-optimized build
 
 ---
 
 ## 🔮 Roadmap
 
-### Implementiert ✅
+### Implemented ✅
 - [x] ~~Custom PNG Title Graphics~~ (v1.0.1)
 - [x] ~~Celebration Videos~~ (v1.1.0)
-- [x] ~~Sound-Effekte~~ (v1.1.0)
+- [x] ~~Sound Effects~~ (v1.1.0)
 - [x] ~~Multi-Game-View~~ (v1.2.1)
 - [x] ~~Individual Celebration Control~~ (v1.2.0)
 - [x] ~~Game Filters~~ (v1.2.2)
+- [x] ~~Scoring Team Highlights~~ (v1.3.0)
 
-### Geplante Features 🚧
-- [ ] Bessere Hintergrund-Grafiken für Video Wall
-- [ ] Enhanced Stats Visualisierung
-- [ ] Drive Charts
-- [ ] Play-by-Play Anzeige mit Timeline
-- [ ] Theme-Customization
-- [ ] Push-Benachrichtigungen bei Score-Changes
-- [ ] Favoriten-Team Highlighting
-- [ ] Game Replay / Highlight Clips
-- [ ] Social Media Integration
+### Planned Features 🚧
+- [ ] Better background graphics for video wall
+- [ ] Enhanced stats visualization
+- [ ] Drive charts
+- [ ] Play-by-play display with timeline
+- [ ] Theme customization
+- [ ] Push notifications on score changes
+- [ ] Favorite team highlighting
+- [ ] Game replay / highlight clips
+- [ ] Social media integration
 
 ---
 
