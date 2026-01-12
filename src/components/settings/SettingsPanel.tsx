@@ -10,48 +10,44 @@ function MultiViewFilters() {
   const setMultiViewFilter = useSettingsStore((state) => state.setMultiViewFilter);
 
   return (
-    <section className="bg-slate-800 rounded-xl p-6">
-      <h3 className="text-lg font-semibold text-white mb-4">Multi-View Filters</h3>
-      <p className="text-white/50 text-sm mb-4">Choose which game types to display</p>
-      <div className="space-y-3">
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={multiViewFilters.showLive}
-            onChange={(e) => setMultiViewFilter('showLive', e.target.checked)}
-            className="w-5 h-5 rounded border-2 border-red-500 bg-slate-700 checked:bg-red-600 focus:ring-2 focus:ring-red-500 cursor-pointer"
-          />
-          <span className="text-white font-medium flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-            Live Games
-          </span>
-        </label>
+    <div className="flex justify-center gap-6 mt-4">
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={multiViewFilters.showLive}
+          onChange={(e) => setMultiViewFilter('showLive', e.target.checked)}
+          className="w-4 h-4 rounded border-2 border-red-500 bg-slate-700 checked:bg-red-600 focus:ring-2 focus:ring-red-500 cursor-pointer"
+        />
+        <span className="text-sm font-bold text-white flex items-center gap-1.5">
+          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          Live
+        </span>
+      </label>
 
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={multiViewFilters.showUpcoming}
-            onChange={(e) => setMultiViewFilter('showUpcoming', e.target.checked)}
-            className="w-5 h-5 rounded border-2 border-blue-500 bg-slate-700 checked:bg-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
-          />
-          <span className="text-white font-medium">
-            Upcoming Games
-          </span>
-        </label>
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={multiViewFilters.showUpcoming}
+          onChange={(e) => setMultiViewFilter('showUpcoming', e.target.checked)}
+          className="w-4 h-4 rounded border-2 border-blue-500 bg-slate-700 checked:bg-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+        />
+        <span className="text-sm font-bold text-blue-400">
+          Upcoming
+        </span>
+      </label>
 
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={multiViewFilters.showFinal}
-            onChange={(e) => setMultiViewFilter('showFinal', e.target.checked)}
-            className="w-5 h-5 rounded border-2 border-gray-500 bg-slate-700 checked:bg-gray-600 focus:ring-2 focus:ring-gray-500 cursor-pointer"
-          />
-          <span className="text-white font-medium">
-            Final Games
-          </span>
-        </label>
-      </div>
-    </section>
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={multiViewFilters.showFinal}
+          onChange={(e) => setMultiViewFilter('showFinal', e.target.checked)}
+          className="w-4 h-4 rounded border-2 border-gray-500 bg-slate-700 checked:bg-gray-600 focus:ring-2 focus:ring-gray-500 cursor-pointer"
+        />
+        <span className="text-sm font-bold text-gray-400">
+          Final
+        </span>
+      </label>
+    </div>
   );
 }
 
@@ -104,14 +100,14 @@ export function SettingsPanel() {
                   : 'bg-slate-700 text-white/70 hover:bg-slate-600'}
               `}
             >
-              <div className="text-lg">All Games</div>
+              <div className="text-lg">MultiView</div>
               <div className="text-xs opacity-70 mt-1">Overview of all games</div>
             </button>
           </div>
-        </section>
 
-        {/* Multi-View Filters */}
-        {viewMode === 'multi' && <MultiViewFilters />}
+          {/* Multi-View Filters - shown directly below MultiView button */}
+          {viewMode === 'multi' && <MultiViewFilters />}
+        </section>
 
         {/* Game Selection - Now the primary control */}
         <section className="bg-slate-800 rounded-xl p-6">
