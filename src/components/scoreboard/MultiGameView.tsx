@@ -5,8 +5,8 @@ import { getTitleGraphic } from '../../constants/titleGraphics';
 import type { Game, Team } from '../../types/game';
 import { version } from '../../../package.json';
 
-// Track games with recent score changes (game ID -> timestamp)
-type ScoreChangeMap = Map<string, number>;
+// Track games with recent score changes (game ID -> { timestamp, scoringTeam })
+type ScoreChangeMap = Map<string, { timestamp: number; scoringTeam: 'home' | 'away' | null }>;
 
 export function MultiGameView() {
   const availableGames = useGameStore((state) => state.availableGames);
@@ -27,9 +27,20 @@ export function MultiGameView() {
     availableGames.forEach((game) => {
       const prev = previousScoresRef.current.get(game.id);
       if (prev) {
-        // Check if score changed
-        if (prev.home !== game.homeTeam.score || prev.away !== game.awayTeam.score) {
-          newChanges.set(game.id, now);
+        // Check if score changed and which team scored
+        let scoringTeam: 'home' | 'away' | null = null;
+
+        if (prev.home !== game.homeTeam.score && prev.away !== game.awayTeam.score) {
+          // Both teams scored (unlikely but possible)
+          scoringTeam = null;
+        } else if (prev.home !== game.homeTeam.score) {
+          scoringTeam = 'home';
+        } else if (prev.away !== game.awayTeam.score) {
+          scoringTeam = 'away';
+        }
+
+        if (scoringTeam !== null || (prev.home !== game.homeTeam.score || prev.away !== game.awayTeam.score)) {
+          newChanges.set(game.id, { timestamp: now, scoringTeam });
           hasNewChange = true;
         }
       }
@@ -52,10 +63,10 @@ export function MultiGameView() {
       const thirtySecondsAgo = now - 30000;
 
       setRecentScoreChanges((prev) => {
-        const filtered = new Map<string, number>();
-        prev.forEach((timestamp, gameId) => {
-          if (timestamp > thirtySecondsAgo) {
-            filtered.set(gameId, timestamp);
+        const filtered = new Map<string, { timestamp: number; scoringTeam: 'home' | 'away' | null }>();
+        prev.forEach((data, gameId) => {
+          if (data.timestamp > thirtySecondsAgo) {
+            filtered.set(gameId, data);
           }
         });
         return filtered;
@@ -130,11 +141,12 @@ export function MultiGameView() {
     setViewMode('single');
   };
 
-  // Check if a game has a recent score change
-  const hasRecentScoreChange = (gameId: string): boolean => {
-    const changeTime = recentScoreChanges.get(gameId);
-    if (!changeTime) return false;
-    return Date.now() - changeTime < 30000;
+  // Get recent score change data for a game
+  const getScoreChangeData = (gameId: string): { hasChange: boolean; scoringTeam: 'home' | 'away' | null } => {
+    const changeData = recentScoreChanges.get(gameId);
+    if (!changeData) return { hasChange: false, scoringTeam: null };
+    const isRecent = Date.now() - changeData.timestamp < 30000;
+    return { hasChange: isRecent, scoringTeam: isRecent ? changeData.scoringTeam : null };
   };
 
   if (allGames.length === 0) {
@@ -173,15 +185,19 @@ export function MultiGameView() {
       {/* Games Grid - 2 columns */}
       <div className="flex-1 overflow-y-auto px-4 pb-4">
         <div className={`grid grid-cols-2 ${layoutConfig.gridGap} max-w-6xl mx-auto`}>
-          {allGames.map((game) => (
-            <GameCard
-              key={game.id}
-              game={game}
-              onSelect={handleSelectGame}
-              hasScoreChange={hasRecentScoreChange(game.id)}
-              layoutConfig={layoutConfig}
-            />
-          ))}
+          {allGames.map((game) => {
+            const scoreChangeData = getScoreChangeData(game.id);
+            return (
+              <GameCard
+                key={game.id}
+                game={game}
+                onSelect={handleSelectGame}
+                hasScoreChange={scoreChangeData.hasChange}
+                scoringTeam={scoreChangeData.scoringTeam}
+                layoutConfig={layoutConfig}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -208,10 +224,11 @@ interface GameCardProps {
   game: Game;
   onSelect: (game: Game) => void;
   hasScoreChange: boolean;
+  scoringTeam: 'home' | 'away' | null;
   layoutConfig: LayoutConfig;
 }
 
-function GameCard({ game, onSelect, hasScoreChange, layoutConfig }: GameCardProps) {
+function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }: GameCardProps) {
   const isLive = game.status === 'in_progress' || game.status === 'halftime';
   const isFinal = game.status === 'final';
   const isScheduled = game.status === 'scheduled';
@@ -316,7 +333,13 @@ function GameCard({ game, onSelect, hasScoreChange, layoutConfig }: GameCardProp
       {/* Teams and Score - Centered Layout */}
       <div className="flex items-center justify-center gap-3 w-full">
         {/* Away Team */}
-        <TeamBadge team={game.awayTeam} isFinal={isFinal} isWinner={game.awayTeam.score > game.homeTeam.score} layoutConfig={layoutConfig} />
+        <TeamBadge
+          team={game.awayTeam}
+          isFinal={isFinal}
+          isWinner={game.awayTeam.score > game.homeTeam.score}
+          layoutConfig={layoutConfig}
+          hasScored={scoringTeam === 'away'}
+        />
 
         {/* Score Display - Centered - Fixed width for consistency */}
         <div className="flex items-center justify-center gap-1.5 min-w-[120px]">
@@ -364,7 +387,13 @@ function GameCard({ game, onSelect, hasScoreChange, layoutConfig }: GameCardProp
         </div>
 
         {/* Home Team */}
-        <TeamBadge team={game.homeTeam} isFinal={isFinal} isWinner={game.homeTeam.score > game.awayTeam.score} layoutConfig={layoutConfig} />
+        <TeamBadge
+          team={game.homeTeam}
+          isFinal={isFinal}
+          isWinner={game.homeTeam.score > game.awayTeam.score}
+          layoutConfig={layoutConfig}
+          hasScored={scoringTeam === 'home'}
+        />
       </div>
     </button>
   );
@@ -375,9 +404,10 @@ interface TeamBadgeProps {
   isFinal: boolean;
   isWinner: boolean;
   layoutConfig: LayoutConfig;
+  hasScored: boolean;
 }
 
-function TeamBadge({ team, isFinal, isWinner, layoutConfig }: TeamBadgeProps) {
+function TeamBadge({ team, isFinal, isWinner, layoutConfig, hasScored }: TeamBadgeProps) {
   // Check if the primary color is too dark (for glow visibility)
   const hexToRgbSum = (hex: string) => {
     const r = parseInt(hex.slice(0, 2), 16);
@@ -398,13 +428,21 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig }: TeamBadgeProps) {
     <div className={`flex flex-col items-center gap-1 ${layoutConfig.teamBoxWidth}`} style={{ opacity }}>
       {/* Team Logo with Glow Effect */}
       <div
-        className={`relative ${layoutConfig.logoSize} rounded-full flex items-center justify-center`}
+        className={`relative ${layoutConfig.logoSize} rounded-full flex items-center justify-center ${hasScored ? 'animate-pulse' : ''}`}
         style={{
-          background: `radial-gradient(circle, #${glowColor}40 0%, #${glowColor}15 50%, transparent 70%)`,
-          boxShadow: `
-            0 0 25px #${glowColor}40,
-            0 0 40px #${glowColor}20
-          `,
+          background: hasScored
+            ? `radial-gradient(circle, #${glowColor}90 0%, #${glowColor}50 50%, transparent 70%)`
+            : `radial-gradient(circle, #${glowColor}40 0%, #${glowColor}15 50%, transparent 70%)`,
+          boxShadow: hasScored
+            ? `
+                0 0 50px #${glowColor}90,
+                0 0 80px #${glowColor}60,
+                0 0 100px #${glowColor}40
+              `
+            : `
+                0 0 25px #${glowColor}40,
+                0 0 40px #${glowColor}20
+              `,
         }}
       >
         {/* Outer ring */}
@@ -412,10 +450,15 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig }: TeamBadgeProps) {
           className="absolute inset-0.5 rounded-full"
           style={{
             border: `2px solid #${primaryColor}`,
-            boxShadow: `
-              0 0 12px #${glowColor}60,
-              inset 0 0 12px #${glowColor}30
-            `,
+            boxShadow: hasScored
+              ? `
+                  0 0 20px #${glowColor}90,
+                  inset 0 0 20px #${glowColor}60
+                `
+              : `
+                  0 0 12px #${glowColor}60,
+                  inset 0 0 12px #${glowColor}30
+                `,
           }}
         />
 
@@ -424,32 +467,50 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig }: TeamBadgeProps) {
           alt={team.abbreviation}
           className={`${layoutConfig.logoInner} object-contain relative z-10`}
           style={{
-            filter: `drop-shadow(0 0 8px #${glowColor}80)`,
+            filter: hasScored
+              ? `drop-shadow(0 0 16px #${glowColor}) brightness(1.2)`
+              : `drop-shadow(0 0 8px #${glowColor}80)`,
           }}
         />
       </div>
 
       {/* Team Name Box */}
-      <div className="relative w-full">
+      <div className={`relative w-full ${hasScored ? 'animate-pulse' : ''}`}>
         {/* Glow background */}
         <div
-          className="absolute inset-0 blur-sm opacity-50 rounded"
-          style={{ backgroundColor: `#${team.color}` }}
+          className="absolute inset-0 blur-sm rounded"
+          style={{
+            backgroundColor: `#${team.color}`,
+            opacity: hasScored ? 0.9 : 0.5,
+          }}
         />
 
         {/* Name container */}
         <div
           className="relative px-1.5 py-0.5 rounded border w-full"
           style={{
-            background: `linear-gradient(180deg, #${team.color}cc 0%, #${team.color}88 100%)`,
+            background: hasScored
+              ? `linear-gradient(180deg, #${team.color} 0%, #${team.color}cc 100%)`
+              : `linear-gradient(180deg, #${team.color}cc 0%, #${team.color}88 100%)`,
             borderColor: `#${team.alternateColor || team.color}`,
-            boxShadow: `0 1px 8px #${team.color}50`,
+            boxShadow: hasScored
+              ? `
+                  0 0 15px #${team.color},
+                  0 0 25px #${team.color}80,
+                  0 1px 8px #${team.color}50
+                `
+              : `0 1px 8px #${team.color}50`,
           }}
         >
           <span
             className="text-[10px] font-bold text-white uppercase tracking-tight block text-center truncate leading-tight"
             style={{
-              textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+              textShadow: hasScored
+                ? `
+                    0 0 8px #${glowColor},
+                    0 1px 2px rgba(0,0,0,0.5)
+                  `
+                : '0 1px 2px rgba(0,0,0,0.5)',
             }}
           >
             {team.shortDisplayName}
