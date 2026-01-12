@@ -204,16 +204,13 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] text-left h-[180px] flex flex-col ${
+      className={`rounded-2xl p-3 transition-all duration-300 hover:scale-[1.02] text-left h-[165px] flex flex-col ${
         hasScoreChange ? 'animate-pulse' : ''
       }`}
       style={getCardStyle()}
     >
-      {/* Top spacer for vertical centering */}
-      <div className="flex-1 min-h-0" />
-
       {/* Status Badge */}
-      <div className="flex justify-center mb-3">
+      <div className="flex justify-center mb-2">
         {isLive && !isHalftime && (
           <div
             className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
@@ -301,9 +298,6 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
         {/* Home Team */}
         <TeamBadge team={game.homeTeam} isFinal={isFinal} isWinner={game.homeTeam.score > game.awayTeam.score} />
       </div>
-
-      {/* Bottom spacer for vertical centering */}
-      <div className="flex-1 min-h-0" />
     </button>
   );
 }
