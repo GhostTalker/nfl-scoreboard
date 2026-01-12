@@ -75,10 +75,10 @@ export function MainScoreboard() {
     if (isLive) {
       return {
         background: `
-          radial-gradient(ellipse at top, rgba(220,38,38,0.3) 0%, transparent 40%),
-          radial-gradient(ellipse at bottom left, rgba(234,88,12,0.2) 0%, transparent 50%),
-          radial-gradient(ellipse at bottom right, rgba(239,68,68,0.25) 0%, transparent 50%),
-          linear-gradient(135deg, #1a0a0a 0%, #2d1212 25%, #1a0a0a 50%, #2d1212 75%, #1a0a0a 100%)
+          radial-gradient(ellipse at top, rgba(30,58,138,0.4) 0%, transparent 40%),
+          radial-gradient(ellipse at bottom left, rgba(37,99,235,0.3) 0%, transparent 50%),
+          radial-gradient(ellipse at bottom right, rgba(29,78,216,0.35) 0%, transparent 50%),
+          linear-gradient(135deg, #0a0f1e 0%, #121a2e 25%, #0a0f1e 50%, #121a2e 75%, #0a0f1e 100%)
         `,
       };
     }
@@ -128,12 +128,12 @@ export function MainScoreboard() {
       <div 
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-40 pointer-events-none transition-all duration-1000"
         style={{
-          background: isSuperBowl 
+          background: isSuperBowl
             ? 'radial-gradient(ellipse, rgba(255,215,0,0.25) 0%, transparent 70%)'
             : isConference
             ? 'radial-gradient(ellipse, rgba(200,200,220,0.2) 0%, transparent 70%)'
             : isLive
-            ? 'radial-gradient(ellipse, rgba(220,38,38,0.25) 0%, transparent 70%)'
+            ? 'radial-gradient(ellipse, rgba(37,99,235,0.3) 0%, transparent 70%)'
             : isPlayoffs
             ? 'radial-gradient(ellipse, rgba(59,130,246,0.2) 0%, transparent 70%)'
             : 'radial-gradient(ellipse, rgba(255,200,100,0.15) 0%, transparent 70%)',
@@ -897,7 +897,7 @@ function ChampionshipParticles() {
 function LiveGameParticles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Pulsing red energy particles */}
+      {/* Pulsing blue energy particles */}
       {[...Array(12)].map((_, i) => (
         <div
           key={i}
@@ -907,7 +907,7 @@ function LiveGameParticles() {
             top: `${Math.random() * 100}%`,
             width: `${4 + Math.random() * 8}px`,
             height: `${4 + Math.random() * 8}px`,
-            backgroundColor: i % 2 === 0 ? 'rgba(220,38,38,0.3)' : 'rgba(234,88,12,0.25)',
+            backgroundColor: i % 2 === 0 ? 'rgba(37,99,235,0.35)' : 'rgba(29,78,216,0.3)',
             animationDelay: `${Math.random() * 2}s`,
             animationDuration: `${1.5 + Math.random() * 1.5}s`,
           }}
