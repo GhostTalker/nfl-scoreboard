@@ -5,7 +5,7 @@
 A modern, responsive web application for displaying live NFL games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-1.3.0-blue)
+![Version](https://img.shields.io/badge/Version-1.4.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -709,6 +709,16 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📝 Changelog
+
+### v1.4.0 (2025-01-12)
+- 🎨 **Visual Improvements**
+  - ✅ Changed live game background from red to professional dark blue
+  - ✅ Blue energy particles for live games instead of red
+  - ✅ Uniform game selection box sizes in settings
+- 📚 **Documentation**
+  - ✅ Fixed keyboard navigation documentation (Up arrow → Statistics)
+  - ✅ Added missing SingleView Live screenshot to README
+  - ✅ Corrected all screenshot descriptions
 
 ### v1.3.0 (2025-01-12)
 - 🎯 **MultiView Enhancements**
