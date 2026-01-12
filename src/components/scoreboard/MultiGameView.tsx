@@ -204,13 +204,13 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`rounded-2xl p-3 transition-all duration-300 hover:scale-[1.02] text-left h-[165px] flex flex-col ${
+      className={`rounded-2xl px-3 pt-2 pb-3 transition-all duration-300 hover:scale-[1.02] text-left h-[165px] flex flex-col ${
         hasScoreChange ? 'animate-pulse' : ''
       }`}
       style={getCardStyle()}
     >
       {/* Status Badge */}
-      <div className="flex justify-center mb-2">
+      <div className="flex justify-center mb-1">
         {isLive && !isHalftime && (
           <div
             className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
