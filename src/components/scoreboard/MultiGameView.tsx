@@ -272,13 +272,13 @@ function GameCard({ game, onSelect, hasScoreChange, layoutConfig }: GameCardProp
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`rounded-xl px-2 transition-all duration-300 hover:scale-x-[1.02] text-left ${layoutConfig.cardHeight} flex flex-col justify-center ${
+      className={`rounded-xl px-2 transition-all duration-300 hover:scale-x-[1.02] ${layoutConfig.cardHeight} flex flex-col justify-center items-center ${
         hasScoreChange ? 'animate-pulse' : ''
       }`}
       style={getCardStyle()}
     >
       {/* Status Badge */}
-      <div className="flex justify-center mb-0.5">
+      <div className="flex justify-center mb-0.5 w-full">
         {isLive && !isHalftime && (
           <div
             className={`px-3 py-1 rounded-full ${layoutConfig.badgeText} font-bold tracking-wide bg-red-600/90 text-white`}
@@ -314,7 +314,7 @@ function GameCard({ game, onSelect, hasScoreChange, layoutConfig }: GameCardProp
       </div>
 
       {/* Teams and Score - Centered Layout */}
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3 w-full">
         {/* Away Team */}
         <TeamBadge team={game.awayTeam} isFinal={isFinal} isWinner={game.awayTeam.score > game.homeTeam.score} layoutConfig={layoutConfig} />
 
