@@ -204,16 +204,13 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
   return (
     <button
       onClick={() => onSelect(game)}
-      className={`rounded-2xl p-3 transition-all duration-300 hover:scale-[1.02] text-left h-[160px] flex flex-col ${
+      className={`rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] text-left h-[180px] flex flex-col justify-center ${
         hasScoreChange ? 'animate-pulse' : ''
       }`}
       style={getCardStyle()}
     >
-      {/* Spacer to push content to center */}
-      <div className="flex-1" />
-
       {/* Status Badge */}
-      <div className="flex justify-center mb-2">
+      <div className="flex justify-center mb-3">
         {isLive && !isHalftime && (
           <div
             className="px-4 py-1.5 rounded-full text-sm font-bold tracking-wider bg-red-600/90 text-white"
@@ -301,9 +298,6 @@ function GameCard({ game, onSelect, hasScoreChange }: GameCardProps) {
         {/* Home Team */}
         <TeamBadge team={game.homeTeam} isFinal={isFinal} isWinner={game.homeTeam.score > game.awayTeam.score} />
       </div>
-
-      {/* Spacer to balance vertical centering */}
-      <div className="flex-1" />
     </button>
   );
 }
@@ -332,7 +326,7 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
   const opacity = isFinal && !isWinner ? 0.5 : 1;
 
   return (
-    <div className="flex flex-col items-center gap-1" style={{ opacity }}>
+    <div className="flex flex-col items-center gap-1.5 w-24" style={{ opacity }}>
       {/* Team Logo with Glow Effect */}
       <div
         className="relative w-20 h-20 rounded-full flex items-center justify-center"
@@ -367,7 +361,7 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
       </div>
 
       {/* Team Name Box */}
-      <div className="relative">
+      <div className="relative w-full">
         {/* Glow background */}
         <div
           className="absolute inset-0 blur-md opacity-50 rounded"
@@ -376,7 +370,7 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
 
         {/* Name container */}
         <div
-          className="relative px-3 py-0.5 rounded border"
+          className="relative px-2 py-1 rounded border w-full"
           style={{
             background: `linear-gradient(180deg, #${team.color}cc 0%, #${team.color}88 100%)`,
             borderColor: `#${team.alternateColor || team.color}`,
@@ -384,7 +378,7 @@ function TeamBadge({ team, isFinal, isWinner }: TeamBadgeProps) {
           }}
         >
           <span
-            className="text-xs font-bold text-white uppercase tracking-wide"
+            className="text-xs font-bold text-white uppercase tracking-tight block text-center truncate"
             style={{
               textShadow: '0 1px 3px rgba(0,0,0,0.5)',
             }}
