@@ -7,8 +7,10 @@ import { detectScoreChange } from '../services/scoreDetector';
 export function useScoreChange() {
   const currentGame = useGameStore((state) => state.currentGame);
   const updateScores = useGameStore((state) => state.updateScores);
+  const setScoringTeam = useGameStore((state) => state.setScoringTeam);
   const showCelebration = useUIStore((state) => state.showCelebration);
   const isCelebrationEnabled = useSettingsStore((state) => state.isCelebrationEnabled);
+  const viewMode = useSettingsStore((state) => state.viewMode);
   
   // Track the current game ID to detect game changes
   const currentGameId = useRef<string | null>(null);
@@ -56,8 +58,25 @@ export function useScoreChange() {
     // Only trigger celebration for score INCREASES (not decreases or corrections)
     const homeIncreased = newHomeScore > lastHome;
     const awayIncreased = newAwayScore > lastAway;
-    
+
     if (homeIncreased || awayIncreased) {
+      // Determine which team scored
+      let scoringTeam: 'home' | 'away' | null = null;
+      if (homeIncreased && !awayIncreased) {
+        scoringTeam = 'home';
+      } else if (awayIncreased && !homeIncreased) {
+        scoringTeam = 'away';
+      }
+
+      // Set scoring team (for glow effect in SingleView)
+      if (scoringTeam && viewMode === 'single') {
+        setScoringTeam(scoringTeam);
+        // Clear after 30 seconds
+        setTimeout(() => {
+          setScoringTeam(null);
+        }, 30000);
+      }
+
       // Detect the score change type
       const scoreEvent = detectScoreChange(
         lastHome,

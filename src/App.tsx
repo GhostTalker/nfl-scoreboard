@@ -52,8 +52,8 @@ function App() {
         </div>
       </SwipeContainer>
 
-      {/* Celebration Video Overlay */}
-      {celebrationOverlay.visible && celebrationOverlay.type && (
+      {/* Celebration Video Overlay - Only in SingleView */}
+      {celebrationOverlay.visible && celebrationOverlay.type && viewMode === 'single' && (
         <VideoOverlay type={celebrationOverlay.type} />
       )}
 

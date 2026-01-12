@@ -8,6 +8,8 @@ import { version } from '../../../package.json';
 
 export function MainScoreboard() {
   const currentGame = useGameStore((state) => state.currentGame);
+  const scoringTeam = useGameStore((state) => state.scoringTeam);
+  const scoringTimestamp = useGameStore((state) => state.scoringTimestamp);
   const isLoading = useGameStore((state) => state.isLoading);
   const error = useGameStore((state) => state.error);
 
@@ -15,7 +17,18 @@ export function MainScoreboard() {
   const [debugMode, setDebugMode] = useState(false);
   const [debugSeason, setDebugSeason] = useState<string | null>(null);
   const [debugBackground, setDebugBackground] = useState<string | null>(null);
-  
+
+  // Force re-render to update scoring glow effect timer
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (scoringTimestamp) {
+      const interval = setInterval(() => {
+        setTick((t) => t + 1);
+      }, 100); // Update every 100ms for smooth animation
+      return () => clearInterval(interval);
+    }
+  }, [scoringTimestamp]);
+
   // Toggle debug mode with 'D' key
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -154,7 +167,10 @@ export function MainScoreboard() {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full max-w-7xl px-8 gap-12 mt-24">
         {/* Away Team - Right aligned */}
         <div className="flex justify-end">
-          <TeamDisplay team={currentGame.awayTeam} />
+          <TeamDisplay
+            team={currentGame.awayTeam}
+            hasScored={scoringTeam === 'away' && scoringTimestamp !== null && Date.now() - scoringTimestamp < 30000}
+          />
         </div>
 
         {/* Center Section - Score or Start Time - Always centered */}
@@ -304,7 +320,10 @@ export function MainScoreboard() {
 
         {/* Home Team */}
         <div className="flex justify-start">
-          <TeamDisplay team={currentGame.homeTeam} />
+          <TeamDisplay
+            team={currentGame.homeTeam}
+            hasScored={scoringTeam === 'home' && scoringTimestamp !== null && Date.now() - scoringTimestamp < 30000}
+          />
         </div>
       </div>
 

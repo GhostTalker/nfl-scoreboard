@@ -21,6 +21,10 @@ interface GameState {
   // Scores tracking (for change detection)
   previousScores: PreviousScores;
 
+  // Scoring team tracking (for glow effect)
+  scoringTeam: 'home' | 'away' | null;
+  scoringTimestamp: number | null;
+
   // Stats
   gameStats: GameStats | null;
 
@@ -33,6 +37,7 @@ interface GameState {
   confirmGameSelection: (game: Game) => void;
   setAvailableGames: (games: Game[]) => void;
   updateScores: (home: number, away: number) => void;
+  setScoringTeam: (team: 'home' | 'away' | null) => void;
   setGameStats: (stats: GameStats | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -45,6 +50,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   userConfirmedGameId: null,
   availableGames: [],
   previousScores: { home: 0, away: 0 },
+  scoringTeam: null,
+  scoringTimestamp: null,
   gameStats: null,
   isLoading: false,
   error: null,
@@ -76,6 +83,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentGame: game,
       isLive,
       previousScores: newPreviousScores,
+      scoringTeam: isNewGame ? null : get().scoringTeam,
+      scoringTimestamp: isNewGame ? null : get().scoringTimestamp,
     });
   },
 
@@ -87,6 +96,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       isLive,
       userConfirmedGameId: game.id,
       previousScores: { home: game.homeTeam.score, away: game.awayTeam.score },
+      scoringTeam: null,
+      scoringTimestamp: null,
     });
   },
 
@@ -98,6 +109,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (previousScores.home !== home || previousScores.away !== away) {
       set({ previousScores: { home, away } });
     }
+  },
+
+  setScoringTeam: (team) => {
+    set({
+      scoringTeam: team,
+      scoringTimestamp: team ? Date.now() : null
+    });
   },
 
   setGameStats: (stats) => set({ gameStats: stats }),
