@@ -42,7 +42,7 @@ export function GameSelector() {
             <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
             <span className="text-red-400 text-sm font-bold uppercase tracking-wider">Live</span>
           </div>
-          <div className={`grid gap-2 ${filteredLiveGames.length === 1 ? 'grid-cols-1 place-items-center' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${filteredLiveGames.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
             {filteredLiveGames.map((game) => (
               <GameCard
                 key={game.id}
@@ -65,7 +65,7 @@ export function GameSelector() {
             </svg>
             <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">Upcoming</span>
           </div>
-          <div className={`grid gap-2 ${filteredScheduledGames.length === 1 ? 'grid-cols-1 place-items-center' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${filteredScheduledGames.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
             {filteredScheduledGames.map((game) => (
               <GameCard
                 key={game.id}
@@ -88,7 +88,7 @@ export function GameSelector() {
             </svg>
             <span className="text-gray-400 text-sm font-bold uppercase tracking-wider">Final</span>
           </div>
-          <div className={`grid gap-2 ${filteredFinishedGames.length === 1 ? 'grid-cols-1 place-items-center' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${filteredFinishedGames.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
             {filteredFinishedGames.map((game) => (
               <GameCard
                 key={game.id}
@@ -157,7 +157,7 @@ function GameCard({ game, isSelected, onSelect, isSingleInCategory }: GameCardPr
     <button
       onClick={() => onSelect(game)}
       className={`
-        ${isSingleInCategory ? 'max-w-md' : 'w-full'} flex flex-col gap-1.5 p-2 rounded-lg transition-all text-left relative
+        ${isSingleInCategory ? 'max-w-md' : 'w-full'} flex flex-col gap-2 p-3 rounded-lg transition-all text-left relative
         ${isSelected
           ? 'bg-blue-600 ring-2 ring-blue-400'
           : isLive
@@ -190,39 +190,39 @@ function GameCard({ game, isSelected, onSelect, isSingleInCategory }: GameCardPr
       {/* Main row: Teams & Score */}
       <div className="flex items-center gap-2">
         {/* Away Team */}
-        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
           <img
             src={game.awayTeam.logo}
             alt={game.awayTeam.abbreviation}
-            className="w-6 h-6 flex-shrink-0 object-contain"
+            className="w-10 h-10 flex-shrink-0 object-contain"
           />
-          <span className="font-bold text-white text-xs truncate">
-            {game.awayTeam.abbreviation}
+          <span className="font-bold text-white text-sm truncate">
+            {game.awayTeam.shortDisplayName}
           </span>
         </div>
 
         {/* Score / Time */}
         <div className="flex items-center justify-center flex-shrink-0">
           {isLive || isFinal || isHalftime ? (
-            <span className="text-base font-black text-white">
+            <span className="text-lg font-black text-white">
               {game.awayTeam.score} - {game.homeTeam.score}
             </span>
           ) : (
-            <span className="text-xs font-bold text-blue-400">
+            <span className="text-sm font-bold text-blue-400">
               vs
             </span>
           )}
         </div>
 
         {/* Home Team */}
-        <div className="flex items-center gap-1.5 flex-1 justify-end min-w-0">
-          <span className="font-bold text-white text-xs truncate">
-            {game.homeTeam.abbreviation}
+        <div className="flex items-center gap-2 flex-1 justify-end min-w-0">
+          <span className="font-bold text-white text-sm truncate">
+            {game.homeTeam.shortDisplayName}
           </span>
           <img
             src={game.homeTeam.logo}
             alt={game.homeTeam.abbreviation}
-            className="w-6 h-6 flex-shrink-0 object-contain"
+            className="w-10 h-10 flex-shrink-0 object-contain"
           />
         </div>
       </div>
