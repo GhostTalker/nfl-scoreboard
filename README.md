@@ -5,7 +5,7 @@
 A modern, responsive web application for displaying live NFL games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-1.4.0-blue)
+![Version](https://img.shields.io/badge/Version-1.5.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -709,6 +709,17 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📝 Changelog
+
+### v1.5.0 (2025-01-12)
+- 🎬 **Celebration Updates**
+  - ✅ Disabled video overlays in MultiView mode
+  - ✅ Videos now only play in SingleView for focused experience
+- ✨ **Scoring Glow Effect in SingleView**
+  - ✅ Scoring team's logo glows brighter with enhanced team colors (30 seconds)
+  - ✅ Scoring team's name box pulses and glows with team colors (30 seconds)
+  - ✅ Smooth pulsing animation (animate-pulse)
+  - ✅ No logo darkening - only enhanced glow effects
+  - ✅ Auto-clears after 30 seconds
 
 ### v1.4.0 (2025-01-12)
 - 🎨 **Visual Improvements**
