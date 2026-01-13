@@ -20,9 +20,10 @@ export class BundesligaAdapter implements SportAdapter {
       }
       const currentGroup = await currentGroupResponse.json();
 
-      // Fetch all matches for current matchday
+      // Fetch all matches for current matchday with season parameter
+      // OpenLigaDB currentGroup doesn't include season, so we use 2024 (current season)
       const matchesResponse = await fetch(
-        API_ENDPOINTS.bundesligaMatchday(currentGroup.groupOrderID)
+        `${API_ENDPOINTS.bundesligaMatchday(currentGroup.groupOrderID)}?season=2024`
       );
       if (!matchesResponse.ok) {
         throw new Error(`OpenLigaDB error: ${matchesResponse.statusText}`);
