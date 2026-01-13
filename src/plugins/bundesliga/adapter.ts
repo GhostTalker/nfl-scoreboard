@@ -225,54 +225,97 @@ export class BundesligaAdapter implements SportAdapter {
     const elapsedMs = now - kickoff;
     const elapsedMinutes = Math.floor(elapsedMs / 60000);
 
+    // Check if this is DFB-Pokal (which can have extra time / Verlaengerung)
+    const isDFBPokal = match.leagueShortcut === 'dfb';
+
+    // Find the latest valid (non-null) goal minute from goals array
+    // The API provides matchMinute in goals, which is the most accurate source
+    const validGoalMinutes = goals
+      .map((g) => g.minute)
+      .filter((m): m is number => m !== null && m !== undefined && !isNaN(m));
+    const latestGoalMinute = validGoalMinutes.length > 0
+      ? Math.max(...validGoalMinutes)
+      : null;
+
     let period: SoccerClock['period'] = 'first_half';
     let matchMinute = 0;
 
+    // FINISHED GAME
     if (match.matchIsFinished) {
-      period = 'second_half';
-      matchMinute = 90;
-    } else if (elapsedMinutes < 45) {
-      period = 'first_half';
-      matchMinute = Math.max(0, Math.min(elapsedMinutes, 45));
-    } else if (elapsedMinutes < 60) {
-      period = 'halftime';
-      matchMinute = 45;
-    } else if (elapsedMinutes < 105) {
-      period = 'second_half';
-      matchMinute = Math.min(elapsedMinutes - 15, 90);
-    } else {
-      period = 'extra_time';
-      matchMinute = elapsedMinutes - 15;
-    }
-
-    // Use latest goal minute if more accurate
-    if (goals.length > 0) {
-      const latestGoal = goals[goals.length - 1];
-      matchMinute = Math.max(matchMinute, latestGoal.minute);
-    }
-
-    // Calculate display value with extra time (Nachspielzeit)
-    let displayValue: string;
-    if (period === 'first_half' && matchMinute > 45) {
-      // First half extra time: "45+3'"
-      const extraTime = matchMinute - 45;
-      displayValue = `45+${extraTime}'`;
-    } else if (period === 'second_half' && matchMinute > 90) {
-      // Second half extra time: "90+5'"
-      const extraTime = matchMinute - 90;
-      displayValue = `90+${extraTime}'`;
-    } else if (period === 'extra_time') {
-      // Extra time in overtime
-      const extraTimeMinute = Math.max(0, matchMinute - 90);
-      if (extraTimeMinute > 105) {
-        displayValue = `105+${extraTimeMinute - 105}'`;
+      // For finished games, determine period based on final minute
+      if (latestGoalMinute !== null && latestGoalMinute > 90 && isDFBPokal) {
+        period = 'extra_time';
+        matchMinute = latestGoalMinute;
       } else {
-        displayValue = `${extraTimeMinute}'`;
+        period = 'second_half';
+        matchMinute = latestGoalMinute !== null && latestGoalMinute > 90
+          ? latestGoalMinute
+          : 90;
       }
-    } else {
-      // Normal time
-      displayValue = `${matchMinute}'`;
     }
+    // GAME NOT STARTED YET
+    else if (elapsedMinutes < 0) {
+      period = 'first_half';
+      matchMinute = 0;
+    }
+    // GAME IN PROGRESS - Use goal-based time first, then estimate
+    else {
+      // If we have goal data, use it as primary source
+      if (latestGoalMinute !== null) {
+        matchMinute = latestGoalMinute;
+
+        // Determine period based on goal minute
+        if (matchMinute <= 45) {
+          period = 'first_half';
+        } else if (matchMinute <= 90) {
+          period = 'second_half';
+        } else if (isDFBPokal) {
+          period = 'extra_time';
+        } else {
+          // Bundesliga doesn't have extra time, so this is Nachspielzeit
+          period = 'second_half';
+        }
+
+        // Estimate current time based on elapsed time since last goal
+        // This helps show time progress between goals
+        const estimatedCurrentMinute = this.estimateCurrentMinute(
+          elapsedMinutes,
+          latestGoalMinute,
+          isDFBPokal
+        );
+
+        // Only use estimated time if it's greater than last goal minute
+        // and still within reasonable bounds for the current period
+        if (estimatedCurrentMinute > matchMinute) {
+          matchMinute = estimatedCurrentMinute;
+        }
+      } else {
+        // No goals scored yet - estimate based on elapsed time
+        matchMinute = this.estimateCurrentMinute(elapsedMinutes, 0, isDFBPokal);
+      }
+
+      // Determine period based on calculated match minute
+      if (matchMinute <= 45) {
+        // Check if we're in halftime based on elapsed time
+        // First half + potential Nachspielzeit typically ends around 47-50 real minutes
+        if (elapsedMinutes >= 47 && elapsedMinutes < 62) {
+          period = 'halftime';
+          matchMinute = 45;
+        } else {
+          period = 'first_half';
+        }
+      } else if (matchMinute <= 90) {
+        period = 'second_half';
+      } else if (isDFBPokal && matchMinute > 90) {
+        period = 'extra_time';
+      } else {
+        // Bundesliga: we're in Nachspielzeit of second half
+        period = 'second_half';
+      }
+    }
+
+    // Build display value with proper Nachspielzeit notation
+    const displayValue = this.buildDisplayValue(matchMinute, period, isDFBPokal);
 
     return {
       matchMinute,
@@ -280,6 +323,92 @@ export class BundesligaAdapter implements SportAdapter {
       periodName: this.getPeriodName(period),
       displayValue,
     };
+  }
+
+  /**
+   * Estimate current match minute based on real elapsed time
+   * Accounts for halftime break (~15 min)
+   */
+  private estimateCurrentMinute(
+    elapsedMinutes: number,
+    minMinute: number,
+    isDFBPokal: boolean
+  ): number {
+    let estimatedMinute: number;
+
+    if (elapsedMinutes <= 45) {
+      // First half: direct mapping
+      estimatedMinute = elapsedMinutes;
+    } else if (elapsedMinutes <= 62) {
+      // Likely halftime (45 min + ~2-5 min Nachspielzeit + 15 min break)
+      // Return 45 as we're in halftime
+      estimatedMinute = 45;
+    } else if (elapsedMinutes <= 107) {
+      // Second half: subtract ~17 minutes (halftime break + first half Nachspielzeit)
+      // 62 real minutes = 45 match minutes (start of 2nd half)
+      // 107 real minutes = 90 match minutes (end of regular time)
+      estimatedMinute = 45 + (elapsedMinutes - 62);
+    } else if (isDFBPokal && elapsedMinutes <= 140) {
+      // DFB-Pokal extra time: after ~107 real minutes
+      // Extra time has two 15-minute halves with a short break
+      estimatedMinute = 90 + (elapsedMinutes - 107);
+    } else {
+      // Very late in game - likely Nachspielzeit or finished
+      estimatedMinute = isDFBPokal ? Math.min(elapsedMinutes - 20, 120) : 90;
+    }
+
+    // Never return less than the minimum known minute (from goals)
+    return Math.max(minMinute, Math.max(0, estimatedMinute));
+  }
+
+  /**
+   * Build the display string with proper Nachspielzeit notation
+   * Examples: "45'", "45+3'", "90'", "90+5'", "105+2'" (DFB-Pokal)
+   */
+  private buildDisplayValue(
+    matchMinute: number,
+    period: SoccerClock['period'],
+    isDFBPokal: boolean
+  ): string {
+    // Halftime shows "45'"
+    if (period === 'halftime') {
+      return "45'";
+    }
+
+    // First half: max 45, then Nachspielzeit
+    if (period === 'first_half') {
+      if (matchMinute > 45) {
+        const extra = matchMinute - 45;
+        return `45+${extra}'`;
+      }
+      return `${Math.min(matchMinute, 45)}'`;
+    }
+
+    // Second half: 46-90, then Nachspielzeit
+    if (period === 'second_half') {
+      if (matchMinute > 90) {
+        const extra = matchMinute - 90;
+        return `90+${extra}'`;
+      }
+      return `${Math.max(45, Math.min(matchMinute, 90))}'`;
+    }
+
+    // Extra time (DFB-Pokal only): 91-105, then 105+X, then 106-120, then 120+X
+    if (period === 'extra_time' && isDFBPokal) {
+      if (matchMinute <= 105) {
+        return `${matchMinute}'`;
+      } else if (matchMinute <= 120) {
+        // Second extra time half
+        return `${matchMinute}'`;
+      } else {
+        // Extra time Nachspielzeit
+        const extra = matchMinute - 120;
+        return `120+${extra}'`;
+      }
+    }
+
+    // Fallback
+    return `${matchMinute}'`;
   }
 
   private transformTeam(team: any, score: number): Team {
