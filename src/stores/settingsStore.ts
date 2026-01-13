@@ -92,17 +92,10 @@ export const useSettingsStore = create<SettingsState>()(
       togglePlugin: (pluginId) =>
         set((state) => {
           const enabled = state.enabledPlugins.includes(pluginId);
-          const newEnabledPlugins = enabled
-            ? state.enabledPlugins.filter(id => id !== pluginId)
-            : [...state.enabledPlugins, pluginId];
-
-          console.log('[togglePlugin] pluginId:', pluginId);
-          console.log('[togglePlugin] was enabled:', enabled);
-          console.log('[togglePlugin] old enabledPlugins:', state.enabledPlugins);
-          console.log('[togglePlugin] new enabledPlugins:', newEnabledPlugins);
-
           return {
-            enabledPlugins: newEnabledPlugins,
+            enabledPlugins: enabled
+              ? state.enabledPlugins.filter(id => id !== pluginId)
+              : [...state.enabledPlugins, pluginId],
           };
         }),
 

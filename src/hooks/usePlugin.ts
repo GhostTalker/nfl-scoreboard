@@ -60,18 +60,9 @@ export function useAvailablePlugins(filterEnabled: boolean = false): PluginManif
   useEffect(() => {
     const available = pluginRegistry.getAllPlugins();
 
-    console.log('[useAvailablePlugins] filterEnabled:', filterEnabled);
-    console.log('[useAvailablePlugins] enabledPlugins:', enabledPlugins);
-    console.log('[useAvailablePlugins] available plugins:', available.map(p => p.id));
-
     if (filterEnabled) {
       // Filter to only enabled plugins
-      const filtered = available.filter(p => {
-        const isEnabled = enabledPlugins.includes(p.id);
-        console.log(`[useAvailablePlugins] Plugin ${p.id}: enabled=${isEnabled}`);
-        return isEnabled;
-      });
-      console.log('[useAvailablePlugins] filtered plugins:', filtered.map(p => p.id));
+      const filtered = available.filter(p => enabledPlugins.includes(p.id));
       setPlugins(filtered);
     } else {
       // Return all plugins
