@@ -35,8 +35,8 @@ export function SportSelectionScreen() {
           >
             {/* NFL Icon/Logo */}
             <div className="text-center">
-              <div className="text-8xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                🏈
+              <div className="mb-6 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
+                <img src="/icons/nfl-icon.svg" alt="NFL" className="w-32 h-32" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3">
                 NFL
@@ -60,8 +60,8 @@ export function SportSelectionScreen() {
           >
             {/* Bundesliga Icon/Logo */}
             <div className="text-center">
-              <div className="text-8xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
-                ⚽
+              <div className="mb-6 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
+                <img src="/icons/bundesliga-icon.svg" alt="Bundesliga" className="w-32 h-32" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3">
                 Bundesliga

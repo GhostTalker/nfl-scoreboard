@@ -1,11 +1,11 @@
-# 🏈 NFL Scoreboard
+# ⚽🏈 Sport-Scoreboard
 
-**Live NFL Scoreboard for iPad mini 6 and Video Wall Display**
+**Multi-Sport Live Scoreboard for iPad mini 6 and Video Wall Display**
 
-A modern, responsive web application for displaying live NFL games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
+A modern, responsive web application for displaying live NFL and Bundesliga games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-2.0.1-blue)
+![Version](https://img.shields.io/badge/Version-2.0.2-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -709,6 +709,21 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📝 Changelog
+
+### v2.0.2 (2026-01-16)
+- ⚽ **Bundesliga Improvements**
+  - ✅ Fixed St. Pauli team ID (98) and colors (brown)
+  - ✅ Corrected all Bundesliga team IDs to match OpenLigaDB
+  - ✅ Dynamic season calculation (auto-detects 2025/2026 season)
+  - ✅ Added Bundesliga and DFB-Pokal title graphics (SVG)
+- 🎨 **Rebranding**
+  - ✅ Renamed from "NFL Scoreboard" to "Sport-Scoreboard"
+  - ✅ Updated all documentation and UI text
+  - ✅ Multi-sport branding throughout the app
+- 🖼️ **Sport Selection Screen**
+  - ✅ Replaced emoji icons with custom SVG graphics
+  - ✅ Better visibility and professional look
+  - ✅ Football and soccer ball icons
 
 ### v2.0.1 (2025-01-16)
 - 🐛 **Bundesliga Bugfixes**

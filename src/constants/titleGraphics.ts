@@ -2,13 +2,17 @@
 // Maps season names to their corresponding title graphics
 
 export const TITLE_GRAPHICS: Record<string, string> = {
+  // NFL Graphics
   'SUPER BOWL': '/title/superbowl.png',
   'CONFERENCE CHAMPIONSHIP': '/title/conference.png',
   'DIVISIONAL ROUND': '/title/divisional.png',
   'WILD CARD': '/title/wildcard.png',
-  // Default for regular season and other games
   'GAME DAY': '/title/gameday.png',
   'PRESEASON': '/title/gameday.png',
+
+  // Bundesliga Graphics
+  'BUNDESLIGA': '/title/bundesliga.svg',
+  'DFB-POKAL': '/title/dfb-pokal.svg',
 };
 
 /**

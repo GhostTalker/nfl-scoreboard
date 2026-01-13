@@ -24,11 +24,6 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
     color: '1B75BB', // Blue
     alternateColor: 'FFFFFF', // White
   },
-  87: {
-    name: 'Werder Bremen',
-    color: '1D9053', // Green
-    alternateColor: 'FFFFFF', // White
-  },
   16: {
     name: 'VfB Stuttgart',
     color: 'DC0028', // Red
@@ -49,19 +44,24 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
     color: '005CA9', // Blue
     alternateColor: 'FFFFFF', // White
   },
-  112: {
+  1635: {
     name: 'RB Leipzig',
     color: 'DD0741', // Red
     alternateColor: 'FFFFFF', // White
   },
-  3209: {
+  175: {
     name: 'TSG 1899 Hoffenheim',
     color: '1961B5', // Blue
     alternateColor: 'FFFFFF', // White
   },
-  81: {
+  112: {
     name: 'SC Freiburg',
     color: 'E2001A', // Red
+    alternateColor: 'FFFFFF', // White
+  },
+  81: {
+    name: '1. FSV Mainz 05',
+    color: 'C3011E', // Red
     alternateColor: 'FFFFFF', // White
   },
   131: {
@@ -69,14 +69,9 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
     color: '65B32E', // Green
     alternateColor: 'FFFFFF', // White
   },
-  18: {
+  87: {
     name: "Borussia Mönchengladbach",
     color: '000000', // Black
-    alternateColor: 'FFFFFF', // White
-  },
-  80: {
-    name: '1. FSV Mainz 05',
-    color: 'C3011E', // Red
     alternateColor: 'FFFFFF', // White
   },
   95: {
@@ -89,15 +84,30 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
     color: 'ED1C24', // Red
     alternateColor: 'FFFFFF', // White
   },
-  28: {
+  80: {
     name: '1. FC Union Berlin',
     color: 'EB1923', // Red
     alternateColor: 'F4C318', // Yellow
   },
-  32: {
-    name: 'VfL Bochum 1848',
+  129: {
+    name: 'VfL Bochum',
     color: '005CA9', // Blue
     alternateColor: 'FFFFFF', // White
+  },
+  104: {
+    name: 'Holstein Kiel',
+    color: '003D7A', // Blue
+    alternateColor: 'FFFFFF', // White
+  },
+  134: {
+    name: 'SV Werder Bremen',
+    color: '1D9053', // Green
+    alternateColor: 'FFFFFF', // White
+  },
+  199: {
+    name: '1. FC Heidenheim',
+    color: '003D7A', // Blue
+    alternateColor: 'DC0714', // Red
   },
 
   // Additional teams (2. Bundesliga or former teams)
@@ -116,19 +126,14 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
     color: '8C1721', // Dark Red
     alternateColor: 'FFFFFF', // White
   },
-  134: {
-    name: 'Fortuna Düsseldorf',
-    color: 'E30613', // Red
-    alternateColor: 'FFFFFF', // White
-  },
   167: {
     name: 'SV Darmstadt 98',
     color: '003D7A', // Blue
     alternateColor: 'FFFFFF', // White
   },
-  175: {
+  98: {
     name: 'FC St. Pauli',
-    color: '6C3014', // Brown
+    color: '6A4029', // Brown
     alternateColor: 'FFFFFF', // White
   },
   185: {

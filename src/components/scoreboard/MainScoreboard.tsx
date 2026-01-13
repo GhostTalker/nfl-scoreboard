@@ -54,7 +54,15 @@ export function MainScoreboard() {
   }
 
   // Use debug season if active, otherwise use actual game data
-  const effectiveSeason = debugSeason || (isNFLGame(currentGame) ? currentGame.seasonName : undefined);
+  const effectiveSeason = debugSeason || (
+    isNFLGame(currentGame)
+      ? currentGame.seasonName
+      : currentGame.competition === 'bundesliga'
+      ? 'BUNDESLIGA'
+      : currentGame.competition === 'dfb-pokal'
+      ? 'DFB-POKAL'
+      : undefined
+  );
   
   // Determine background style based on game type (or debug override)
   const isSuperBowl = debugBackground === 'superbowl' || effectiveSeason === 'SUPER BOWL';

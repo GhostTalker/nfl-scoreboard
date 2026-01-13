@@ -1,10 +1,10 @@
 #!/bin/bash
-# NFL Scoreboard - Quick Deployment Script
+# Sport-Scoreboard - Quick Deployment Script
 # Usage: ./deploy.sh
 
 set -e  # Exit on error
 
-echo "🏈 NFL Scoreboard Deployment"
+echo "⚽🏈 Sport-Scoreboard Deployment"
 echo "=============================="
 echo ""
 

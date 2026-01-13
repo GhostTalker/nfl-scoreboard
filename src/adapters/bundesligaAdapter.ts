@@ -21,9 +21,17 @@ export class BundesligaAdapter implements SportAdapter {
       const currentGroup = await currentGroupResponse.json();
 
       // Fetch all matches for current matchday with season parameter
-      // OpenLigaDB currentGroup doesn't include season, so we use 2024 (current season)
+      // OpenLigaDB currentGroup doesn't include season, calculate it dynamically
+      // Bundesliga season runs from August-May, so:
+      // January-July: use previous year (e.g., Jan 2026 -> season 2025/2026 -> year 2025)
+      // August-December: use current year (e.g., Oct 2025 -> season 2025/2026 -> year 2025)
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // 1-12
+      const season = currentMonth >= 8 ? currentYear : currentYear - 1;
+
       const matchesResponse = await fetch(
-        `${API_ENDPOINTS.bundesligaMatchday(currentGroup.groupOrderID)}?season=2024`
+        `${API_ENDPOINTS.bundesligaMatchday(currentGroup.groupOrderID)}?season=${season}`
       );
       if (!matchesResponse.ok) {
         throw new Error(`OpenLigaDB error: ${matchesResponse.statusText}`);
