@@ -27,9 +27,11 @@ export const useSettingsStore = create<SettingsState>()(
 
       setSport: (sport) => {
         // Atomic update to prevent race conditions
+        // For NFL, auto-set competition to 'nfl' (only one competition)
+        // For Bundesliga, don't set competition - let user choose between bundesliga/dfb-pokal
         set({
           currentSport: sport,
-          currentCompetition: sport === 'nfl' ? 'nfl' : 'bundesliga',
+          currentCompetition: sport === 'nfl' ? 'nfl' : null,
         });
       },
 
@@ -37,7 +39,7 @@ export const useSettingsStore = create<SettingsState>()(
 
       setInitialSportSelection: (sport) => {
         // Set sport, competition, and selection flag in ONE atomic update
-        // This prevents race conditions where useGameData might fetch before competition is set
+        // For NFL, auto-set competition. For Bundesliga, set to 'bundesliga' as default (can be changed later)
         set({
           currentSport: sport,
           currentCompetition: sport === 'nfl' ? 'nfl' : 'bundesliga',

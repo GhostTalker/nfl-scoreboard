@@ -14,6 +14,7 @@ export function MultiGameView() {
   const confirmGameSelection = useGameStore((state) => state.confirmGameSelection);
   const setViewMode = useSettingsStore((state) => state.setViewMode);
   const multiViewFilters = useSettingsStore((state) => state.multiViewFilters);
+  const currentCompetition = useSettingsStore((state) => state.currentCompetition);
 
   // Track previous scores to detect changes
   const previousScoresRef = useRef<Map<string, { home: number; away: number }>>(new Map());
@@ -77,10 +78,13 @@ export function MultiGameView() {
     return () => clearInterval(interval);
   }, []);
 
+  // Filter by competition first
+  const competitionGames = availableGames.filter(g => g.competition === currentCompetition);
+
   // Group games by status
-  const liveGames = availableGames.filter(g => g.status === 'in_progress' || g.status === 'halftime');
-  const scheduledGames = availableGames.filter(g => g.status === 'scheduled');
-  const finishedGames = availableGames.filter(g => g.status === 'final');
+  const liveGames = competitionGames.filter(g => g.status === 'in_progress' || g.status === 'halftime');
+  const scheduledGames = competitionGames.filter(g => g.status === 'scheduled');
+  const finishedGames = competitionGames.filter(g => g.status === 'final');
 
   // Apply filters from settings
   const filteredGames = [
@@ -323,11 +327,11 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }:
       <div className="flex justify-center mb-0.5 w-full">
         {isLive && !isHalftime && (
           <div
-            className={`px-3 py-1 rounded-full ${layoutConfig.badgeText} font-bold tracking-wide bg-red-600/90 text-white`}
+            className={`px-2 py-0.5 rounded-full ${layoutConfig.badgeText} font-bold tracking-wide bg-red-600/90 text-white`}
             style={{ boxShadow: '0 0 15px rgba(220,38,38,0.5)' }}
           >
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+            <span className="inline-flex items-center gap-1">
+              <span className="w-1 h-1 bg-white rounded-full animate-pulse" />
               {game.clock?.periodName} {game.clock?.displayValue}
             </span>
           </div>

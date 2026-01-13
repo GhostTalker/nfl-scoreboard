@@ -9,6 +9,7 @@ export function useGameData() {
   // Get current plugin and adapter
   const plugin = useCurrentPlugin();
   const adapter = plugin?.adapter;
+  const currentCompetition = useSettingsStore(state => state.currentCompetition);
 
   const intervalRef = useRef<number | null>(null);
   const isFirstFetch = useRef(true);
@@ -208,6 +209,13 @@ export function useGameData() {
       return; // Wait for plugin to load
     }
 
+    // Check if competition is set (required for multi-competition sports like Bundesliga)
+    if (!currentCompetition) {
+      // Don't fetch yet - wait for user to select competition
+      console.log('[useGameData] Waiting for competition selection...');
+      return;
+    }
+
     // Reset initialization flag when adapter changes (e.g., sport switch)
     hasInitialized.current = false;
     isFirstFetch.current = true;
@@ -281,7 +289,7 @@ export function useGameData() {
       unsubscribeSport();
       hasInitialized.current = false;
     };
-  }, [adapter, fetchData]); // adapter dependency ensures refetch when plugin loads
+  }, [adapter, fetchData, currentCompetition]); // adapter and currentCompetition dependencies ensure refetch when plugin loads or competition changes
 
   return {
     refetch: fetchData,
