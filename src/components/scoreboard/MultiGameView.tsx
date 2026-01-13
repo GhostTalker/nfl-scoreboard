@@ -117,8 +117,8 @@ export function MultiGameView() {
     if (gameCount <= 6) {
       return {
         cardHeight: 'h-[140px]',
-        logoSize: 'w-18 h-18',
-        logoInner: 'w-13 h-13',
+        logoSize: 'w-16 h-16',
+        logoInner: 'w-11 h-11',
         scoreSize: 'text-3xl',
         scoreMinW: 'min-w-[45px]',
         teamBoxWidth: 'w-22',
@@ -128,8 +128,8 @@ export function MultiGameView() {
     } else if (gameCount <= 10) {
       return {
         cardHeight: 'h-[130px]',
-        logoSize: 'w-16 h-16',
-        logoInner: 'w-11 h-11',
+        logoSize: 'w-14 h-14',
+        logoInner: 'w-9 h-9',
         scoreSize: 'text-3xl',
         scoreMinW: 'min-w-[45px]',
         teamBoxWidth: 'w-20',
@@ -140,8 +140,8 @@ export function MultiGameView() {
       // 11+ games - compact mode
       return {
         cardHeight: 'h-[120px]',
-        logoSize: 'w-14 h-14',
-        logoInner: 'w-10 h-10',
+        logoSize: 'w-12 h-12',
+        logoInner: 'w-8 h-8',
         scoreSize: 'text-2xl',
         scoreMinW: 'min-w-[40px]',
         teamBoxWidth: 'w-18',
