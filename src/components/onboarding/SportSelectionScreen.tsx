@@ -17,11 +17,18 @@ export function SportSelectionScreen() {
   return (
     <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-8">
       <div className="max-w-4xl w-full">
-        {/* Header */}
+        {/* Header with Scoreboard Logo */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            Willkommen!
-          </h1>
+          <div className="mb-6 flex justify-center">
+            <img
+              src="/title/scoreboard-logo.png"
+              alt="Sport-Scoreboard"
+              className="h-32 w-auto object-contain"
+              style={{
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.8))',
+              }}
+            />
+          </div>
           <p className="text-2xl text-white/70">
             Wähle deine Sportart
           </p>
@@ -37,7 +44,7 @@ export function SportSelectionScreen() {
             {/* NFL Icon/Logo */}
             <div className="text-center">
               <div className="mb-6 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
-                <img src="/icons/nfl-icon.svg" alt="NFL" className="w-32 h-32" />
+                <img src="/title/nfl-logo.png" alt="NFL" className="h-32 w-auto object-contain" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3">
                 NFL
@@ -62,7 +69,7 @@ export function SportSelectionScreen() {
             {/* Bundesliga Icon/Logo */}
             <div className="text-center">
               <div className="mb-6 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
-                <img src="/icons/bundesliga-icon.svg" alt="Bundesliga" className="w-32 h-32" />
+                <img src="/title/bundesliga-logo.png" alt="Bundesliga" className="h-32 w-auto object-contain" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3">
                 Bundesliga

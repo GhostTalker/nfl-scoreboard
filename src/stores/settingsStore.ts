@@ -38,13 +38,13 @@ export const useSettingsStore = create<SettingsState>()(
       setCompetition: (competition) => set({ currentCompetition: competition }),
 
       setInitialSportSelection: (sport) => {
-        set({ currentSport: sport, hasSelectedInitialSport: true });
-        // Reset competition when sport changes
-        if (sport === 'nfl') {
-          set({ currentCompetition: 'nfl' });
-        } else {
-          set({ currentCompetition: 'bundesliga' });
-        }
+        // Set sport, competition, and selection flag in ONE atomic update
+        // This prevents race conditions where useGameData might fetch before competition is set
+        set({
+          currentSport: sport,
+          currentCompetition: sport === 'nfl' ? 'nfl' : 'bundesliga',
+          hasSelectedInitialSport: true,
+        });
       },
 
       setPrimaryTeam: (teamId) => set({ primaryTeamId: teamId }),
