@@ -46,8 +46,8 @@ export const BUNDESLIGA_TEAMS: Record<number, BundesligaTeamColors> = {
   },
   1635: {
     name: 'RB Leipzig',
-    color: 'FFFFFF', // White
-    alternateColor: 'DD0741', // Red
+    color: 'DD0741', // Red
+    alternateColor: 'FFFFFF', // White
   },
   175: {
     name: 'TSG 1899 Hoffenheim',
