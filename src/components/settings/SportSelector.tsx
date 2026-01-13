@@ -7,6 +7,25 @@ export function SportSelector() {
   const setSport = useSettingsStore((state) => state.setSport);
   const setCompetition = useSettingsStore((state) => state.setCompetition);
   const isLoading = useGameStore((state) => state.isLoading);
+  const setLoading = useGameStore((state) => state.setLoading);
+
+  // Handle sport change with immediate loading state
+  const handleSportChange = (sport: 'nfl' | 'bundesliga') => {
+    if (sport === currentSport) return;
+
+    // Immediately set loading state and clear games for instant UI feedback
+    setLoading(true);
+    useGameStore.setState({
+      currentGame: null,
+      availableGames: [],
+      userConfirmedGameId: null,
+      isLive: false,
+      gameStats: null,
+    });
+
+    // Then change the sport (triggers plugin reload + data fetch)
+    setSport(sport);
+  };
 
   return (
     <section className="bg-slate-800 rounded-xl p-6">
@@ -28,24 +47,26 @@ export function SportSelector() {
         <label className="text-sm text-white/60 mb-2 block">Sportart</label>
         <div className="flex gap-3">
           <button
-            onClick={() => setSport('nfl')}
+            onClick={() => handleSportChange('nfl')}
+            disabled={isLoading}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
               currentSport === 'nfl'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-white/70 hover:bg-slate-600'
-            }`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <div className="text-lg">NFL</div>
             <div className="text-xs opacity-70 mt-1">American Football</div>
           </button>
 
           <button
-            onClick={() => setSport('bundesliga')}
+            onClick={() => handleSportChange('bundesliga')}
+            disabled={isLoading}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
               currentSport === 'bundesliga'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-white/70 hover:bg-slate-600'
-            }`}
+            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <div className="text-lg">Bundesliga</div>
             <div className="text-xs opacity-70 mt-1">Deutscher Fußball</div>
@@ -60,22 +81,24 @@ export function SportSelector() {
           <div className="flex gap-3">
             <button
               onClick={() => setCompetition('bundesliga')}
+              disabled={isLoading}
               className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                 currentCompetition === 'bundesliga'
                   ? 'bg-green-600 text-white'
                   : 'bg-slate-700 text-white/70 hover:bg-slate-600'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               Bundesliga
             </button>
 
             <button
               onClick={() => setCompetition('dfb-pokal')}
+              disabled={isLoading}
               className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
                 currentCompetition === 'dfb-pokal'
                   ? 'bg-green-600 text-white'
                   : 'bg-slate-700 text-white/70 hover:bg-slate-600'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               DFB-Pokal
             </button>

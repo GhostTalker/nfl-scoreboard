@@ -183,7 +183,7 @@ export function MainScoreboard() {
       />
 
       {/* Main Score Display - Grid with items-start for precise logo-score alignment */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-start w-full max-w-7xl px-8 gap-12 mt-36">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-start w-full max-w-7xl px-8 gap-10 mt-32">
         {/* Home Team - Left side for Bundesliga, Away for NFL */}
         <div className="flex justify-end">
           <TeamDisplay
@@ -348,21 +348,21 @@ export function MainScoreboard() {
                   </div>
                 )}
 
-                {/* Bundesliga: Vertical layout */}
+                {/* Bundesliga: Compact vertical layout with additional info */}
                 {isBundesligaGame(currentGame) && (
-                  <div className="flex flex-col gap-2">
-                    {/* Time Box */}
+                  <div className="flex flex-col gap-1.5">
+                    {/* Time and Period - Combined compact box */}
                     <div
-                      className="flex flex-col items-center px-6 py-2 rounded-xl"
+                      className="flex items-center gap-4 px-5 py-2 rounded-xl"
                       style={{
                         background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
                         boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
                         border: '1px solid rgba(255,255,255,0.1)',
                       }}
                     >
-                      <span className="text-xs text-white/50 uppercase tracking-wider mb-1">Spielzeit</span>
+                      {/* Time */}
                       <div className="flex items-center gap-2">
-                        <span className="text-3xl font-black text-white font-mono">
+                        <span className="text-4xl font-black text-white font-mono">
                           {currentGame.clock.displayValue || '0\''}
                         </span>
                         {currentGame.status === 'in_progress' && (
@@ -372,22 +372,43 @@ export function MainScoreboard() {
                           </span>
                         )}
                       </div>
-                    </div>
 
-                    {/* Period Box */}
-                    <div
-                      className="flex flex-col items-center px-6 py-2 rounded-xl"
-                      style={{
-                        background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                      }}
-                    >
-                      <span className="text-xs text-white/50 uppercase tracking-wider mb-1">Spielabschnitt</span>
-                      <span className="text-2xl font-black text-white">
+                      {/* Divider */}
+                      <div className="w-px h-8 bg-white/20" />
+
+                      {/* Period */}
+                      <span className="text-lg font-bold text-white/80">
                         {currentGame.clock?.periodName || '-'}
                       </span>
                     </div>
+
+                    {/* Halftime Score (if available and past halftime) */}
+                    {currentGame.halftimeScore && currentGame.clock.period !== 'first_half' && (
+                      <div className="flex justify-center">
+                        <span className="text-xs text-white/40 px-3 py-0.5 rounded-full bg-white/5">
+                          HZ: {currentGame.halftimeScore.home} - {currentGame.halftimeScore.away}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Last Scorer (if goals exist) */}
+                    {currentGame.goals && currentGame.goals.length > 0 && (() => {
+                      const lastGoal = currentGame.goals[currentGame.goals.length - 1];
+                      const scorerInfo = lastGoal.isPenalty ? '(P)' : lastGoal.isOwnGoal ? '(ET)' : '';
+                      return (
+                        <div className="flex justify-center">
+                          <div className="flex items-center gap-1.5 text-xs text-white/50 px-3 py-0.5 rounded-full bg-white/5">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
+                              <circle cx="12" cy="12" r="4" fill="currentColor" />
+                            </svg>
+                            <span className="truncate max-w-[180px]">
+                              {lastGoal.scorerName} ({lastGoal.minute}') {scorerInfo}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </>
@@ -417,7 +438,7 @@ export function MainScoreboard() {
         </div>
       )}
 
-      {/* Bottom Info Section - LIVE badge and Venue/Broadcast */}
+      {/* Bottom Info Section - LIVE badge, Matchday, and Venue/Broadcast */}
       <div className="absolute bottom-12 left-0 right-0 flex flex-col items-center gap-2">
         {/* LIVE Badge for in-progress games */}
         {(currentGame.status === 'in_progress' || currentGame.status === 'halftime') && (
@@ -429,6 +450,15 @@ export function MainScoreboard() {
               <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
               LIVE
             </span>
+          </div>
+        )}
+
+        {/* Competition & Matchday for Bundesliga */}
+        {isBundesligaGame(currentGame) && (
+          <div className="flex items-center gap-2 text-sm text-white/50 font-medium">
+            <span>{currentGame.competition === 'bundesliga' ? 'Bundesliga' : 'DFB-Pokal'}</span>
+            <span className="text-white/30">•</span>
+            <span>{currentGame.matchday}. Spieltag</span>
           </div>
         )}
 

@@ -80,7 +80,7 @@ export function useGameData() {
       setError(null);
 
       // Fetch scoreboard (all games) using sport adapter
-      let games = await adapter.fetchScoreboard();
+      const games = await adapter.fetchScoreboard();
 
       // Debug logging for game loading
       console.log(`[useGameData] Fetched ${games.length} games for ${adapter.sport}:`, games.map(g => ({
@@ -206,6 +206,7 @@ export function useGameData() {
   useEffect(() => {
     // Only fetch if adapter is available
     if (!adapter) {
+      console.log('[useGameData] Waiting for adapter to load...');
       return; // Wait for plugin to load
     }
 
@@ -216,12 +217,19 @@ export function useGameData() {
       return;
     }
 
+    console.log(`[useGameData] Adapter loaded for ${adapter.sport}, competition: ${currentCompetition}. Starting fetch...`);
+
     // Reset initialization flag when adapter changes (e.g., sport switch)
     hasInitialized.current = false;
     isFirstFetch.current = true;
+    isFetching.current = false; // Reset fetching flag to allow immediate fetch
 
-    // Immediate fetch when adapter becomes available
-    fetchData();
+    // Immediate fetch when adapter becomes available - this is the key fix
+    // The setTimeout(0) ensures the state is fully updated before fetching
+    const immediateTimeout = setTimeout(() => {
+      console.log(`[useGameData] Triggering immediate fetch for ${adapter.sport}`);
+      fetchData();
+    }, 0);
 
     const setupInterval = () => {
       if (intervalRef.current) {
@@ -240,7 +248,10 @@ export function useGameData() {
       intervalRef.current = window.setInterval(fetchData, interval);
     };
 
-    setupInterval();
+    // Set up polling after initial fetch completes
+    const pollSetupTimeout = setTimeout(() => {
+      setupInterval();
+    }, 100); // Small delay to let initial fetch start
 
     // Re-setup interval when game status changes
     const unsubscribe = useGameStore.subscribe((state, prevState) => {
@@ -250,26 +261,20 @@ export function useGameData() {
       }
     });
 
-    // Re-fetch when sport or competition changes
+    // Re-fetch when competition changes (sport changes handled by adapter dependency)
     const unsubscribeSport = useSettingsStore.subscribe((state, prevState) => {
-      const sportChanged = state.currentSport !== prevState.currentSport;
       const competitionChanged = state.currentCompetition !== prevState.currentCompetition;
+      const sportChanged = state.currentSport !== prevState.currentSport;
 
+      // Sport change is handled by adapter dependency, don't double-clear
       if (sportChanged) {
-        // Clear current game when sport changes
-        useGameStore.setState({
-          currentGame: null,
-          isLive: false,
-          gameStats: null,
-          userConfirmedGameId: null,
-          availableGames: [],
-        });
-        // fetchData will be triggered automatically by useEffect when adapter changes
+        return;
       }
 
-      if (competitionChanged && !sportChanged) {
+      if (competitionChanged) {
         // Competition changed but sport stayed the same
         // Adapter doesn't change, so we need to explicitly refetch
+        console.log(`[useGameData] Competition changed to ${state.currentCompetition}, refetching...`);
         useGameStore.setState({
           currentGame: null,
           isLive: false,
@@ -277,11 +282,14 @@ export function useGameData() {
           userConfirmedGameId: null,
           availableGames: [],
         });
-        fetchData(); // Explicit refetch for competition change
+        isFetching.current = false; // Reset to allow fetch
+        fetchData();
       }
     });
 
     return () => {
+      clearTimeout(immediateTimeout);
+      clearTimeout(pollSetupTimeout);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
