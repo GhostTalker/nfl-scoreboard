@@ -116,37 +116,37 @@ export function MultiGameView() {
   const getLayoutConfig = (gameCount: number) => {
     if (gameCount <= 6) {
       return {
-        cardHeight: 'h-[165px]',
-        logoSize: 'w-20 h-20',
-        logoInner: 'w-14 h-14',
-        scoreSize: 'text-4xl',
-        scoreMinW: 'min-w-[50px]',
-        teamBoxWidth: 'w-24',
-        badgeText: 'text-sm',
-        gridGap: 'gap-5',
-      };
-    } else if (gameCount <= 10) {
-      return {
-        cardHeight: 'h-[150px]',
+        cardHeight: 'h-[140px]',
         logoSize: 'w-18 h-18',
-        logoInner: 'w-12 h-12',
-        scoreSize: 'text-4xl',
-        scoreMinW: 'min-w-[48px]',
+        logoInner: 'w-13 h-13',
+        scoreSize: 'text-3xl',
+        scoreMinW: 'min-w-[45px]',
         teamBoxWidth: 'w-22',
         badgeText: 'text-xs',
         gridGap: 'gap-4',
       };
-    } else {
-      // 11+ games - compact mode
+    } else if (gameCount <= 10) {
       return {
-        cardHeight: 'h-[135px]',
+        cardHeight: 'h-[130px]',
         logoSize: 'w-16 h-16',
         logoInner: 'w-11 h-11',
         scoreSize: 'text-3xl',
         scoreMinW: 'min-w-[45px]',
         teamBoxWidth: 'w-20',
         badgeText: 'text-xs',
-        gridGap: 'gap-4',
+        gridGap: 'gap-3',
+      };
+    } else {
+      // 11+ games - compact mode
+      return {
+        cardHeight: 'h-[120px]',
+        logoSize: 'w-14 h-14',
+        logoInner: 'w-10 h-10',
+        scoreSize: 'text-2xl',
+        scoreMinW: 'min-w-[40px]',
+        teamBoxWidth: 'w-18',
+        badgeText: 'text-xs',
+        gridGap: 'gap-3',
       };
     }
   };
@@ -186,12 +186,12 @@ export function MultiGameView() {
       }}
     >
       {/* Title Graphic Header */}
-      <div className="flex-shrink-0 pt-4 pb-3 flex justify-center">
+      <div className="flex-shrink-0 pt-2 pb-2 flex justify-center">
         {titleGraphic && (
           <img
             src={titleGraphic}
             alt={seasonName}
-            className="h-48 w-auto object-contain drop-shadow-2xl"
+            className="h-40 w-auto object-contain drop-shadow-2xl"
             style={{
               filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.8))',
             }}
