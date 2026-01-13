@@ -1,11 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useSettingsStore } from '../stores/settingsStore';
-import { getSportAdapter } from '../adapters';
+import { useCurrentPlugin } from './usePlugin';
 import { POLLING_INTERVALS } from '../constants/api';
 import { isNFLGame, isBundesligaGame } from '../types/game';
 
 export function useGameData() {
+  // Get current plugin and adapter
+  const plugin = useCurrentPlugin();
+  const adapter = plugin?.adapter;
+
   const intervalRef = useRef<number | null>(null);
   const isFirstFetch = useRef(true);
   const isFetching = useRef(false);
@@ -36,6 +40,11 @@ export function useGameData() {
   }, []);
 
   const fetchData = useCallback(async () => {
+    // Early return if adapter not loaded yet
+    if (!adapter) {
+      return;
+    }
+
     // Initialize and clear phantom state on first fetch
     if (!hasInitialized.current) {
       hasInitialized.current = true;
@@ -63,10 +72,9 @@ export function useGameData() {
     const store = useGameStore.getState();
     const { userConfirmedGameId, setAvailableGames, setCurrentGame, setGameStats, setLoading, setError } = store;
 
-    // Get current sport, competition, and adapter
+    // Get current sport and competition
     const currentSport = useSettingsStore.getState().currentSport;
     const currentCompetition = useSettingsStore.getState().currentCompetition;
-    const adapter = getSportAdapter(currentSport);
 
     try {
       if (isFirstFetch.current) {
@@ -190,7 +198,7 @@ export function useGameData() {
       isFirstFetch.current = false;
       isFetching.current = false;
     }
-  }, []);
+  }, [adapter]);
 
   // Set up polling - refetch when sport changes
   useEffect(() => {
