@@ -433,6 +433,8 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig, hasScored }: TeamBad
   const isLeipzig = team.name.includes('Leipzig');
   // Special rendering for HSV - blue box with white text
   const isHSV = team.name.includes('HSV') || team.name.includes('Hamburger');
+  // Special rendering for BVB - yellow box with black text
+  const isBVB = team.name.includes('Dortmund') || team.abbreviation === 'BVB';
 
   // Check if the primary color is too dark (for glow visibility)
   const hexToRgbSum = (hex: string) => {
@@ -445,7 +447,8 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig, hasScored }: TeamBad
   const primaryColor = team.color;
   const altColor = team.alternateColor || 'ffffff';
   const isPrimaryDark = hexToRgbSum(primaryColor) < 180;
-  const glowColor = isPrimaryDark ? altColor : primaryColor;
+  // Special glow colors for custom teams
+  const glowColor = isHSV ? '0069B4' : (isPrimaryDark ? altColor : primaryColor);
 
   // Dim everything for losing team in final games
   const opacity = isFinal && !isWinner ? 0.5 : 1;
@@ -541,11 +544,15 @@ function TeamBadge({ team, isFinal, isWinner, layoutConfig, hasScored }: TeamBad
           <span
             className="text-[10px] font-bold uppercase tracking-tight block text-center truncate leading-tight"
             style={{
-              color: isLeipzig ? '#DD0741' : '#FFFFFF',
+              color: isLeipzig ? '#DD0741' : isBVB ? '#000000' : '#FFFFFF',
               textShadow: isLeipzig
                 ? hasScored
                   ? '0 0 8px #DD0741, 0 1px 2px rgba(0,0,0,0.2)'
                   : '0 1px 2px rgba(0,0,0,0.2)'
+                : isBVB
+                ? hasScored
+                  ? '0 0 8px #000000, 0 1px 2px rgba(255,255,255,0.5)'
+                  : '0 1px 2px rgba(255,255,255,0.5)'
                 : isHSV
                 ? hasScored
                   ? '0 0 8px #FFFFFF, 0 1px 2px rgba(0,0,0,0.5)'
