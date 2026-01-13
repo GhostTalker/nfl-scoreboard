@@ -5,7 +5,7 @@
 A modern, responsive web application for displaying live NFL and Bundesliga games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-2.0.3-blue)
+![Version](https://img.shields.io/badge/Version-2.0.4-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -709,6 +709,19 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📝 Changelog
+
+### v2.0.4 (2026-01-16)
+- 🐛 **Critical Bugfixes**
+  - ✅ Fixed St. Pauli logo - now uses correct Wikipedia PNG (team ID 98)
+  - ✅ Fixed Union Berlin logo - transparent PNG without white background
+  - ✅ Fixed MultiView title - shows "BUNDESLIGA" or "DFB-POKAL" instead of "GAMEDAY"
+  - ✅ Fixed DFB-Pokal loading - competition switch now loads correct games
+  - ✅ Fixed MultiView grid symmetry - last odd game now spans full width
+  - ✅ Fixed sport selection screen - now always appears on hard-refresh
+- ⚽ **Bundesliga Improvements**
+  - ✅ Competition change listener in useGameData - live reloading on competition switch
+  - ✅ Competition-based filtering after fetchScoreboard()
+  - ✅ Migration forces all users through sport selection screen (better onboarding)
 
 ### v2.0.3 (2026-01-16)
 - ⚽ **DFB-Pokal Support**

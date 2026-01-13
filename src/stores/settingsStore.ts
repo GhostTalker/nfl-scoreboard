@@ -100,9 +100,10 @@ export const useSettingsStore = create<SettingsState>()(
           persistedState.currentSport = 'nfl';
           persistedState.currentCompetition = 'nfl';
         }
-        // Existing users have already implicitly selected a sport (NFL was default)
+        // Force all users to see sport selection screen (v2.0.4)
+        // This ensures proper multi-sport onboarding experience
         if (persistedState.hasSelectedInitialSport === undefined) {
-          persistedState.hasSelectedInitialSport = true;
+          persistedState.hasSelectedInitialSport = false;
         }
         // Add Bundesliga celebration settings
         if (persistedState.celebrationVideos) {

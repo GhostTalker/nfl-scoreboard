@@ -259,10 +259,17 @@ export class BundesligaAdapter implements SportAdapter {
   }
 
   private transformTeam(team: any, score: number): Team {
-    // Use local logo for St. Pauli (teamId 98) as API logo has CORS issues
+    // Override logos for teams with better quality or transparency issues
     let logo = team.teamIconUrl;
+
+    // St. Pauli - use Wikipedia SVG (better quality, transparent)
     if (team.teamId === 98) {
-      logo = '/logos/st-pauli.svg';
+      logo = 'https://upload.wikimedia.org/wikipedia/de/b/b3/Fc_st_pauli_logo.svg';
+    }
+
+    // Union Berlin - use PNG without white background
+    if (team.teamId === 80) {
+      logo = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/FC_Union_Berlin_logo.svg/1200px-FC_Union_Berlin_logo.svg.png';
     }
 
     return {

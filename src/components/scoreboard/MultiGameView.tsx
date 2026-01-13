@@ -3,7 +3,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { getTitleGraphic } from '../../constants/titleGraphics';
 import type { Game, Team } from '../../types/game';
-import { isNFLGame } from '../../types/game';
+import { isNFLGame, isBundesligaGame } from '../../types/game';
 import { version } from '../../../package.json';
 
 // Track games with recent score changes (game ID -> { timestamp, scoringTeam })
@@ -93,7 +93,15 @@ export function MultiGameView() {
   const allGames = filteredGames;
 
   // Get the season name from the first game for the header
-  const seasonName = (allGames[0] && isNFLGame(allGames[0]) && allGames[0].seasonName) || 'GAME DAY';
+  const seasonName = allGames[0]
+    ? isNFLGame(allGames[0])
+      ? allGames[0].seasonName || 'GAME DAY'
+      : isBundesligaGame(allGames[0])
+      ? allGames[0].competition === 'bundesliga'
+        ? 'BUNDESLIGA'
+        : 'DFB-POKAL'
+      : 'GAME DAY'
+    : 'GAME DAY';
   const titleGraphic = getTitleGraphic(seasonName);
 
   // Calculate dynamic sizing based on number of games
@@ -186,8 +194,9 @@ export function MultiGameView() {
       {/* Games Grid - 2 columns */}
       <div className="flex-1 overflow-y-auto px-4 pb-4">
         <div className={`grid grid-cols-2 ${layoutConfig.gridGap} max-w-6xl mx-auto`}>
-          {allGames.map((game) => {
+          {allGames.map((game, index) => {
             const scoreChangeData = getScoreChangeData(game.id);
+            const isLastOdd = index === allGames.length - 1 && allGames.length % 2 !== 0;
             return (
               <GameCard
                 key={game.id}
@@ -196,6 +205,7 @@ export function MultiGameView() {
                 hasScoreChange={scoreChangeData.hasChange}
                 scoringTeam={scoreChangeData.scoringTeam}
                 layoutConfig={layoutConfig}
+                spanFullWidth={isLastOdd}
               />
             );
           })}
@@ -227,9 +237,10 @@ interface GameCardProps {
   hasScoreChange: boolean;
   scoringTeam: 'home' | 'away' | null;
   layoutConfig: LayoutConfig;
+  spanFullWidth?: boolean;
 }
 
-function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }: GameCardProps) {
+function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig, spanFullWidth }: GameCardProps) {
   const isLive = game.status === 'in_progress' || game.status === 'halftime';
   const isFinal = game.status === 'final';
   const isScheduled = game.status === 'scheduled';
@@ -292,7 +303,7 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }:
       onClick={() => onSelect(game)}
       className={`rounded-xl px-2 transition-all duration-300 hover:scale-x-[1.02] ${layoutConfig.cardHeight} flex flex-col justify-center items-center ${
         hasScoreChange ? 'animate-pulse' : ''
-      }`}
+      } ${spanFullWidth ? 'col-span-2' : ''}`}
       style={getCardStyle()}
     >
       {/* Status Badge */}

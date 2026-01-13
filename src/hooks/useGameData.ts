@@ -222,10 +222,13 @@ export function useGameData() {
       }
     });
 
-    // Re-fetch when sport changes
+    // Re-fetch when sport or competition changes
     const unsubscribeSport = useSettingsStore.subscribe((state, prevState) => {
-      if (state.currentSport !== prevState.currentSport) {
-        // Clear current game when sport changes
+      const sportChanged = state.currentSport !== prevState.currentSport;
+      const competitionChanged = state.currentCompetition !== prevState.currentCompetition;
+
+      if (sportChanged || competitionChanged) {
+        // Clear current game when sport or competition changes
         useGameStore.setState({
           currentGame: null,
           isLive: false,
@@ -233,7 +236,7 @@ export function useGameData() {
           userConfirmedGameId: null,
           availableGames: [],
         });
-        // Fetch new sport's games
+        // Fetch new data
         fetchData();
       }
     });
