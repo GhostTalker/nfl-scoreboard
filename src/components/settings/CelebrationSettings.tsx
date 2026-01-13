@@ -3,7 +3,7 @@ import { useCurrentPlugin } from '../../hooks/usePlugin';
 import type { CelebrationType } from '../../types/game';
 
 interface CelebrationOption {
-  type: string;
+  type: CelebrationType;
   label: string;
   description: string;
   color: string;
@@ -29,7 +29,7 @@ const CELEBRATION_METADATA: Record<string, { label: string; description: string;
 
 function getCelebrationOptions(celebrationTypes: string[]): CelebrationOption[] {
   return celebrationTypes.map(type => ({
-    type,
+    type: type as CelebrationType,
     ...CELEBRATION_METADATA[type] || {
       label: type,
       description: 'Celebration event',

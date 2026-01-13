@@ -1,6 +1,7 @@
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useAvailablePlugins } from '../../hooks/usePlugin';
+import type { SportType } from '../../config/plugins';
 
 export function SportSelectionScreen() {
   const plugins = useAvailablePlugins();
@@ -9,7 +10,8 @@ export function SportSelectionScreen() {
 
   const handleSportSelection = (pluginId: string) => {
     // Set the sport and mark initial selection as complete
-    setInitialSportSelection(pluginId as any); // Type will be fixed in Phase 5
+    // pluginId is from plugin.manifest.id which is type-safe from PLUGIN_DEFINITIONS
+    setInitialSportSelection(pluginId as SportType);
     // Small delay to allow useGameData subscriber to trigger and start fetching
     // This prevents showing empty state before games are loaded
     setTimeout(() => {

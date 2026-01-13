@@ -1,6 +1,10 @@
 // Sport-agnostic base types for multi-sport support
 
-export type SportType = 'nfl' | 'bundesliga';
+// SportType is now auto-generated from plugin definitions
+// Import from config/plugins.ts for type-safe, plugin-driven SportType
+import type { SportType as PluginSportType } from '../config/plugins';
+export type SportType = PluginSportType;
+
 export type CompetitionType = 'nfl' | 'bundesliga' | 'dfb-pokal';
 
 export interface Team {

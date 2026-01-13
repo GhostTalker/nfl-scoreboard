@@ -139,7 +139,7 @@ export class PluginRegistry {
    * Unload all plugins (app shutdown)
    */
   async unloadAll(): Promise<void> {
-    for (const [id, entry] of this.plugins.entries()) {
+    for (const entry of this.plugins.values()) {
       if (entry.plugin?.onUnload) {
         await entry.plugin.onUnload();
       }
