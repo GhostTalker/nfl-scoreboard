@@ -82,6 +82,12 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'scoreboard-settings',
+      // Exclude hasSelectedInitialSport from persistence
+      // This ensures sport selection screen shows on every app start
+      partialize: (state) => {
+        const { hasSelectedInitialSport, ...rest } = state;
+        return rest;
+      },
       // Migration for existing users
       migrate: (persistedState: any, _version: number) => {
         if (!persistedState.celebrationVideos) {
@@ -98,9 +104,9 @@ export const useSettingsStore = create<SettingsState>()(
           persistedState.currentSport = 'nfl';
           persistedState.currentCompetition = 'nfl';
         }
-        // Force all users to see sport selection screen (v2.0.12)
-        // This ensures proper multi-sport onboarding experience
-        // Force for ALL users to see the selection screen again
+        // hasSelectedInitialSport is now excluded from persistence (v2.0.14)
+        // It always starts as false on every app start
+        // This line is kept for backward compatibility but has no effect
         persistedState.hasSelectedInitialSport = false;
         // Add Bundesliga celebration settings
         if (persistedState.celebrationVideos) {
@@ -122,7 +128,7 @@ export const useSettingsStore = create<SettingsState>()(
         }
         return persistedState;
       },
-      version: 10,
+      version: 11,
     }
   )
 );
