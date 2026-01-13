@@ -194,9 +194,8 @@ export function MultiGameView() {
       {/* Games Grid - 2 columns */}
       <div className="flex-1 overflow-y-auto px-4 pb-4">
         <div className={`grid grid-cols-2 ${layoutConfig.gridGap} max-w-6xl mx-auto`}>
-          {allGames.map((game, index) => {
+          {allGames.map((game) => {
             const scoreChangeData = getScoreChangeData(game.id);
-            const isLastOdd = index === allGames.length - 1 && allGames.length % 2 !== 0;
             return (
               <GameCard
                 key={game.id}
@@ -205,7 +204,6 @@ export function MultiGameView() {
                 hasScoreChange={scoreChangeData.hasChange}
                 scoringTeam={scoreChangeData.scoringTeam}
                 layoutConfig={layoutConfig}
-                spanFullWidth={isLastOdd}
               />
             );
           })}
@@ -237,10 +235,9 @@ interface GameCardProps {
   hasScoreChange: boolean;
   scoringTeam: 'home' | 'away' | null;
   layoutConfig: LayoutConfig;
-  spanFullWidth?: boolean;
 }
 
-function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig, spanFullWidth }: GameCardProps) {
+function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }: GameCardProps) {
   const isLive = game.status === 'in_progress' || game.status === 'halftime';
   const isFinal = game.status === 'final';
   const isScheduled = game.status === 'scheduled';
@@ -303,7 +300,7 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig, s
       onClick={() => onSelect(game)}
       className={`rounded-xl px-2 transition-all duration-300 hover:scale-x-[1.02] ${layoutConfig.cardHeight} flex flex-col justify-center items-center ${
         hasScoreChange ? 'animate-pulse' : ''
-      } ${spanFullWidth ? 'col-span-2' : ''}`}
+      }`}
       style={getCardStyle()}
     >
       {/* Status Badge */}

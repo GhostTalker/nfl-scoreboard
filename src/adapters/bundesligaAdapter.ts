@@ -262,14 +262,14 @@ export class BundesligaAdapter implements SportAdapter {
     // Override logos for teams with better quality or transparency issues
     let logo = team.teamIconUrl;
 
-    // St. Pauli - use Wikipedia SVG (better quality, transparent)
+    // St. Pauli - use local logo
     if (team.teamId === 98) {
-      logo = 'https://upload.wikimedia.org/wikipedia/de/b/b3/Fc_st_pauli_logo.svg';
+      logo = '/logos/st-pauli.png';
     }
 
-    // Union Berlin - use PNG without white background
+    // Union Berlin - use local logo
     if (team.teamId === 80) {
-      logo = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/FC_Union_Berlin_logo.svg/1200px-FC_Union_Berlin_logo.svg.png';
+      logo = '/logos/union.png';
     }
 
     return {

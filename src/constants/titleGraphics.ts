@@ -11,8 +11,9 @@ export const TITLE_GRAPHICS: Record<string, string> = {
   'PRESEASON': '/title/gameday.png',
 
   // Bundesliga Graphics
-  'BUNDESLIGA': '/title/bundesliga.svg',
-  'DFB-POKAL': '/title/dfb-pokal.svg',
+  'BUNDESLIGA': '/title/bundesliga.png',
+  'DFB-POKAL': '/title/dfbpokal.png',
+  'DFB-POKAL FINALE': '/title/dfbpokalfinale.png',
 };
 
 /**

@@ -100,11 +100,10 @@ export const useSettingsStore = create<SettingsState>()(
           persistedState.currentSport = 'nfl';
           persistedState.currentCompetition = 'nfl';
         }
-        // Force all users to see sport selection screen (v2.0.4)
+        // Force all users to see sport selection screen (v2.0.5)
         // This ensures proper multi-sport onboarding experience
-        if (persistedState.hasSelectedInitialSport === undefined) {
-          persistedState.hasSelectedInitialSport = false;
-        }
+        // Force for ALL users, not just those with undefined value
+        persistedState.hasSelectedInitialSport = false;
         // Add Bundesliga celebration settings
         if (persistedState.celebrationVideos) {
           if (persistedState.celebrationVideos.goal === undefined) {
@@ -125,7 +124,7 @@ export const useSettingsStore = create<SettingsState>()(
         }
         return persistedState;
       },
-      version: 5,
+      version: 6,
     }
   )
 );
