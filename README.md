@@ -5,7 +5,7 @@
 A modern, responsive web application for displaying live NFL and Bundesliga games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-2.0.5-blue)
+![Version](https://img.shields.io/badge/Version-2.0.6-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ---
@@ -709,6 +709,22 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📝 Changelog
+
+### v2.0.6 (2026-01-16)
+- 🐛 **Critical Bugfixes**
+  - ✅ Fixed SingleView - GameSituation no longer disappears after few seconds
+    - Preserved `situation` field when merging game details
+    - Situation data now persists across API updates
+  - ✅ Fixed MultiView - Score colons now vertically aligned
+    - Changed from Flexbox to CSS Grid layout (grid-cols-[1fr_auto_1fr])
+    - Score section always centered regardless of team name box heights
+  - ✅ Fixed DebugPanel - Added Bundesliga graphics testing
+    - NFL Season Types: Game Day, Preseason, Wild Card, Divisional, Conference, Super Bowl
+    - Bundesliga Season Types: Bundesliga, DFB-Pokal, DFB-Pokal Finale
+- 🏆 **DFB-Pokal Finale Detection**
+  - ✅ Automatic detection when only 1 game in round AND venue is Berlin
+  - ✅ Shows special `dfbpokalfinale.png` title graphic for finale
+  - ✅ Works in both SingleView and MultiView
 
 ### v2.0.5 (2026-01-16)
 - 🎨 **UI Fixes**

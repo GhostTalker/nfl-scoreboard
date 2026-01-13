@@ -9,6 +9,7 @@ import { isNFLGame } from '../../types/game';
 
 export function MainScoreboard() {
   const currentGame = useGameStore((state) => state.currentGame);
+  const availableGames = useGameStore((state) => state.availableGames);
   const scoringTeam = useGameStore((state) => state.scoringTeam);
   const scoringTimestamp = useGameStore((state) => state.scoringTimestamp);
   const isLoading = useGameStore((state) => state.isLoading);
@@ -60,7 +61,15 @@ export function MainScoreboard() {
       : currentGame.competition === 'bundesliga'
       ? 'BUNDESLIGA'
       : currentGame.competition === 'dfb-pokal'
-      ? 'DFB-POKAL'
+      ? (() => {
+          // DFB-Pokal Finale detection: only 1 game in round AND in Berlin
+          const dfbGames = availableGames.filter(g =>
+            !isNFLGame(g) && g.competition === 'dfb-pokal'
+          );
+          const isFinale = dfbGames.length === 1 &&
+                          (currentGame.venue?.toLowerCase().includes('berlin') || false);
+          return isFinale ? 'DFB-POKAL FINALE' : 'DFB-POKAL';
+        })()
       : undefined
   );
   

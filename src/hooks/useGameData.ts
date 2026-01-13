@@ -127,6 +127,7 @@ export function useGameData() {
                   ...details.game,
                   status: gameToShow.status,
                   clock: gameToShow.clock,
+                  situation: details.game.situation || gameToShow.situation, // Preserve situation if details doesn't have it
                   seasonType: gameToShow.seasonType,
                   week: gameToShow.week,
                   seasonName: gameToShow.seasonName,

@@ -99,6 +99,14 @@ export function MultiGameView() {
       : isBundesligaGame(allGames[0])
       ? allGames[0].competition === 'bundesliga'
         ? 'BUNDESLIGA'
+        : allGames[0].competition === 'dfb-pokal'
+        ? (() => {
+            // DFB-Pokal Finale detection: only 1 game in round AND in Berlin
+            const dfbGames = allGames.filter(isBundesligaGame).filter(g => g.competition === 'dfb-pokal');
+            const isFinale = dfbGames.length === 1 &&
+                            (allGames[0].venue?.toLowerCase().includes('berlin') || false);
+            return isFinale ? 'DFB-POKAL FINALE' : 'DFB-POKAL';
+          })()
         : 'DFB-POKAL'
       : 'GAME DAY'
     : 'GAME DAY';
@@ -339,19 +347,21 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }:
         )}
       </div>
 
-      {/* Teams and Score - Centered Layout */}
-      <div className="flex items-center justify-center gap-3 w-full">
+      {/* Teams and Score - Centered Layout with Grid for vertical alignment */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 w-full">
         {/* Away Team */}
-        <TeamBadge
-          team={game.awayTeam}
-          isFinal={isFinal}
-          isWinner={game.awayTeam.score > game.homeTeam.score}
-          layoutConfig={layoutConfig}
-          hasScored={scoringTeam === 'away'}
-        />
+        <div className="flex justify-end">
+          <TeamBadge
+            team={game.awayTeam}
+            isFinal={isFinal}
+            isWinner={game.awayTeam.score > game.homeTeam.score}
+            layoutConfig={layoutConfig}
+            hasScored={scoringTeam === 'away'}
+          />
+        </div>
 
         {/* Score Display - Centered - Fixed width for consistency */}
-        <div className="flex items-center justify-center gap-1.5 min-w-[120px]">
+        <div className="flex items-center justify-center gap-1.5 min-w-[120px] self-center">
           {/* Away Score */}
           <span
             className={`${layoutConfig.scoreSize} font-black ${layoutConfig.scoreMinW} text-right ${
@@ -396,13 +406,15 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }:
         </div>
 
         {/* Home Team */}
-        <TeamBadge
-          team={game.homeTeam}
-          isFinal={isFinal}
-          isWinner={game.homeTeam.score > game.awayTeam.score}
-          layoutConfig={layoutConfig}
-          hasScored={scoringTeam === 'home'}
-        />
+        <div className="flex justify-start">
+          <TeamBadge
+            team={game.homeTeam}
+            isFinal={isFinal}
+            isWinner={game.homeTeam.score > game.awayTeam.score}
+            layoutConfig={layoutConfig}
+            hasScored={scoringTeam === 'home'}
+          />
+        </div>
       </div>
     </button>
   );
