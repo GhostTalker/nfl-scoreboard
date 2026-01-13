@@ -9,7 +9,7 @@ echo "=============================="
 echo ""
 
 echo "📥 Pulling latest code..."
-git pull origin version-2.0
+git pull origin version-3.0
 
 echo ""
 echo "📦 Installing dependencies..."
