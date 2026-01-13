@@ -251,11 +251,34 @@ export class BundesligaAdapter implements SportAdapter {
       matchMinute = Math.max(matchMinute, latestGoal.minute);
     }
 
+    // Calculate display value with extra time (Nachspielzeit)
+    let displayValue: string;
+    if (period === 'first_half' && matchMinute > 45) {
+      // First half extra time: "45+3'"
+      const extraTime = matchMinute - 45;
+      displayValue = `45+${extraTime}'`;
+    } else if (period === 'second_half' && matchMinute > 90) {
+      // Second half extra time: "90+5'"
+      const extraTime = matchMinute - 90;
+      displayValue = `90+${extraTime}'`;
+    } else if (period === 'extra_time') {
+      // Extra time in overtime
+      const extraTimeMinute = Math.max(0, matchMinute - 90);
+      if (extraTimeMinute > 105) {
+        displayValue = `105+${extraTimeMinute - 105}'`;
+      } else {
+        displayValue = `${extraTimeMinute}'`;
+      }
+    } else {
+      // Normal time
+      displayValue = `${matchMinute}'`;
+    }
+
     return {
       matchMinute,
       period,
       periodName: this.getPeriodName(period),
-      displayValue: `${matchMinute}'`,
+      displayValue,
     };
   }
 

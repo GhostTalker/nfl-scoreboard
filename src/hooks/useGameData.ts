@@ -9,6 +9,7 @@ export function useGameData() {
   // Get current plugin and adapter
   const plugin = useCurrentPlugin();
   const adapter = plugin?.adapter;
+  const currentSport = useSettingsStore(state => state.currentSport);
 
   const intervalRef = useRef<number | null>(null);
   const isFirstFetch = useRef(true);
@@ -72,10 +73,6 @@ export function useGameData() {
     const store = useGameStore.getState();
     const { userConfirmedGameId, setAvailableGames, setCurrentGame, setGameStats, setLoading, setError } = store;
 
-    // Get current sport and competition
-    const currentSport = useSettingsStore.getState().currentSport;
-    const currentCompetition = useSettingsStore.getState().currentCompetition;
-
     try {
       if (isFirstFetch.current) {
         setLoading(true);
@@ -85,11 +82,8 @@ export function useGameData() {
       // Fetch scoreboard (all games) using sport adapter
       let games = await adapter.fetchScoreboard();
 
-      // Filter games by competition for sports with multiple competitions
-      if (currentSport === 'bundesliga') {
-        games = games.filter((g) => g.competition === currentCompetition);
-      }
-
+      // Show all games for the sport (don't filter by competition)
+      // This allows showing both Bundesliga + DFB-Pokal games together
       setAvailableGames(games);
 
       // Determine which game to show
@@ -263,7 +257,7 @@ export function useGameData() {
       unsubscribeSport();
       hasInitialized.current = false;
     };
-  }, [fetchData]);
+  }, [fetchData, currentSport]); // currentSport ensures refetch on sport change
 
   return {
     refetch: fetchData,

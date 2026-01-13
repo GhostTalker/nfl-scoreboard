@@ -57,10 +57,8 @@ export function useAvailablePlugins(): PluginManifest[] {
 
   useEffect(() => {
     const available = pluginRegistry.getAllPlugins();
-    console.log('[useAvailablePlugins] Registry returned:', available.length, 'plugins', available);
     setPlugins(available);
   }, []);
 
-  console.log('[useAvailablePlugins] Returning:', plugins.length, 'plugins');
   return plugins;
 }
