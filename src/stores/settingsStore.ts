@@ -98,7 +98,7 @@ export const useSettingsStore = create<SettingsState>()(
           persistedState.currentSport = 'nfl';
           persistedState.currentCompetition = 'nfl';
         }
-        // Force all users to see sport selection screen (v2.0.11)
+        // Force all users to see sport selection screen (v2.0.12)
         // This ensures proper multi-sport onboarding experience
         // Force for ALL users to see the selection screen again
         persistedState.hasSelectedInitialSport = false;
@@ -122,7 +122,7 @@ export const useSettingsStore = create<SettingsState>()(
         }
         return persistedState;
       },
-      version: 9,
+      version: 10,
     }
   )
 );
