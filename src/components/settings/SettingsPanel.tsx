@@ -4,6 +4,7 @@ import { GameSelector } from './GameSelector';
 import { DebugControls } from './DebugControls';
 import { CelebrationSettings } from './CelebrationSettings';
 import { SportSelector } from './SportSelector';
+import { PluginManager } from './PluginManager';
 import type { ViewMode } from '../../types/settings';
 
 function MultiViewFilters() {
@@ -78,6 +79,11 @@ export function SettingsPanel() {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Sport & Competition Selector */}
         <SportSelector />
+
+        {/* Plugin Manager */}
+        <section className="bg-slate-800 rounded-xl p-6">
+          <PluginManager />
+        </section>
 
         {/* View Mode Toggle */}
         <section className="bg-slate-800 rounded-xl p-6">

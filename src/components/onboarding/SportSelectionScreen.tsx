@@ -4,7 +4,8 @@ import { useAvailablePlugins } from '../../hooks/usePlugin';
 import type { SportType } from '../../config/plugins';
 
 export function SportSelectionScreen() {
-  const plugins = useAvailablePlugins();
+  // Only show enabled plugins in sport selection
+  const plugins = useAvailablePlugins(true);
   const setInitialSportSelection = useSettingsStore((state) => state.setInitialSportSelection);
   const setView = useUIStore((state) => state.setView);
 

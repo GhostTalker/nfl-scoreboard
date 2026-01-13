@@ -18,6 +18,11 @@ interface SettingsState extends Settings {
   setViewMode: (mode: ViewMode) => void;
   setMultiViewFilter: (key: keyof MultiViewFilters, value: boolean) => void;
   resetSettings: () => void;
+
+  // Plugin management
+  togglePlugin: (pluginId: string) => void;
+  isPluginEnabled: (pluginId: string) => boolean;
+  setEnabledPlugins: (pluginIds: string[]) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -82,6 +87,24 @@ export const useSettingsStore = create<SettingsState>()(
         })),
 
       resetSettings: () => set(DEFAULT_SETTINGS),
+
+      // Plugin management actions
+      togglePlugin: (pluginId) =>
+        set((state) => {
+          const enabled = state.enabledPlugins.includes(pluginId);
+          return {
+            enabledPlugins: enabled
+              ? state.enabledPlugins.filter(id => id !== pluginId)
+              : [...state.enabledPlugins, pluginId],
+          };
+        }),
+
+      isPluginEnabled: (pluginId) => {
+        const state = get();
+        return state.enabledPlugins.includes(pluginId);
+      },
+
+      setEnabledPlugins: (pluginIds) => set({ enabledPlugins: pluginIds }),
     }),
     {
       name: 'scoreboard-settings',
@@ -111,6 +134,10 @@ export const useSettingsStore = create<SettingsState>()(
         // It always starts as false on every app start
         // This line is kept for backward compatibility but has no effect
         persistedState.hasSelectedInitialSport = false;
+        // Version 3.0 - Add plugin management
+        if (!persistedState.enabledPlugins) {
+          persistedState.enabledPlugins = ['nfl', 'bundesliga']; // Enable all existing plugins by default
+        }
         // Add Bundesliga celebration settings
         if (persistedState.celebrationVideos) {
           if (persistedState.celebrationVideos.goal === undefined) {
@@ -131,7 +158,7 @@ export const useSettingsStore = create<SettingsState>()(
         }
         return persistedState;
       },
-      version: 11,
+      version: 12, // Incremented for plugin management feature
     }
   )
 );

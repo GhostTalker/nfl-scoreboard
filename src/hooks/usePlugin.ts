@@ -51,14 +51,24 @@ export function useCurrentPlugin(): SportPlugin | null {
 
 /**
  * Hook to get all available plugins (for sport selection)
+ * @param filterEnabled - If true, only return enabled plugins. If false, return all plugins.
  */
-export function useAvailablePlugins(): PluginManifest[] {
+export function useAvailablePlugins(filterEnabled: boolean = false): PluginManifest[] {
   const [plugins, setPlugins] = useState<PluginManifest[]>([]);
+  const enabledPlugins = useSettingsStore(state => state.enabledPlugins);
 
   useEffect(() => {
     const available = pluginRegistry.getAllPlugins();
-    setPlugins(available);
-  }, []);
+
+    if (filterEnabled) {
+      // Filter to only enabled plugins
+      const filtered = available.filter(p => enabledPlugins.includes(p.id));
+      setPlugins(filtered);
+    } else {
+      // Return all plugins
+      setPlugins(available);
+    }
+  }, [filterEnabled, enabledPlugins]);
 
   return plugins;
 }

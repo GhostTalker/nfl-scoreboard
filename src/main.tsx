@@ -5,16 +5,24 @@ import App from './App';
 
 // Plugin System
 import { pluginRegistry } from './core/plugin/PluginRegistry';
-import { PLUGIN_DEFINITIONS } from './config/plugins';
+import { getPluginDefinitions } from './config/plugins';
 
 /**
  * Bootstrap: Register all plugins
  */
 async function bootstrap() {
-  // Register plugins
-  for (const { manifest, loader } of PLUGIN_DEFINITIONS) {
+  console.log('🚀 Starting Sport-Scoreboard...');
+
+  // Get plugin definitions
+  const pluginDefinitions = getPluginDefinitions();
+  console.log(`📦 Registering ${pluginDefinitions.length} plugins`);
+
+  // Register all plugins
+  for (const { manifest, loader } of pluginDefinitions) {
     pluginRegistry.register(manifest, loader);
   }
+
+  console.log('✅ All plugins registered');
 
   // Render app
   createRoot(document.getElementById('root')!).render(

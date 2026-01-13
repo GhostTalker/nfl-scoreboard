@@ -20,6 +20,9 @@ export interface Settings {
   currentCompetition: CompetitionType;
   hasSelectedInitialSport: boolean; // Track if user has made initial sport selection
 
+  // Plugin management
+  enabledPlugins: string[]; // Array of enabled plugin IDs ['nfl', 'bundesliga']
+
   // Team preferences
   primaryTeamId: string;
 
@@ -59,6 +62,7 @@ export const DEFAULT_SETTINGS: Settings = {
   currentSport: 'nfl',
   currentCompetition: 'nfl',
   hasSelectedInitialSport: false, // New users need to select sport first
+  enabledPlugins: ['nfl', 'bundesliga'], // All plugins enabled by default (will be updated on first load)
   primaryTeamId: '17', // New England Patriots
   soundEffectsEnabled: true,
   videoVolume: 0.8,
