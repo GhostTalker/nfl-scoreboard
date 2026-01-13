@@ -4,6 +4,7 @@ import { MainScoreboard } from './components/scoreboard/MainScoreboard';
 import { MultiGameView } from './components/scoreboard/MultiGameView';
 import { StatsPanel } from './components/stats/StatsPanel';
 import { SettingsPanel } from './components/settings/SettingsPanel';
+import { SportSelectionScreen } from './components/onboarding/SportSelectionScreen';
 import { VideoOverlay } from './components/celebration/VideoOverlay';
 import { useUIStore } from './stores/uiStore';
 import { useSettingsStore } from './stores/settingsStore';
@@ -17,6 +18,7 @@ function App() {
   const currentView = useUIStore((state) => state.currentView);
   const celebrationOverlay = useUIStore((state) => state.celebrationOverlay);
   const viewMode = useSettingsStore((state) => state.viewMode);
+  const hasSelectedInitialSport = useSettingsStore((state) => state.hasSelectedInitialSport);
 
   // Preload celebration videos at app start
   const { isPreloading, progress } = useVideoPreloader();
@@ -39,6 +41,15 @@ function App() {
     document.addEventListener('contextmenu', handler);
     return () => document.removeEventListener('contextmenu', handler);
   }, []);
+
+  // Show sport selection screen if user hasn't selected initial sport
+  if (!hasSelectedInitialSport) {
+    return (
+      <div className="h-full w-full bg-slate-900 text-white overflow-hidden">
+        <SportSelectionScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full bg-slate-900 text-white overflow-hidden">

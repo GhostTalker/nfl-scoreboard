@@ -3,7 +3,6 @@ import { useGameStore } from '../../stores/gameStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import type { CelebrationType } from '../../types/game';
 import { isNFLGame, isBundesligaGame } from '../../types/game';
-import { getSportAdapter } from '../../adapters';
 
 // NFL celebration button configuration
 const NFL_CELEBRATION_BUTTONS: Array<{ type: CelebrationType; label: string; color: string }> = [

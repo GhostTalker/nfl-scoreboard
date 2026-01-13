@@ -18,6 +18,7 @@ export interface Settings {
   // Sport selection
   currentSport: SportType;
   currentCompetition: CompetitionType;
+  hasSelectedInitialSport: boolean; // Track if user has made initial sport selection
 
   // Team preferences
   primaryTeamId: string;
@@ -57,6 +58,7 @@ export const DEFAULT_MULTI_VIEW_FILTERS: MultiViewFilters = {
 export const DEFAULT_SETTINGS: Settings = {
   currentSport: 'nfl',
   currentCompetition: 'nfl',
+  hasSelectedInitialSport: false, // New users need to select sport first
   primaryTeamId: '17', // New England Patriots
   soundEffectsEnabled: true,
   videoVolume: 0.8,

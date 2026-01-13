@@ -9,6 +9,7 @@ interface SettingsState extends Settings {
   // Actions
   setSport: (sport: SportType) => void;
   setCompetition: (competition: CompetitionType) => void;
+  setInitialSportSelection: (sport: SportType) => void;
   setPrimaryTeam: (teamId: string) => void;
   toggleSoundEffects: () => void;
   setVideoVolume: (volume: number) => void;
@@ -35,6 +36,16 @@ export const useSettingsStore = create<SettingsState>()(
       },
 
       setCompetition: (competition) => set({ currentCompetition: competition }),
+
+      setInitialSportSelection: (sport) => {
+        set({ currentSport: sport, hasSelectedInitialSport: true });
+        // Reset competition when sport changes
+        if (sport === 'nfl') {
+          set({ currentCompetition: 'nfl' });
+        } else {
+          set({ currentCompetition: 'bundesliga' });
+        }
+      },
 
       setPrimaryTeam: (teamId) => set({ primaryTeamId: teamId }),
 
@@ -89,6 +100,10 @@ export const useSettingsStore = create<SettingsState>()(
           persistedState.currentSport = 'nfl';
           persistedState.currentCompetition = 'nfl';
         }
+        // Existing users have already implicitly selected a sport (NFL was default)
+        if (persistedState.hasSelectedInitialSport === undefined) {
+          persistedState.hasSelectedInitialSport = true;
+        }
         // Add Bundesliga celebration settings
         if (persistedState.celebrationVideos) {
           if (persistedState.celebrationVideos.goal === undefined) {
@@ -109,7 +124,7 @@ export const useSettingsStore = create<SettingsState>()(
         }
         return persistedState;
       },
-      version: 4,
+      version: 5,
     }
   )
 );
