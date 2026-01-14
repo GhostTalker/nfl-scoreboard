@@ -3,13 +3,16 @@ import { useUIStore } from '../../stores/uiStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { PluginManager } from './PluginManager';
 import { CelebrationSettings } from './CelebrationSettings';
+import { DebugControls } from './DebugControls';
+import { LanguageSelector } from './LanguageSelector';
 import { useTranslation } from '../../i18n/useTranslation';
 
 export function SettingsSidebar() {
   const [showPluginOverlay, setShowPluginOverlay] = useState(false);
   const [showCelebrationOverlay, setShowCelebrationOverlay] = useState(false);
+  const [showDebugOverlay, setShowDebugOverlay] = useState(false);
+  const [showLanguageOverlay, setShowLanguageOverlay] = useState(false);
   const debugMode = useUIStore((state) => state.debugMode);
-  const toggleDebugMode = useUIStore((state) => state.toggleDebugMode);
   const soundEffectsEnabled = useSettingsStore((state) => state.soundEffectsEnabled);
   const toggleSoundEffects = useSettingsStore((state) => state.toggleSoundEffects);
   const { t } = useTranslation();
@@ -68,9 +71,26 @@ export function SettingsSidebar() {
           <span className="text-left">Sound</span>
         </button>
 
-        {/* Debug Mode Toggle */}
+        {/* Language Button */}
         <button
-          onClick={toggleDebugMode}
+          onClick={() => setShowLanguageOverlay(true)}
+          className="
+            flex items-center gap-2
+            px-3 py-2.5 rounded-lg
+            bg-slate-700 hover:bg-slate-600
+            text-white font-medium text-sm
+            transition-all
+          "
+        >
+          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span className="text-left">{t.settings.language.title}</span>
+        </button>
+
+        {/* Debug Button */}
+        <button
+          onClick={() => setShowDebugOverlay(true)}
           className={`
             flex items-center gap-2
             px-3 py-2.5 rounded-lg
@@ -140,6 +160,64 @@ export function SettingsSidebar() {
 
             {/* Celebration Settings Content */}
             <CelebrationSettings />
+          </div>
+        </div>
+      )}
+
+      {/* Language Overlay */}
+      {showLanguageOverlay && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6"
+          onClick={() => setShowLanguageOverlay(false)}
+        >
+          <div
+            className="bg-slate-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">{t.settings.language.title}</h2>
+              <button
+                onClick={() => setShowLanguageOverlay(false)}
+                className="text-white/50 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Language Settings Content */}
+            <LanguageSelector />
+          </div>
+        </div>
+      )}
+
+      {/* Debug Overlay */}
+      {showDebugOverlay && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6"
+          onClick={() => setShowDebugOverlay(false)}
+        >
+          <div
+            className="bg-slate-800 rounded-xl p-6 max-w-3xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">{t.settings.debug.title}</h2>
+              <button
+                onClick={() => setShowDebugOverlay(false)}
+                className="text-white/50 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Debug Controls Content */}
+            <DebugControls />
           </div>
         </div>
       )}

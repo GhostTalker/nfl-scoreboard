@@ -1,11 +1,9 @@
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUIStore } from '../../stores/uiStore';
 import { GameSelector } from './GameSelector';
-import { DebugControls } from './DebugControls';
 import { CompetitionSelector } from './CompetitionSelector';
 import { SportTabs } from './SportTabs';
 import { SettingsSidebar } from './SettingsSidebar';
-import { LanguageSelector } from './LanguageSelector';
 import { useTranslation } from '../../i18n/useTranslation';
 import type { ViewMode } from '../../types/settings';
 
@@ -59,7 +57,6 @@ function MultiViewFilters() {
 export function SettingsPanel() {
   const viewMode = useSettingsStore((state) => state.viewMode);
   const setViewMode = useSettingsStore((state) => state.setViewMode);
-  const debugMode = useUIStore((state) => state.debugMode);
   const setView = useUIStore((state) => state.setView);
   const { t } = useTranslation();
 
@@ -133,16 +130,6 @@ export function SettingsPanel() {
               <GameSelector />
             </section>
 
-            {/* Language Selector */}
-            <LanguageSelector />
-
-            {/* Debug Controls - only show when debug mode is active */}
-            {debugMode && (
-              <section className="bg-slate-800 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">{t.settings.debug.title}</h3>
-                <DebugControls />
-              </section>
-            )}
           </div>
 
           {/* Navigation hint */}
@@ -151,8 +138,8 @@ export function SettingsPanel() {
           </div>
         </div>
 
-        {/* Right Sidebar - Closer to main content */}
-        <div className="w-40 border-l border-slate-700 p-3 bg-slate-800/50">
+        {/* Right Sidebar - Very close to main content */}
+        <div className="w-auto border-l border-slate-700 pl-3 pr-4 py-3 bg-slate-800/50">
           <SettingsSidebar />
         </div>
       </div>
