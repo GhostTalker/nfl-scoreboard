@@ -5,8 +5,10 @@
 A modern, responsive web application for displaying live NFL and Bundesliga games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-2.0.8-blue)
+![Version](https://img.shields.io/badge/Version-3.1.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+
+> **What's New in v3.1.0:** Horizontal tab menu for settings, Sound overlay with volume control, Generic sport favicon, Improved UI consistency
 
 ---
 

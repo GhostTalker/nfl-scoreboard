@@ -3,7 +3,7 @@ import { useUIStore } from '../../stores/uiStore';
 import { GameSelector } from './GameSelector';
 import { CompetitionSelector } from './CompetitionSelector';
 import { SportTabs } from './SportTabs';
-import { SettingsSidebar } from './SettingsSidebar';
+import { SettingsMenuTabs } from './SettingsMenuTabs';
 import { useTranslation } from '../../i18n/useTranslation';
 import type { ViewMode } from '../../types/settings';
 
@@ -79,10 +79,13 @@ export function SettingsPanel() {
         <SportTabs />
       </div>
 
-      {/* Main Content with Sidebar */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto p-6">
+      {/* Settings Menu Tabs */}
+      <div className="px-6 pt-4">
+        <SettingsMenuTabs />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Competition Selector */}
             <CompetitionSelector />
@@ -137,12 +140,6 @@ export function SettingsPanel() {
             {t.settings.navigation.hint}
           </div>
         </div>
-
-        {/* Right Sidebar - Very close to main content */}
-        <div className="w-auto border-l border-slate-700 pl-3 pr-4 py-3 bg-slate-800/50">
-          <SettingsSidebar />
-        </div>
-      </div>
     </div>
   );
 }

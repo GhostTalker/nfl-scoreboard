@@ -4,9 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A live NFL scoreboard application designed for iPad mini 6 and video wall displays. The app fetches real-time game data from ESPN API, displays team logos, scores, game situations, and statistics with dynamic backgrounds based on game type (Regular Season, Wild Card, Divisional, Championship, Super Bowl).
+**Version:** 3.1.0
+
+A modular multi-sport scoreboard application designed for iPad mini 6 and video wall displays. The app features a plugin-based architecture supporting multiple sports (NFL, Bundesliga, and more). It fetches real-time game data from various APIs, displays team logos, scores, game situations, and statistics with dynamic backgrounds.
 
 **Stack**: React 18 + TypeScript + Vite (frontend), Express + Node.js (backend proxy), Tailwind CSS, Zustand (state management)
+
+**Key Features:**
+- Plugin-based architecture for easy sport additions
+- Dual language support (German/English) with browser detection
+- Real-time score updates with celebration videos
+- Multi-view and single-view game modes
+- Dynamic plugin management (enable/disable sports)
+- Comprehensive settings with overlay-based UI
 
 ## Commands
 
@@ -240,3 +250,59 @@ pm2 save
 3. **ESPN API rate limiting**: Use caching in espnProxy, don't poll too frequently
 4. **Playoff detection**: ESPN API inconsistently provides `seasonName` - fallback logic in `getSeasonName()` determines round by week number
 5. **CORS in development**: Express proxy must be running for frontend to access ESPN API
+
+
+## Version History
+
+### v3.1.0 (2026-01-14) - UI Redesign & Sound Overlay
+**Major UI improvements:**
+- Horizontal tab menu for settings (replaced vertical sidebar)
+- Sound settings overlay with volume control
+- Generic sport favicon (no longer NFL-specific)
+- All settings now use consistent overlay pattern
+
+**Settings Menu Tabs:**
+1. **Plugins** - Enable/disable sport plugins
+2. **Videos** - Configure celebration videos
+3. **Sound** - Audio settings with volume slider
+4. **Language** - Switch between German/English
+5. **Debug** - Debug controls and simulation tools
+
+### v3.0.0 (2026-01-13) - Plugin System & Internationalization
+**Plugin Architecture:**
+- Complete plugin system with registry and lazy loading
+- Dynamic plugin management (enable/disable)
+- Type-safe plugin definitions in `src/config/plugins.ts`
+- Plugin manifests with metadata (id, version, celebrations, competitions)
+
+**Internationalization:**
+- Dual language support (German/English)
+- Browser language auto-detection
+- Translation system in `src/i18n/`
+- Language selector in settings overlay
+
+**UI Enhancements:**
+- Sport tabs showing only enabled plugins
+- Competition selector (for multi-competition sports like Bundesliga)
+- Plugin management overlay
+- Settings redesign with overlay-based UI
+
+**Supported Plugins:**
+- NFL (ESPN API)
+- Bundesliga (OpenLigaDB API)
+
+### v2.0.x - Dual-Sport Support
+- Added Bundesliga support alongside NFL
+- Celebration videos for both sports
+- Manual game selection
+- Multi-view mode with filters
+
+### v1.0.0 - Initial Release
+- NFL scoreboard with ESPN API integration
+- Real-time score updates
+- iPad-optimized display
+- Dynamic backgrounds based on game type
+
+---
+
+For detailed changes, see [CHANGELOG.md](./CHANGELOG.md)
