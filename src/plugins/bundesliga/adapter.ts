@@ -17,7 +17,7 @@ import type {
 import type { GameStats } from '../../types/stats';
 import { API_ENDPOINTS } from '../../constants/api';
 import { getBundesligaTeamColor, getBundesligaTeamAlternateColor } from '../../constants/bundesligaTeams';
-import { fetchBundesligaLiveFixtures, type ApiFootballFixture } from '../../services/apiFootball';
+import { fetchBundesligaLiveFixtures } from '../../services/apiFootball';
 
 interface MinuteState {
   lastApiMinute: number | null;

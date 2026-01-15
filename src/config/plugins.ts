@@ -59,6 +59,23 @@ export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
     loader: () => import('../plugins/bundesliga'),
   },
 
+  // UEFA Champions League Plugin
+  {
+    manifest: {
+      id: 'uefa',
+      version: '1.0.0',
+      name: 'UEFA Champions League Plugin',
+      displayName: 'UEFA Champions League',
+      description: 'European Football',
+      icon: '/title/uefa-logo.png',
+      hasStats: false,
+      celebrationTypes: ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'],
+      competitions: ['champions-league'],
+      coreVersion: '^3.0.0',
+    },
+    loader: () => import('../plugins/uefa'),
+  },
+
   // Add new plugins here...
   // {
   //   manifest: {

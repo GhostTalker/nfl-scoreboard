@@ -3,7 +3,7 @@ import { useGameStore } from '../stores/gameStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { useCurrentPlugin } from './usePlugin';
 import { POLLING_INTERVALS, BUNDESLIGA_POLLING_INTERVAL } from '../constants/api';
-import { isNFLGame, isBundesligaGame } from '../types/game';
+import { isNFLGame, isBundesligaGame, isUEFAGame } from '../types/game';
 
 export function useGameData() {
   // Get current plugin and adapter
@@ -157,6 +157,18 @@ export function useGameData() {
                   broadcast: gameToShow.broadcast || details.game.broadcast,
                 };
                 setCurrentGame(mergedBLGame);
+              } else if (isUEFAGame(gameToShow) && isUEFAGame(details.game)) {
+                const mergedUEFAGame = {
+                  ...details.game,
+                  status: gameToShow.status,
+                  clock: gameToShow.clock,
+                  matchday: gameToShow.matchday,
+                  round: gameToShow.round || details.game.round,
+                  startTime: gameToShow.startTime || details.game.startTime,
+                  venue: gameToShow.venue || details.game.venue,
+                  broadcast: gameToShow.broadcast || details.game.broadcast,
+                };
+                setCurrentGame(mergedUEFAGame);
               } else {
                 // Fallback: just use details game
                 setCurrentGame(details.game);
@@ -243,8 +255,8 @@ export function useGameData() {
         interval = POLLING_INTERVALS.final;
       } else if (isLive) {
         // Use sport-specific intervals
-        if (adapter.sport === 'bundesliga') {
-          interval = BUNDESLIGA_POLLING_INTERVAL; // 15 seconds for Bundesliga
+        if (adapter.sport === 'bundesliga' || adapter.sport === 'uefa') {
+          interval = BUNDESLIGA_POLLING_INTERVAL; // 15 seconds for football (Bundesliga, UEFA)
         } else {
           interval = POLLING_INTERVALS.live; // 10 seconds for NFL
         }

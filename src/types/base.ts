@@ -5,7 +5,7 @@
 import type { SportType as PluginSportType } from '../config/plugins';
 export type SportType = PluginSportType;
 
-export type CompetitionType = 'nfl' | 'bundesliga' | 'dfb-pokal' | null;
+export type CompetitionType = 'nfl' | 'bundesliga' | 'dfb-pokal' | 'champions-league' | null;
 
 export interface Team {
   id: string;

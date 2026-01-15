@@ -2,6 +2,7 @@
 
 import { NFLGame, NFLCelebrationType } from './nfl';
 import { BundesligaGame, BundesligaCelebrationType } from './bundesliga';
+import { UEFAGame, UEFACelebrationType } from './uefa';
 
 // Re-export commonly used types for backwards compatibility
 export type { Team, GameStatus, SportType, CompetitionType } from './base';
@@ -22,15 +23,19 @@ export type {
   Card,
   BundesligaCelebrationType
 } from './bundesliga';
+export type {
+  UEFAGame,
+  UEFACelebrationType
+} from './uefa';
 
 // Re-export constants
 export { PLAY_TYPE_IDS, PLAY_TYPE_TO_VIDEO } from './nfl';
 
 // Polymorphic Game type - discriminated union
-export type Game = NFLGame | BundesligaGame;
+export type Game = NFLGame | BundesligaGame | UEFAGame;
 
 // Union of all celebration types
-export type CelebrationType = NFLCelebrationType | BundesligaCelebrationType;
+export type CelebrationType = NFLCelebrationType | BundesligaCelebrationType | UEFACelebrationType;
 
 // Type guards for runtime type checking
 export function isNFLGame(game: Game): game is NFLGame {
@@ -41,11 +46,19 @@ export function isBundesligaGame(game: Game): game is BundesligaGame {
   return game.sport === 'bundesliga';
 }
 
+export function isUEFAGame(game: Game): game is UEFAGame {
+  return game.sport === 'uefa';
+}
+
 // Type guard for celebration types
 export function isNFLCelebration(type: CelebrationType): type is NFLCelebrationType {
   return ['touchdown', 'fieldgoal', 'interception', 'sack', 'fumble', 'safety'].includes(type);
 }
 
 export function isBundesligaCelebration(type: CelebrationType): type is BundesligaCelebrationType {
+  return ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'].includes(type);
+}
+
+export function isUEFACelebration(type: CelebrationType): type is UEFACelebrationType {
   return ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'].includes(type);
 }
