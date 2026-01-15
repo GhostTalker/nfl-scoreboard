@@ -5,10 +5,10 @@
 A modern, responsive web application for displaying live NFL and Bundesliga games with dynamic backgrounds, team logos, statistics, celebration videos, and German localization.
 
 ![Status](https://img.shields.io/badge/Status-Production-green)
-![Version](https://img.shields.io/badge/Version-3.1.1-blue)
+![Version](https://img.shields.io/badge/Version-3.2.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-> **What's New in v3.1.1:** Code cleanup (removed 530 lines of redundant code), Fixed all TypeScript 'any' types, Logo updates, Improved type safety
+> **What's New in v3.2.0:** UEFA Champions League Plugin, Hybrid API system for Bundesliga (OpenLigaDB + API-Football for accurate live minutes), Smart phase-based polling
 
 ---
 

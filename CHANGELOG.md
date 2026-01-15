@@ -5,6 +5,36 @@ All notable changes to the Sport-Scoreboard project will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-01-15
+
+### Added
+- **UEFA Champions League Plugin** - Full support for European football
+  - OpenLigaDB integration for Champions League matches
+  - Round detection: Group Stage, Round of 16, Quarter-finals, Semi-finals, Final
+  - Title graphics for all tournament rounds
+  - Icon: uefa-logo.png, Logo: Logo_UEFA.png
+  - Same celebration types as Bundesliga (goal, penalty, own goal, cards)
+- **Hybrid API System for Bundesliga** - Intelligent dual-API approach for accurate live minutes
+  - Primary: OpenLigaDB (15s polling) for goals, cards, events
+  - Secondary: API-Football (optional, 100 req/day free tier) for live match minutes
+  - Smart phase-based polling: 10min normal, 1min critical (injury time, restarts)
+  - Fixes issues with delayed kickoffs, interruptions, and injury time variations
+  - Falls back to estimation without API key (still functional)
+
+### Changed
+- Bundesliga polling interval optimized to 15 seconds (respects OpenLigaDB 1000/hour limit)
+- UEFA Champions League uses same 15s polling interval as Bundesliga
+- Updated README with comprehensive Bundesliga API setup guide
+
+### Technical
+- New service: `src/services/apiFootball.ts` for batch live fixture requests
+- Enhanced BundesligaAdapter with phase detection and hybrid clock calculation
+- Sport-specific polling intervals in useGameData hook
+- New types: `UEFAGame`, `UEFACelebrationType` in `src/types/uefa.ts`
+- Extended Game type union: `NFLGame | BundesligaGame | UEFAGame`
+- Added `.env.example` for API-Football key configuration
+- Competition type extended: added 'champions-league'
+
 ## [3.1.1] - 2026-01-14
 
 ### Changed
