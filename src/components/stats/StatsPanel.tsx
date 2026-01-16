@@ -1,7 +1,7 @@
 import { useGameStore } from '../../stores/gameStore';
 import { TeamStats } from './TeamStats';
 import { LiveTable } from '../table/LiveTable';
-import { isNFLGame } from '../../types/game';
+import { isNFLGame, isTournamentGame } from '../../types/game';
 
 export function StatsPanel() {
   const currentGame = useGameStore((state) => state.currentGame);
@@ -18,7 +18,7 @@ export function StatsPanel() {
 
   // Show live table for Bundesliga/UEFA instead of stats
   if (!isNFLGame(currentGame)) {
-    // Only show table for Bundesliga (not UEFA - they don't have tables)
+    // Only show table for Bundesliga (not UEFA/Tournament - they don't have tables)
     if (currentGame.sport === 'bundesliga') {
       return (
         <div className="h-full w-full bg-slate-900 p-6">
@@ -31,7 +31,38 @@ export function StatsPanel() {
       );
     }
 
-    // For UEFA, show "no stats available" message
+    // For tournaments (World Cup, Euro), show tournament-specific stats
+    if (isTournamentGame(currentGame)) {
+      const tournamentGame = currentGame;
+
+      // Show tournament bracket for knockout phase
+      if (tournamentGame.roundType !== 'group') {
+        return (
+          <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-6">
+            <p className="text-white/50 text-xl mb-2">Turnierbaum</p>
+            <p className="text-white/30 text-sm">{tournamentGame.round}</p>
+            <p className="text-white/30 text-xs mt-4">Coming soon: Tournament bracket visualization</p>
+            <div className="text-center mt-8 text-white/30 text-sm">
+              Swipe down to return to scoreboard
+            </div>
+          </div>
+        );
+      }
+
+      // Show group tables for group phase
+      return (
+        <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-6">
+          <p className="text-white/50 text-xl mb-2">Gruppentabelle</p>
+          <p className="text-white/30 text-sm">{tournamentGame.group || tournamentGame.round}</p>
+          <p className="text-white/30 text-xs mt-4">Coming soon: Group table visualization</p>
+          <div className="text-center mt-8 text-white/30 text-sm">
+            Swipe down to return to scoreboard
+          </div>
+        </div>
+      );
+    }
+
+    // For UEFA Champions League, show "no stats available" message
     return (
       <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-6">
         <p className="text-white/50 text-xl mb-2">Keine Statistiken verfügbar</p>

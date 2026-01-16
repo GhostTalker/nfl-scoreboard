@@ -76,6 +76,40 @@ export const PLUGIN_DEFINITIONS: PluginDefinition[] = [
     loader: () => import('../plugins/uefa'),
   },
 
+  // FIFA World Cup 2026 Plugin
+  {
+    manifest: {
+      id: 'worldcup',
+      version: '1.0.0',
+      name: 'FIFA World Cup Plugin',
+      displayName: 'FIFA Weltmeisterschaft 2026',
+      description: 'International Tournament',
+      icon: '/title/worldcup-logo.png',
+      hasStats: true,
+      celebrationTypes: ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'],
+      competitions: ['fifa-worldcup'],
+      coreVersion: '^3.0.0',
+    },
+    loader: () => import('../plugins/worldcup'),
+  },
+
+  // UEFA Euro 2020 Plugin
+  {
+    manifest: {
+      id: 'euro',
+      version: '1.0.0',
+      name: 'UEFA Euro Plugin',
+      displayName: 'UEFA Europameisterschaft 2020',
+      description: 'European Tournament',
+      icon: '/title/euro-logo.png',
+      hasStats: true,
+      celebrationTypes: ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'],
+      competitions: ['uefa-euro'],
+      coreVersion: '^3.0.0',
+    },
+    loader: () => import('../plugins/euro'),
+  },
+
   // Add new plugins here...
   // {
   //   manifest: {

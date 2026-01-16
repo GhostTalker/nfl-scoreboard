@@ -3,6 +3,7 @@
 import { NFLGame, NFLCelebrationType } from './nfl';
 import { BundesligaGame, BundesligaCelebrationType } from './bundesliga';
 import { UEFAGame, UEFACelebrationType } from './uefa';
+import { TournamentGame } from './tournament';
 
 // Re-export commonly used types for backwards compatibility
 export type { Team, GameStatus, SportType, CompetitionType } from './base';
@@ -27,12 +28,19 @@ export type {
   UEFAGame,
   UEFACelebrationType
 } from './uefa';
+export type {
+  TournamentGame,
+  BracketMatch,
+  GroupTableEntry,
+  GroupTable,
+  TournamentStats
+} from './tournament';
 
 // Re-export constants
 export { PLAY_TYPE_IDS, PLAY_TYPE_TO_VIDEO } from './nfl';
 
 // Polymorphic Game type - discriminated union
-export type Game = NFLGame | BundesligaGame | UEFAGame;
+export type Game = NFLGame | BundesligaGame | UEFAGame | TournamentGame;
 
 // Union of all celebration types
 export type CelebrationType = NFLCelebrationType | BundesligaCelebrationType | UEFACelebrationType;
@@ -48,6 +56,18 @@ export function isBundesligaGame(game: Game): game is BundesligaGame {
 
 export function isUEFAGame(game: Game): game is UEFAGame {
   return game.sport === 'uefa';
+}
+
+export function isWorldCupGame(game: Game): game is TournamentGame {
+  return game.sport === 'worldcup';
+}
+
+export function isEuroGame(game: Game): game is TournamentGame {
+  return game.sport === 'euro';
+}
+
+export function isTournamentGame(game: Game): game is TournamentGame {
+  return game.sport === 'worldcup' || game.sport === 'euro';
 }
 
 // Type guard for celebration types
