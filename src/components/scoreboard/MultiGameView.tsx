@@ -3,7 +3,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { getTitleGraphic } from '../../constants/titleGraphics';
 import type { Game, Team } from '../../types/game';
-import { isNFLGame, isBundesligaGame } from '../../types/game';
+import { isNFLGame, isBundesligaGame, isUEFAGame } from '../../types/game';
 import { version } from '../../../package.json';
 
 // Track games with recent score changes (game ID -> { timestamp, scoringTeam })
@@ -255,13 +255,13 @@ function GameCard({ game, onSelect, hasScoreChange, scoringTeam, layoutConfig }:
   const isScheduled = game.status === 'scheduled';
   const isHalftime = game.status === 'halftime';
 
-  // Determine team display order: Bundesliga = Home left, NFL = Away left
-  const isBundesliga = isBundesligaGame(game);
-  const leftTeam = isBundesliga ? game.homeTeam : game.awayTeam;
-  const rightTeam = isBundesliga ? game.awayTeam : game.homeTeam;
+  // Determine team display order: Bundesliga/UEFA = Home left, NFL = Away left
+  const isSoccer = isBundesligaGame(game) || isUEFAGame(game);
+  const leftTeam = isSoccer ? game.homeTeam : game.awayTeam;
+  const rightTeam = isSoccer ? game.awayTeam : game.homeTeam;
   // Map scoringTeam to display position
-  const leftScored = isBundesliga ? scoringTeam === 'home' : scoringTeam === 'away';
-  const rightScored = isBundesliga ? scoringTeam === 'away' : scoringTeam === 'home';
+  const leftScored = isSoccer ? scoringTeam === 'home' : scoringTeam === 'away';
+  const rightScored = isSoccer ? scoringTeam === 'away' : scoringTeam === 'home';
 
   const formatTime = (dateStr?: string) => {
     if (!dateStr) return 'TBD';

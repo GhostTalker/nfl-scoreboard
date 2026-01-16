@@ -15,6 +15,7 @@ import type {
 } from '../../types/uefa';
 import type { GameStats } from '../../types/stats';
 import { API_ENDPOINTS } from '../../constants/api';
+import { getBestLogoUrl } from '../../utils/logoFallback';
 
 // UEFA-specific team colors (primary colors for major European clubs)
 // OpenLigaDB Team IDs mapped to hex colors
@@ -442,11 +443,12 @@ export class UEFAAdapter implements SportAdapter {
   }
 
   private transformTeam(team: OpenLigaDBTeam, score: number): Team {
-    let logo = team.teamIconUrl;
+    // Use fallback for better logo quality (Wikimedia Commons)
+    const logo = getBestLogoUrl(team.teamIconUrl, team.teamName);
 
     // Use team-specific colors if available
-    const color = UEFA_TEAM_COLORS[team.teamId] || '#0066CC'; // Default UEFA blue
-    const alternateColor = '#FFFFFF';
+    const color = UEFA_TEAM_COLORS[team.teamId] || '0066CC'; // Default UEFA blue (no # prefix)
+    const alternateColor = 'FFFFFF';
 
     return {
       id: team.teamId.toString(),
