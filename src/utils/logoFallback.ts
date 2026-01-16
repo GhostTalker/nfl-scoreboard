@@ -76,38 +76,18 @@ export function getLogoFallback(teamName: string): string | null {
 
 /**
  * Get the best quality logo URL, with fallbacks
- * PRIORITY ORDER:
- * 1. If OpenLigaDB URL is already a Wikimedia thumb URL, upgrade to high-res (1200px or direct SVG)
- * 2. Try our curated Wikimedia Commons URLs
- * 3. Fall back to original OpenLigaDB logo
- * 4. Return placeholder if all fail
+ * Strategy: Just use what OpenLigaDB provides - don't try to modify URLs
  */
 export function getBestLogoUrl(openLigaDbUrl: string, teamName: string): string {
-  // If OpenLigaDB URL is already a Wikimedia thumbnail, upgrade to high resolution
-  if (openLigaDbUrl && openLigaDbUrl.includes('wikimedia.org/wikipedia')) {
-    // Check if it's a thumbnail URL
-    const thumbMatch = openLigaDbUrl.match(/\/thumb\/(.+\/)([^/]+)\/\d+px-([^/]+)$/);
-    if (thumbMatch) {
-      // Upgrade to 1200px version for better quality
-      const [, path, filename] = thumbMatch;
-      return `https://upload.wikimedia.org/wikipedia/commons/thumb/${path}${filename}/1200px-${filename.replace('.svg', '.svg.png')}`;
-    }
-
-    // If it's already a direct SVG/image, use it
-    if (openLigaDbUrl.includes('.svg') || openLigaDbUrl.includes('.png')) {
-      return openLigaDbUrl;
-    }
+  // If OpenLigaDB provides a URL, use it as-is
+  if (openLigaDbUrl && openLigaDbUrl.includes('http')) {
+    return openLigaDbUrl;
   }
 
-  // Try our curated Wikimedia Commons URLs
+  // Try our curated Wikimedia Commons URLs as fallback
   const fallback = getLogoFallback(teamName);
   if (fallback) {
     return fallback;
-  }
-
-  // Fall back to original OpenLigaDB if it exists
-  if (openLigaDbUrl && openLigaDbUrl.includes('http')) {
-    return openLigaDbUrl;
   }
 
   // Last resort: placeholder
