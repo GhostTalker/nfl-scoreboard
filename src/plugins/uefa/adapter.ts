@@ -33,15 +33,18 @@ export class UEFAAdapter implements SportAdapter {
       // UEFA season starts in September
       const season = currentMonth >= 9 ? currentYear : currentYear - 1;
 
+      // Calculate league code for OpenLigaDB (e.g., ucl2025 for 2025/26 season)
+      const leagueCode = `ucl${season}`;
+
       const allGames: Game[] = [];
 
       // Fetch UEFA Champions League games
       try {
-        const uefaGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=uefa`);
+        const uefaGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=${leagueCode}`);
         if (uefaGroupResponse.ok) {
           const uefaGroup: OpenLigaDBCurrentGroup = await uefaGroupResponse.json();
           const uefaMatchesResponse = await fetch(
-            `${API_ENDPOINTS.bundesligaMatchday(uefaGroup.groupOrderID)}?season=${season}&league=uefa`
+            `${API_ENDPOINTS.bundesligaMatchday(uefaGroup.groupOrderID)}?season=${season}&league=${leagueCode}`
           );
           if (uefaMatchesResponse.ok) {
             const uefaMatches: OpenLigaDBMatch[] = await uefaMatchesResponse.json();

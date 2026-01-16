@@ -624,7 +624,11 @@ function NoGameState() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-black text-white mb-2">
-            {currentSport === 'nfl' ? '🏈 NFL Scoreboard' : '⚽ Bundesliga Scoreboard'}
+            {currentSport === 'nfl'
+              ? '🏈 NFL Scoreboard'
+              : currentSport === 'uefa'
+              ? '⭐ UEFA Champions League'
+              : '⚽ Bundesliga Scoreboard'}
           </h1>
           <p className="text-white/60 text-lg">Wählen Sie ein Spiel aus</p>
         </div>

@@ -38,10 +38,16 @@ export const useSettingsStore = create<SettingsState>()(
         // Atomic update to prevent race conditions
         // For NFL, auto-set competition to 'nfl' (only one competition)
         // For Bundesliga, auto-set to 'bundesliga' as default (user can change to DFB-Pokal in settings)
+        // For UEFA, auto-set to 'champions-league'
         // This prevents the "Laden..." (loading) state when switching sports
+        const competitionMap: Record<SportType, CompetitionType> = {
+          nfl: 'nfl',
+          bundesliga: 'bundesliga',
+          uefa: 'champions-league',
+        };
         set({
           currentSport: sport,
-          currentCompetition: sport === 'nfl' ? 'nfl' : 'bundesliga',
+          currentCompetition: competitionMap[sport] || 'nfl',
         });
       },
 
@@ -50,9 +56,15 @@ export const useSettingsStore = create<SettingsState>()(
       setInitialSportSelection: (sport) => {
         // Set sport, competition, and selection flag in ONE atomic update
         // For NFL, auto-set competition. For Bundesliga, set to 'bundesliga' as default (can be changed later)
+        // For UEFA, auto-set to 'champions-league'
+        const competitionMap: Record<SportType, CompetitionType> = {
+          nfl: 'nfl',
+          bundesliga: 'bundesliga',
+          uefa: 'champions-league',
+        };
         set({
           currentSport: sport,
-          currentCompetition: sport === 'nfl' ? 'nfl' : 'bundesliga',
+          currentCompetition: competitionMap[sport] || 'nfl',
           hasSelectedInitialSport: true,
         });
       },
