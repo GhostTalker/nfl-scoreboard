@@ -7,7 +7,7 @@ const WIKIMEDIA_DIRECT_LOGOS: Record<string, string> = {
   'Borussia Dortmund': 'https://upload.wikimedia.org/wikipedia/commons/6/67/Borussia_Dortmund_logo.svg',
   'FC Bayern München': 'https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg',
   'Bayer 04 Leverkusen': 'https://upload.wikimedia.org/wikipedia/en/5/59/Bayer_04_Leverkusen_logo.svg',
-  // 'Eintracht Frankfurt': Not available on Wikimedia - using OpenLigaDB URL
+  'Eintracht Frankfurt': 'https://i.imgur.com/X8NFkOb.png', // High-res PNG from Imgur (OpenLigaDB source)
 
   // English Clubs (OpenLigaDB names) - Direct SVG URLs
   'FC Liverpool': 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg',
@@ -37,7 +37,7 @@ const WIKIMEDIA_DIRECT_LOGOS: Record<string, string> = {
 
   // Belgian Clubs (OpenLigaDB names) - Direct SVG URLs
   'FC Brügge': 'https://upload.wikimedia.org/wikipedia/en/d/d0/Club_Brugge_KV_logo.svg',
-  // 'Union Saint-Gilloise': Not available on Wikimedia - using OpenLigaDB URL
+  // 'Union Saint-Gilloise': Use OpenLigaDB URL (no high-res Wikimedia available)
 
   // Portuguese Clubs (OpenLigaDB names) - Direct SVG URLs
   'Benfica Lissabon': 'https://upload.wikimedia.org/wikipedia/en/a/a2/SL_Benfica_logo.svg',
@@ -48,9 +48,9 @@ const WIKIMEDIA_DIRECT_LOGOS: Record<string, string> = {
 
   // Other Clubs (OpenLigaDB names) - Direct SVG URLs
   'FC Kopenhagen': 'https://upload.wikimedia.org/wikipedia/en/7/78/FC_K%C3%B8benhavn_logo.svg',
-  // 'Qarabag FK': Not available on Wikimedia - using OpenLigaDB URL
+  // 'Qarabag FK': Use OpenLigaDB URL (no high-res Wikimedia available)
   'FK Bodö/Glimt': 'https://upload.wikimedia.org/wikipedia/en/4/4c/FK_Bodo_Glimt_logo.svg',
-  // 'Olympiakos Piräus': Not available on Wikimedia - using OpenLigaDB URL
+  // 'Olympiakos Piräus': Use OpenLigaDB URL (no high-res Wikimedia available)
   'Paphos FC': 'https://upload.wikimedia.org/wikipedia/en/f/f9/Pafos_FC_logo.svg',
 };
 
