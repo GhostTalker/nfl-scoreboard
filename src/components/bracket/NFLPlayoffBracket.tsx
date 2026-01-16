@@ -18,42 +18,44 @@ export function NFLPlayoffBracket() {
   const bracket = buildPlayoffBracket(availableGames.filter(isNFLGame), currentGame);
 
   return (
-    <div className="h-full w-full bg-slate-900 p-6 overflow-y-auto">
+    <div className="h-full w-full bg-slate-900 p-4 overflow-auto">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <h2 className="text-3xl font-bold text-white mb-2">NFL Playoffs {bracket.season}</h2>
         <p className="text-white/60 text-lg">{getRoundDisplayName(bracket.currentRound)}</p>
       </div>
 
-      {/* Bracket Layout */}
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-3 gap-8">
-          {/* Left: AFC Bracket */}
-          <div className="space-y-6">
-            <ConferenceBracket
-              conference="AFC"
-              wildCard={bracket.afc.wildCard}
-              divisional={bracket.afc.divisional}
-              conferenceGame={bracket.afc.conference}
-            />
+      {/* Bracket Layout - Horizontal flow with connections */}
+      <div className="max-w-[1800px] mx-auto">
+        {/* AFC Conference */}
+        <div className="mb-12">
+          <div className="text-center mb-4">
+            <h3 className="text-2xl font-bold text-blue-400">AFC</h3>
           </div>
+          <ConferenceBracketHorizontal
+            conference="AFC"
+            wildCard={bracket.afc.wildCard}
+            divisional={bracket.afc.divisional}
+            conferenceGame={bracket.afc.conference}
+          />
+        </div>
 
-          {/* Center: Super Bowl */}
-          <div className="flex items-center justify-center">
-            {bracket.superBowl && (
-              <SuperBowlMatchup matchup={bracket.superBowl} />
-            )}
-          </div>
+        {/* Super Bowl */}
+        <div className="my-8">
+          <SuperBowlMatchup matchup={bracket.superBowl} />
+        </div>
 
-          {/* Right: NFC Bracket */}
-          <div className="space-y-6">
-            <ConferenceBracket
-              conference="NFC"
-              wildCard={bracket.nfc.wildCard}
-              divisional={bracket.nfc.divisional}
-              conferenceGame={bracket.nfc.conference}
-            />
+        {/* NFC Conference */}
+        <div className="mt-12">
+          <div className="text-center mb-4">
+            <h3 className="text-2xl font-bold text-red-400">NFC</h3>
           </div>
+          <ConferenceBracketHorizontal
+            conference="NFC"
+            wildCard={bracket.nfc.wildCard}
+            divisional={bracket.nfc.divisional}
+            conferenceGame={bracket.nfc.conference}
+          />
         </div>
       </div>
 
@@ -65,80 +67,177 @@ export function NFLPlayoffBracket() {
   );
 }
 
-interface ConferenceBracketProps {
+interface ConferenceBracketHorizontalProps {
   conference: 'AFC' | 'NFC';
   wildCard: PlayoffMatchup[];
   divisional: PlayoffMatchup[];
   conferenceGame: PlayoffMatchup | null;
 }
 
-function ConferenceBracket({ conference, wildCard, divisional, conferenceGame }: ConferenceBracketProps) {
+function ConferenceBracketHorizontal({ conference, wildCard, divisional, conferenceGame }: ConferenceBracketHorizontalProps) {
+  // Ensure we have exactly 3 wild card slots, 2 divisional slots, 1 conference slot
+  const wcSlots = Array(3).fill(null).map((_, i) => wildCard[i] || createPlaceholderMatchup('wild_card', conference, i));
+  const divSlots = Array(2).fill(null).map((_, i) => divisional[i] || createPlaceholderMatchup('divisional', conference, i));
+  const confSlot = conferenceGame || createPlaceholderMatchup('conference', conference, 0);
+
   return (
-    <div className="space-y-6">
-      {/* Conference Header */}
-      <div className="text-center">
-        <h3 className="text-2xl font-bold text-white">{conference}</h3>
+    <div className="relative">
+      <div className="grid grid-cols-4 gap-8">
+        {/* Column 1: Wild Card Round (3 games + 1 bye) */}
+        <div className="space-y-4 relative">
+          <div className="text-center mb-3">
+            <p className="text-xs text-white/50 font-semibold">WILD CARD</p>
+          </div>
+          {/* #1 Seed - Bye Week */}
+          <div className="h-24 flex items-center justify-center bg-slate-800/30 rounded border border-slate-700/50">
+            <div className="text-center">
+              <span className="text-white/40 text-sm font-semibold">#1 Seed - BYE</span>
+            </div>
+          </div>
+          {/* Wild Card Games */}
+          {wcSlots.map((matchup, idx) => (
+            <div key={idx} className="relative">
+              <MatchupCard matchup={matchup} compact />
+            </div>
+          ))}
+        </div>
+
+        {/* Column 2: Divisional Round (2 games) */}
+        <div className="space-y-4 relative">
+          <div className="text-center mb-3">
+            <p className="text-xs text-white/50 font-semibold">DIVISIONAL</p>
+          </div>
+          {/* Spacer for alignment */}
+          <div className="h-16"></div>
+          {divSlots.map((matchup, idx) => (
+            <div key={idx} className="relative" style={{ marginTop: idx === 0 ? '0' : '8rem' }}>
+              <MatchupCard matchup={matchup} compact />
+            </div>
+          ))}
+        </div>
+
+        {/* Column 3: Conference Championship (1 game) */}
+        <div className="space-y-4 relative">
+          <div className="text-center mb-3">
+            <p className="text-xs text-white/50 font-semibold">CONFERENCE</p>
+          </div>
+          {/* Spacer for alignment */}
+          <div className="h-32"></div>
+          <MatchupCard matchup={confSlot} compact />
+        </div>
+
+        {/* Column 4: To Super Bowl */}
+        <div className="flex items-center justify-center relative">
+          <div className="text-center">
+            <div className="text-white/40 text-sm mb-2">TO</div>
+            <div className="text-white/60 font-bold">SUPER BOWL</div>
+          </div>
+        </div>
       </div>
 
-      {/* Wild Card Round */}
-      {wildCard.length > 0 && (
-        <div className="space-y-3">
-          <p className="text-sm text-white/60 font-semibold">Wild Card</p>
-          {wildCard.map((matchup) => (
-            <MatchupCard key={matchup.id} matchup={matchup} />
-          ))}
-        </div>
-      )}
-
-      {/* Divisional Round */}
-      {divisional.length > 0 && (
-        <div className="space-y-3">
-          <p className="text-sm text-white/60 font-semibold">Divisional</p>
-          {divisional.map((matchup) => (
-            <MatchupCard key={matchup.id} matchup={matchup} />
-          ))}
-        </div>
-      )}
-
-      {/* Conference Championship */}
-      {conferenceGame && (
-        <div className="space-y-3">
-          <p className="text-sm text-white/60 font-semibold">Championship</p>
-          <MatchupCard matchup={conferenceGame} />
-        </div>
-      )}
+      {/* Connection lines (SVG overlay) */}
+      <BracketConnections />
     </div>
+  );
+}
+
+function BracketConnections() {
+  return (
+    <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+      {/* Wild Card → Divisional connections */}
+      {/* Top WC games → Top Divisional */}
+      <path
+        d="M 25% 20%, L 35% 20%, L 35% 35%, L 50% 35%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+      <path
+        d="M 25% 35%, L 35% 35%, L 35% 35%, L 50% 35%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+
+      {/* Bottom WC games → Bottom Divisional */}
+      <path
+        d="M 25% 65%, L 35% 65%, L 35% 65%, L 50% 65%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+      <path
+        d="M 25% 80%, L 35% 80%, L 35% 65%, L 50% 65%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+
+      {/* Divisional → Conference connections */}
+      <path
+        d="M 50% 35%, L 60% 35%, L 60% 50%, L 75% 50%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+      <path
+        d="M 50% 65%, L 60% 65%, L 60% 50%, L 75% 50%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+
+      {/* Conference → Super Bowl */}
+      <path
+        d="M 75% 50%, L 90% 50%"
+        stroke="#475569"
+        strokeWidth="2"
+        fill="none"
+        opacity="0.3"
+      />
+    </svg>
   );
 }
 
 interface MatchupCardProps {
   matchup: PlayoffMatchup;
+  compact?: boolean;
 }
 
-function MatchupCard({ matchup }: MatchupCardProps) {
+function MatchupCard({ matchup, compact }: MatchupCardProps) {
+  const isLive = matchup.status === 'in_progress';
+
   return (
-    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
+    <div className={`bg-slate-800 rounded-lg ${compact ? 'p-2' : 'p-3'} border ${isLive ? 'border-green-500/50' : 'border-slate-700'} relative z-10`}>
       {/* Away Team */}
       <TeamRow
         team={matchup.awayTeam}
         isWinner={matchup.winner === 'away'}
         status={matchup.status}
+        compact={compact}
       />
 
       {/* Divider */}
-      <div className="h-px bg-slate-700 my-2"></div>
+      <div className="h-px bg-slate-700 my-1"></div>
 
       {/* Home Team */}
       <TeamRow
         team={matchup.homeTeam}
         isWinner={matchup.winner === 'home'}
         status={matchup.status}
+        compact={compact}
       />
 
       {/* Game Status */}
-      {matchup.status === 'in_progress' && (
-        <div className="mt-2 text-center">
-          <span className="text-xs text-green-400 font-semibold">LIVE</span>
+      {isLive && (
+        <div className="mt-1 text-center">
+          <span className="text-[10px] text-green-400 font-semibold">● LIVE</span>
         </div>
       )}
     </div>
@@ -149,27 +248,28 @@ interface TeamRowProps {
   team: PlayoffTeam | null;
   isWinner: boolean;
   status: 'scheduled' | 'in_progress' | 'final';
+  compact?: boolean;
 }
 
-function TeamRow({ team, isWinner, status }: TeamRowProps) {
+function TeamRow({ team, isWinner, status, compact }: TeamRowProps) {
   if (!team) {
     return (
-      <div className="flex items-center gap-3 py-1">
-        <div className="w-8 h-8 bg-slate-700 rounded"></div>
+      <div className={`flex items-center gap-2 ${compact ? 'py-0.5' : 'py-1'}`}>
+        <div className={`${compact ? 'w-6 h-6' : 'w-8 h-8'} bg-slate-700 rounded`}></div>
         <div className="flex-1">
-          <span className="text-white/40 text-sm">TBD</span>
+          <span className="text-white/30 text-xs">TBD</span>
         </div>
       </div>
     );
   }
 
   const isComplete = status === 'final';
-  const opacity = isComplete && !isWinner ? 'opacity-50' : '';
+  const opacity = isComplete && !isWinner ? 'opacity-40' : '';
 
   return (
-    <div className={`flex items-center gap-3 py-1 ${opacity}`}>
+    <div className={`flex items-center gap-2 ${compact ? 'py-0.5' : 'py-1'} ${opacity}`}>
       {/* Team Logo */}
-      <div className="w-8 h-8 flex-shrink-0">
+      <div className={`${compact ? 'w-6 h-6' : 'w-8 h-8'} flex-shrink-0`}>
         <img
           src={team.logo}
           alt={team.abbreviation}
@@ -181,20 +281,18 @@ function TeamRow({ team, isWinner, status }: TeamRowProps) {
       </div>
 
       {/* Team Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          {team.seed && (
-            <span className="text-xs text-white/40">#{team.seed}</span>
-          )}
-          <span className={`font-semibold ${isWinner ? 'text-white' : 'text-white/80'}`}>
-            {team.abbreviation}
-          </span>
-        </div>
+      <div className="flex-1 min-w-0 flex items-center gap-1">
+        {team.seed && (
+          <span className="text-[10px] text-white/40">#{team.seed}</span>
+        )}
+        <span className={`${compact ? 'text-xs' : 'text-sm'} font-semibold ${isWinner ? 'text-white' : 'text-white/70'} truncate`}>
+          {team.abbreviation}
+        </span>
       </div>
 
       {/* Score */}
       {team.score !== undefined && (
-        <div className={`text-xl font-bold tabular-nums ${isWinner ? 'text-white' : 'text-white/60'}`}>
+        <div className={`${compact ? 'text-base' : 'text-lg'} font-bold tabular-nums ${isWinner ? 'text-white' : 'text-white/50'}`}>
           {team.score}
         </div>
       )}
@@ -202,14 +300,30 @@ function TeamRow({ team, isWinner, status }: TeamRowProps) {
   );
 }
 
-function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup }) {
+function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup | null }) {
+  if (!matchup) {
+    return (
+      <div className="max-w-md mx-auto bg-gradient-to-br from-yellow-900/20 to-slate-800/50 rounded-lg p-6 border-2 border-yellow-600/30">
+        <div className="text-center mb-4">
+          <h3 className="text-2xl font-bold text-yellow-400/60">Super Bowl</h3>
+          <p className="text-white/30 text-sm mt-1">To Be Determined</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isLive = matchup.status === 'in_progress';
+
   return (
-    <div className="bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-6 border-2 border-yellow-600/50">
+    <div className="max-w-md mx-auto bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-6 border-2 border-yellow-600/50">
       <div className="text-center mb-4">
         <h3 className="text-2xl font-bold text-yellow-400">Super Bowl</h3>
+        {matchup.venue && (
+          <p className="text-white/50 text-xs mt-1">{matchup.venue}</p>
+        )}
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Away Team */}
         <TeamRow
           team={matchup.awayTeam}
@@ -228,13 +342,29 @@ function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup }) {
       </div>
 
       {/* Game Status */}
-      {matchup.status === 'in_progress' && (
+      {isLive && (
         <div className="mt-4 text-center">
-          <span className="text-sm text-green-400 font-semibold">LIVE</span>
+          <span className="text-sm text-green-400 font-semibold">● LIVE</span>
         </div>
       )}
     </div>
   );
+}
+
+// Helper function to create placeholder matchup for TBD games
+function createPlaceholderMatchup(
+  round: PlayoffMatchup['round'],
+  conference: 'AFC' | 'NFC',
+  index: number
+): PlayoffMatchup {
+  return {
+    id: `placeholder-${conference}-${round}-${index}`,
+    round,
+    conference: conference === 'AFC' ? 'AFC' : 'NFC',
+    homeTeam: null,
+    awayTeam: null,
+    status: 'scheduled',
+  };
 }
 
 // Helper function to build playoff bracket from games
@@ -258,12 +388,21 @@ function buildPlayoffBracket(games: NFLGame[], currentGame: NFLGame): PlayoffBra
     week: currentGame.week || 1,
     currentRound,
     afc: {
-      wildCard: wildCardGames.filter(g => isAFCGame(g)).map(gameToMatchup),
+      wildCard: wildCardGames.filter(g => isAFCGame(g)).map(gameToMatchup).sort((a, b) => {
+        // Sort by seed if available
+        const aSeed = Math.min(a.homeTeam?.seed || 999, a.awayTeam?.seed || 999);
+        const bSeed = Math.min(b.homeTeam?.seed || 999, b.awayTeam?.seed || 999);
+        return aSeed - bSeed;
+      }),
       divisional: divisionalGames.filter(g => isAFCGame(g)).map(gameToMatchup),
       conference: conferenceGames.find(g => isAFCGame(g)) ? gameToMatchup(conferenceGames.find(g => isAFCGame(g))!) : null,
     },
     nfc: {
-      wildCard: wildCardGames.filter(g => !isAFCGame(g)).map(gameToMatchup),
+      wildCard: wildCardGames.filter(g => !isAFCGame(g)).map(gameToMatchup).sort((a, b) => {
+        const aSeed = Math.min(a.homeTeam?.seed || 999, a.awayTeam?.seed || 999);
+        const bSeed = Math.min(b.homeTeam?.seed || 999, b.awayTeam?.seed || 999);
+        return aSeed - bSeed;
+      }),
       divisional: divisionalGames.filter(g => !isAFCGame(g)).map(gameToMatchup),
       conference: conferenceGames.find(g => !isAFCGame(g)) ? gameToMatchup(conferenceGames.find(g => !isAFCGame(g))!) : null,
     },
@@ -271,7 +410,7 @@ function buildPlayoffBracket(games: NFLGame[], currentGame: NFLGame): PlayoffBra
   };
 }
 
-// Check if game involves AFC teams (simple heuristic based on team names)
+// Check if game involves AFC teams
 function isAFCGame(game: NFLGame): boolean {
   const afcTeams = [
     'BAL', 'BUF', 'CIN', 'CLE', 'DEN', 'HOU', 'IND', 'JAX',
