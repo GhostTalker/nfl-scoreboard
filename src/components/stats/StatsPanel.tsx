@@ -1,9 +1,12 @@
 import { useGameStore } from '../../stores/gameStore';
 import { TeamStats } from './TeamStats';
+import { LiveTable } from '../table/LiveTable';
+import { isNFLGame } from '../../types/game';
 
 export function StatsPanel() {
   const currentGame = useGameStore((state) => state.currentGame);
   const gameStats = useGameStore((state) => state.gameStats);
+  const availableGames = useGameStore((state) => state.availableGames);
 
   if (!currentGame) {
     return (
@@ -13,6 +16,34 @@ export function StatsPanel() {
     );
   }
 
+  // Show live table for Bundesliga/UEFA instead of stats
+  if (!isNFLGame(currentGame)) {
+    // Only show table for Bundesliga (not UEFA - they don't have tables)
+    if (currentGame.sport === 'bundesliga') {
+      return (
+        <div className="h-full w-full bg-slate-900 p-6">
+          <LiveTable currentGames={availableGames} season={2024} />
+          {/* Swipe hint */}
+          <div className="text-center mt-4 text-white/30 text-sm">
+            Swipe down to return to scoreboard
+          </div>
+        </div>
+      );
+    }
+
+    // For UEFA, show "no stats available" message
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-6">
+        <p className="text-white/50 text-xl mb-2">Keine Statistiken verfügbar</p>
+        <p className="text-white/30 text-sm">UEFA Champions League bietet keine detaillierten Stats</p>
+        <div className="text-center mt-8 text-white/30 text-sm">
+          Swipe down to return to scoreboard
+        </div>
+      </div>
+    );
+  }
+
+  // NFL: Show normal stats
   return (
     <div className="h-full w-full bg-slate-900 p-6 overflow-y-auto">
       {/* Header */}

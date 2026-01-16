@@ -14,6 +14,9 @@ export const API_ENDPOINTS = {
   bundesligaCurrentGroup: `${API_BASE_URL}/bundesliga/current-group`,
   bundesligaMatchday: (matchday: number) => `${API_BASE_URL}/bundesliga/matchday/${matchday}`,
   bundesligaMatch: (matchId: string) => `${API_BASE_URL}/bundesliga/match/${matchId}`,
+
+  // Bundesliga table (direct OpenLigaDB - no proxy needed, updates infrequently)
+  bundesligaTable: 'https://api.openligadb.de/getbltable/bl1',
 };
 
 // Polling Intervals (in ms)

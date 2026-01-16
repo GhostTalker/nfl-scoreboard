@@ -115,3 +115,40 @@ export interface OpenLigaDBCurrentGroup {
   groupName: string;
   groupID: number;
 }
+
+// OpenLigaDB Table API Response
+export interface OpenLigaDBTableEntry {
+  teamInfoId: number;
+  teamName: string;
+  shortName: string;
+  teamIconUrl: string;
+  points: number;
+  opponentGoals: number;
+  goals: number;
+  matches: number;
+  won: number;
+  lost: number;
+  draw: number;
+  goalDiff: number;
+}
+
+// Live Table Entry (calculated with current match results)
+export interface LiveTableEntry {
+  position: number;
+  previousPosition?: number; // For showing ↑↓ arrows
+  teamId: number;
+  teamName: string;
+  shortName: string;
+  teamIconUrl: string;
+  points: number;
+  livePoints: number; // Points if current games finish as they are
+  played: number;
+  won: number;
+  draw: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  liveGoalDifference: number; // Goal diff with live results
+  form?: string[]; // Last 5 results: 'W', 'D', 'L'
+}
