@@ -160,6 +160,10 @@ export const useSettingsStore = create<SettingsState>()(
         if (!state.enabledPlugins) {
           state.enabledPlugins = ['nfl', 'bundesliga']; // Enable all existing plugins by default
         }
+        // Version 3.2 - Add UEFA Champions League plugin
+        if (state.enabledPlugins && !state.enabledPlugins.includes('uefa')) {
+          state.enabledPlugins.push('uefa');
+        }
         // Add Bundesliga celebration settings
         if (state.celebrationVideos) {
           if (state.celebrationVideos.goal === undefined) {

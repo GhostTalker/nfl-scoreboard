@@ -38,7 +38,10 @@ function App() {
 
   // Update document title based on current sport
   useEffect(() => {
-    const sportName = currentSport === 'nfl' ? 'NFL' : 'Bundesliga';
+    const sportName =
+      currentSport === 'nfl' ? 'NFL' :
+      currentSport === 'uefa' ? 'UEFA Champions League' :
+      'Bundesliga';
     document.title = `${sportName} - Sport-Scoreboard`;
   }, [currentSport]);
 

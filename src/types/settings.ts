@@ -75,7 +75,7 @@ export const DEFAULT_SETTINGS: Settings = {
   currentSport: 'nfl',
   currentCompetition: 'nfl',
   hasSelectedInitialSport: false, // New users need to select sport first
-  enabledPlugins: ['nfl', 'bundesliga'], // All plugins enabled by default (will be updated on first load)
+  enabledPlugins: ['nfl', 'bundesliga', 'uefa'], // All plugins enabled by default (will be updated on first load)
   primaryTeamId: '17', // New England Patriots
   soundEffectsEnabled: true,
   videoVolume: 0.8,
