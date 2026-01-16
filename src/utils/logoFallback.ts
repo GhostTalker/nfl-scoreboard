@@ -48,7 +48,7 @@ const WIKIMEDIA_DIRECT_LOGOS: Record<string, string> = {
 
   // Other Clubs (OpenLigaDB names) - Direct SVG URLs
   'FC Kopenhagen': 'https://upload.wikimedia.org/wikipedia/en/7/78/FC_K%C3%B8benhavn_logo.svg',
-  // 'Qarabag FK': Use OpenLigaDB URL (no high-res Wikimedia available)
+  'Qarabag FK': '/images/teams/Qarabagh_1987.png', // Local high-res PNG
   'FK Bodö/Glimt': 'https://upload.wikimedia.org/wikipedia/en/4/4c/FK_Bodo_Glimt_logo.svg',
   // 'Olympiakos Piräus': Use OpenLigaDB URL (no high-res Wikimedia available)
   'Paphos FC': 'https://upload.wikimedia.org/wikipedia/en/f/f9/Pafos_FC_logo.svg',
