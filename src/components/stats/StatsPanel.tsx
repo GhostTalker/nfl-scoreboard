@@ -1,10 +1,12 @@
 import { useGameStore } from '../../stores/gameStore';
 import { TeamStats } from './TeamStats';
-import { isNFLGame, isTournamentGame } from '../../types/game';
+import { isNFLGame, isTournamentGame, isUEFAGame } from '../../types/game';
+import { UEFAStandings } from '../uefa/UEFAStandings';
 
 export function StatsPanel() {
   const currentGame = useGameStore((state) => state.currentGame);
   const gameStats = useGameStore((state) => state.gameStats);
+  const availableGames = useGameStore((state) => state.availableGames);
 
   if (!currentGame) {
     return (
@@ -128,11 +130,15 @@ export function StatsPanel() {
       );
     }
 
-    // For UEFA Champions League, show "no stats available" message
+    // For UEFA Champions League, show standings table
+    if (isUEFAGame(currentGame)) {
+      return <UEFAStandings currentGames={availableGames} />;
+    }
+
+    // Fallback for unknown sports
     return (
       <div className="h-full w-full flex flex-col items-center justify-center bg-slate-900 p-6">
         <p className="text-white/50 text-xl mb-2">Keine Statistiken verfügbar</p>
-        <p className="text-white/30 text-sm">UEFA Champions League bietet keine detaillierten Stats</p>
         <div className="text-center mt-8 text-white/30 text-sm">
           Swipe down to return to scoreboard
         </div>
