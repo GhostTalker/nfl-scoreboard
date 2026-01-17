@@ -26,6 +26,11 @@ function App() {
   const currentSport = useSettingsStore((state) => state.currentSport);
   const availableGames = useGameStore((state) => state.availableGames);
 
+  // Calculate current Bundesliga season (Aug-Jul, so Jan 2026 = 2025/2026 season)
+  const currentMonth = new Date().getMonth() + 1; // 1-12
+  const currentYear = new Date().getFullYear();
+  const bundesligaSeason = currentMonth >= 8 ? currentYear : currentYear - 1;
+
   // Preload celebration videos at app start
   const { isPreloading, progress } = useVideoPreloader();
 
@@ -79,7 +84,7 @@ function App() {
           {currentView === 'stats' && <StatsPanel />}
           {currentView === 'settings' && <SettingsPanel />}
           {currentView === 'bracket' && <NFLPlayoffBracket />}
-          {currentView === 'table' && <LiveTable currentGames={availableGames} season={2024} />}
+          {currentView === 'table' && <LiveTable currentGames={availableGames} season={bundesligaSeason} />}
         </div>
       </SwipeContainer>
 
