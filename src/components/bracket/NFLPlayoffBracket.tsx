@@ -254,7 +254,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
           </div>
           {wcSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact />
+              <MatchupCard matchup={matchup} compact conference={conference} />
             </div>
           ))}
         </div>
@@ -268,7 +268,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
         <div className="flex-1 flex flex-col justify-around">
           {divSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact />
+              <MatchupCard matchup={matchup} compact conference={conference} />
             </div>
           ))}
         </div>
@@ -281,7 +281,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
         </div>
         <div className="flex-1 flex items-center">
           <div className="mx-2 w-full">
-            <MatchupCard matchup={confSlot} compact />
+            <MatchupCard matchup={confSlot} compact conference={conference} />
           </div>
         </div>
       </div>
@@ -307,7 +307,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
         </div>
         <div className="flex-1 flex items-center">
           <div className="mx-2 w-full">
-            <MatchupCard matchup={confSlot} compact />
+            <MatchupCard matchup={confSlot} compact conference={conference} />
           </div>
         </div>
       </div>
@@ -320,7 +320,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
         <div className="flex-1 flex flex-col justify-around">
           {divSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact />
+              <MatchupCard matchup={matchup} compact conference={conference} />
             </div>
           ))}
         </div>
@@ -338,7 +338,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
           </div>
           {wcSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact />
+              <MatchupCard matchup={matchup} compact conference={conference} />
             </div>
           ))}
         </div>
@@ -497,13 +497,27 @@ function BracketConnectionsRight() {
 interface MatchupCardProps {
   matchup: PlayoffMatchup;
   compact?: boolean;
+  conference?: 'AFC' | 'NFC';
 }
 
-function MatchupCard({ matchup, compact }: MatchupCardProps) {
+function MatchupCard({ matchup, compact, conference }: MatchupCardProps) {
   const isLive = matchup.status === 'in_progress';
 
+  // Determine border color based on conference
+  let borderColor = 'border-slate-700/50';
+  if (conference === 'AFC') {
+    borderColor = 'border-red-500/50';
+  } else if (conference === 'NFC') {
+    borderColor = 'border-blue-500/50';
+  }
+
+  // Override with green if live
+  if (isLive) {
+    borderColor = 'border-green-500/70';
+  }
+
   return (
-    <div className={`bg-slate-800/80 rounded ${compact ? 'p-1' : 'p-2'} border ${isLive ? 'border-green-500/50' : 'border-slate-700/50'} relative z-10`}>
+    <div className={`bg-slate-800/80 rounded ${compact ? 'p-1' : 'p-2'} border-2 ${borderColor} relative z-10`}>
       {/* Away Team */}
       <TeamRow
         team={matchup.awayTeam}
@@ -539,11 +553,14 @@ interface ByeTeamCardProps {
   conference: 'AFC' | 'NFC';
 }
 
-function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
+function ByeTeamCard({ team, conference }: ByeTeamCardProps) {
+  // Determine border color based on conference
+  const borderColor = conference === 'AFC' ? 'border-red-500/50' : 'border-blue-500/50';
+
   if (!team) {
     // Placeholder when team not yet determined - matches TeamRow TBD structure
     return (
-      <div className="bg-slate-800/80 rounded p-1 border border-slate-700/50 relative z-10">
+      <div className={`bg-slate-800/80 rounded p-1 border-2 ${borderColor} relative z-10`}>
         {/* Placeholder Team Row - matches TeamRow with compact */}
         <div className="flex items-center gap-1 py-0.5">
           <div className="w-4 h-4 bg-slate-700/50 rounded"></div>
@@ -567,7 +584,7 @@ function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
   }
 
   return (
-    <div className="bg-slate-800/80 rounded p-1 border border-slate-700/50 relative z-10">
+    <div className={`bg-slate-800/80 rounded p-1 border-2 ${borderColor} relative z-10`}>
       {/* #1 Seed Team Row - matches TeamRow with compact */}
       <div className="flex items-center gap-1 py-0.5">
         {/* Team Logo */}
