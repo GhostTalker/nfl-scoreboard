@@ -205,7 +205,11 @@ export function NFLPlayoffBracket() {
                 mixBlendMode: 'lighten'
               }}
             />
-            <SuperBowlMatchup matchup={bracket.superBowl} />
+            <SuperBowlMatchup
+              matchup={bracket.superBowl}
+              afcChampionship={bracket.afc.conference}
+              nfcChampionship={bracket.nfc.conference}
+            />
           </div>
 
           {/* Right: NFC Bracket */}
@@ -580,22 +584,39 @@ interface MatchupCardProps {
 
 function MatchupCard({ matchup, compact, conference }: MatchupCardProps) {
   const isLive = matchup.status === 'in_progress';
+  const isFinal = matchup.status === 'final';
+  const isCurrent = matchup.status === 'scheduled' || matchup.status === 'in_progress';
 
-  // Determine border color based on conference
+  // Determine border color and glow based on conference and status
   let borderColor = 'border-slate-700/50';
+  let glowClass = '';
+  let glowStyle = {};
+
   if (conference === 'AFC') {
     borderColor = 'border-red-500/50';
+    if (isFinal) {
+      // Static glow for finished games
+      glowStyle = { boxShadow: '0 0 15px rgba(239,68,68,0.4)' };
+    } else if (isCurrent) {
+      // Pulsing glow for current games
+      glowClass = 'playoff-game-pulse-afc';
+    }
   } else if (conference === 'NFC') {
     borderColor = 'border-blue-500/50';
-  }
-
-  // Override with green if live
-  if (isLive) {
-    borderColor = 'border-green-500/70';
+    if (isFinal) {
+      // Static glow for finished games
+      glowStyle = { boxShadow: '0 0 15px rgba(96,165,250,0.4)' };
+    } else if (isCurrent) {
+      // Pulsing glow for current games
+      glowClass = 'playoff-game-pulse-nfc';
+    }
   }
 
   return (
-    <div className={`bg-slate-800/80 rounded ${compact ? 'p-1' : 'p-2'} border-2 ${borderColor} relative z-10`}>
+    <div
+      className={`bg-slate-800/80 rounded ${compact ? 'p-1' : 'p-2'} border-2 ${borderColor} relative z-10 ${glowClass}`}
+      style={glowStyle}
+    >
       {/* Away Team */}
       <TeamRow
         team={matchup.awayTeam}
@@ -765,9 +786,21 @@ function TeamRow({ team, isWinner, status, compact }: TeamRowProps) {
   );
 }
 
-function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup | null }) {
+function SuperBowlMatchup({
+  matchup,
+  afcChampionship,
+  nfcChampionship,
+}: {
+  matchup: PlayoffMatchup | null;
+  afcChampionship: PlayoffMatchup | null;
+  nfcChampionship: PlayoffMatchup | null;
+}) {
   const isLive = matchup?.status === 'in_progress';
   const isComplete = matchup?.status === 'final';
+
+  // Check if both championship games are finished
+  const bothChampionshipsComplete =
+    afcChampionship?.status === 'final' && nfcChampionship?.status === 'final';
 
   // Determine if teams are TBD (no matchup or null team)
   const awayTeam = matchup?.awayTeam;
@@ -777,9 +810,12 @@ function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup | null }) {
   const afcLogo = '/logos/afc-logo.svg';
   const nfcLogo = '/logos/nfc-logo.svg';
 
+  // Only pulse if both championships are complete, otherwise static glow
+  const glowClass = bothChampionshipsComplete ? 'superbowl-glow-pulse' : '';
+
   return (
     <div
-      className="w-full bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-4 border-2 border-yellow-600/50 superbowl-glow-pulse"
+      className={`w-full bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-4 border-2 border-yellow-600/50 ${glowClass}`}
       style={{
         boxShadow: '0 0 20px rgba(234,179,8,0.3), 0 0 40px rgba(234,179,8,0.2)',
       }}
