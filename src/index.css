@@ -66,3 +66,51 @@ body {
 .team-gradient {
   background: linear-gradient(135deg, var(--team-primary) 0%, var(--team-secondary) 100%);
 }
+
+/* Super Bowl pulsing animations */
+@keyframes superbowl-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(234,179,8,0.3), 0 0 40px rgba(234,179,8,0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(234,179,8,0.5), 0 0 60px rgba(234,179,8,0.3);
+  }
+}
+
+@keyframes superbowl-pulse-line-afc {
+  0%, 100% {
+    opacity: 0.7;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 4px rgba(239,68,68,0.4));
+  }
+  50% {
+    opacity: 0.9;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));
+  }
+}
+
+@keyframes superbowl-pulse-line-nfc {
+  0%, 100% {
+    opacity: 0.7;
+    stroke-width: 3;
+    filter: drop-shadow(0 0 4px rgba(96,165,250,0.4));
+  }
+  50% {
+    opacity: 0.9;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 8px rgba(96,165,250,0.6));
+  }
+}
+
+.superbowl-glow-pulse {
+  animation: superbowl-pulse-glow 2s ease-in-out infinite;
+}
+
+.superbowl-line-pulse-afc {
+  animation: superbowl-pulse-line-afc 2s ease-in-out infinite;
+}
+
+.superbowl-line-pulse-nfc {
+  animation: superbowl-pulse-line-nfc 2s ease-in-out infinite;
+}

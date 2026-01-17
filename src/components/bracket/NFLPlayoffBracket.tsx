@@ -173,7 +173,10 @@ export function NFLPlayoffBracket() {
         </div>
 
         {/* Bracket Layout - Fixed dimensions */}
-        <div className="flex items-start justify-center gap-4" style={{ height: '620px' }}>
+        <div className="relative flex items-start justify-center gap-4" style={{ height: '620px' }}>
+          {/* Super Bowl Connection Lines - Overlays entire bracket */}
+          <SuperBowlConnectionLines />
+
           {/* Left: AFC Bracket */}
           <div style={{ width: '340px', height: '100%' }}>
             <div className="text-center mb-3 bg-red-600/20 rounded-lg py-2 border border-red-500/30">
@@ -191,7 +194,7 @@ export function NFLPlayoffBracket() {
           </div>
 
           {/* Center: Super Bowl - aligned with Conference Championship */}
-          <div className="flex flex-col items-center" style={{ width: '240px', height: '100%', paddingTop: '120px' }}>
+          <div className="flex flex-col items-center relative z-10" style={{ width: '240px', height: '100%', paddingTop: '120px' }}>
             {/* Trophy Image */}
             <img
               src="/images/nfl_trophy.png"
@@ -376,7 +379,6 @@ function BracketConnectionsLeft() {
   const divRight = 218 * scale;      // 64.12 - Right edge of DIV box
   const gap2Mid = 227 * scale;       // 66.74 - Middle of gap between DIV and CONF
   const confLeft = 236 * scale;      // 69.41 - Left edge of CONF box
-  const confRight = 332 * scale;     // 97.65 - Right edge of CONF box (for Super Bowl line)
 
   return (
     <svg
@@ -414,10 +416,61 @@ function BracketConnectionsLeft() {
       <line x1={gap2Mid} y1={div1} x2={gap2Mid} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" strokeLinecap="butt" />
       {/* Short horizontal from gap middle to CONF box edge */}
       <line x1={gap2Mid} y1={conf} x2={confLeft} y2={conf} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" strokeLinecap="butt" />
+    </svg>
+  );
+}
 
-      {/* === Conference to Super Bowl === */}
-      {/* conf (90) -> Super Bowl (from CONF box edge to center) */}
-      <line x1={confRight} y1={conf} x2={104} y2={conf} stroke="#ef4444" strokeWidth="0.8" opacity="0.8" strokeLinecap="butt" />
+// Super Bowl connection lines - connects AFC/NFC Championship to Super Bowl box
+function SuperBowlConnectionLines() {
+  // Total width: AFC(340) + gap(16) + SB(240) + gap(16) + NFC(340) = 952px
+  // Total height: 620px
+  // Conference Championship is at ~450px from top (120px padding + 330px down in bracket)
+  // Super Bowl box is at ~350px from top
+
+  const totalWidth = 952;
+  const totalHeight = 620;
+  const confY = 450; // Conference Championship vertical position
+
+  // X positions
+  const afcConfRight = 340; // Right edge of AFC bracket
+  const nfcConfLeft = 612; // Left edge of NFC bracket (after 16px gap)
+
+  // Super Bowl box is centered in the 240px SB area, roughly 200px wide
+  const sbBoxLeft = 376; // ~20px from SB left edge
+  const sbBoxRight = 576; // ~20px from SB right edge
+
+  return (
+    <svg
+      className="absolute inset-0 pointer-events-none"
+      style={{ zIndex: 5 }}
+      viewBox={`0 0 ${totalWidth} ${totalHeight}`}
+      preserveAspectRatio="none"
+    >
+      {/* AFC to Super Bowl - Red pulsing line */}
+      <line
+        x1={afcConfRight}
+        y1={confY}
+        x2={sbBoxLeft}
+        y2={confY}
+        className="superbowl-line-pulse-afc"
+        stroke="#ef4444"
+        strokeWidth="3"
+        opacity="0.7"
+        strokeLinecap="butt"
+      />
+
+      {/* NFC to Super Bowl - Blue pulsing line */}
+      <line
+        x1={nfcConfLeft}
+        y1={confY}
+        x2={sbBoxRight}
+        y2={confY}
+        className="superbowl-line-pulse-nfc"
+        stroke="#60a5fa"
+        strokeWidth="3"
+        opacity="0.7"
+        strokeLinecap="butt"
+      />
     </svg>
   );
 }
@@ -442,7 +495,6 @@ function BracketConnectionsRight() {
   // With mx-2 (8px margin): CONF box(8-104), DIV box(122-218), WC box(236-332)
   // Using BOX EDGES and SHORT LINES (like example image)
   const scale = 100 / 340;
-  const confLeft = 8 * scale;        // 2.35 - Left edge of CONF box
   const confRight = 104 * scale;     // 30.59 - Right edge of CONF box
   const gapConfDiv = 113 * scale;    // 33.22 - Middle of gap between CONF and DIV
   const divLeft = 122 * scale;       // 35.88 - Left edge of DIV box
@@ -457,10 +509,6 @@ function BracketConnectionsRight() {
       viewBox="0 0 100 200"
       preserveAspectRatio="none"
     >
-      {/* === Super Bowl to Conference === */}
-      {/* Super Bowl (extends beyond left edge) -> conf box left edge */}
-      <line x1="-4" y1={conf} x2={confLeft} y2={conf} stroke="#60a5fa" strokeWidth="0.8" opacity="0.8" strokeLinecap="butt" />
-
       {/* === Conference to Divisional === */}
       {/* Short horizontal from CONF box edge to gap middle */}
       <line x1={confRight} y1={conf} x2={gapConfDiv} y2={conf} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" strokeLinecap="butt" />
@@ -698,7 +746,12 @@ function SuperBowlMatchup({ matchup }: { matchup: PlayoffMatchup | null }) {
   const nfcLogo = '/logos/nfc-logo.svg';
 
   return (
-    <div className="w-full bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-4 border-2 border-yellow-600/50">
+    <div
+      className="w-full bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded-lg p-4 border-2 border-yellow-600/50 superbowl-glow-pulse"
+      style={{
+        boxShadow: '0 0 20px rgba(234,179,8,0.3), 0 0 40px rgba(234,179,8,0.2)',
+      }}
+    >
       {/* Header */}
       <div className="text-center mb-3">
         <h3 className="text-lg font-bold text-yellow-400">Super Bowl</h3>
