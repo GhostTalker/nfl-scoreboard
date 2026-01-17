@@ -430,20 +430,20 @@ function SuperBowlConnectionLines() {
 
   const totalWidth = 952;
   const totalHeight = 620;
-  const confY = 303; // Same Y as Conference Championship boxes
+  const confY = 348; // Y position for Super Bowl connection lines
 
   // X positions - SHORT LINES pattern like other connections
-  // Pattern: Box edge → short line → Gap middle → short line → SB box middle
+  // Pattern: Box edge → short line → Gap middle → short line → SB box edge
 
   // AFC side
   const afcConfRight = 332; // Right edge of AFC CONF box
-  const afcGapMid = 348;    // Middle of gap between AFC (340) and SB area (356): (340+356)/2
-  const sbBoxLeft = 376;    // Left edge of SB box (356 + 20px padding)
+  const afcGapMid = 342;    // Middle of gap between CONF (332) and SB box (353): (332+353)/2
+  const sbBoxLeft = 353;    // Left edge of SB box (actual position)
 
   // NFC side
   const nfcConfLeft = 620;  // Left edge of NFC CONF box
-  const nfcGapMid = 604;    // Middle of gap between SB area (596) and NFC (612): (596+612)/2
-  const sbBoxRight = 576;   // Right edge of SB box (596 - 20px padding)
+  const nfcGapMid = 602;    // Middle of gap between SB box (585) and CONF (620): (585+620)/2
+  const sbBoxRight = 585;   // Right edge of SB box (actual position)
 
   return (
     <svg
@@ -452,10 +452,11 @@ function SuperBowlConnectionLines() {
       viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       preserveAspectRatio="none"
     >
-      {/* DEBUG GRID - Remove after positioning */}
-      {/* Vertical lines every 50px */}
-      {Array.from({ length: Math.floor(totalWidth / 50) + 1 }).map((_, i) => {
-        const x = i * 50;
+      {/* DEBUG GRID - Finer grid at 10px intervals */}
+      {/* Vertical lines every 10px */}
+      {Array.from({ length: Math.floor(totalWidth / 10) + 1 }).map((_, i) => {
+        const x = i * 10;
+        const isMajor = x % 50 === 0;
         return (
           <g key={`v-${i}`}>
             <line
@@ -463,24 +464,27 @@ function SuperBowlConnectionLines() {
               y1={0}
               x2={x}
               y2={totalHeight}
-              stroke="rgba(0,255,0,0.3)"
-              strokeWidth="1"
+              stroke={isMajor ? "rgba(0,255,0,0.5)" : "rgba(0,255,0,0.2)"}
+              strokeWidth={isMajor ? "1.5" : "0.5"}
             />
-            <text
-              x={x + 2}
-              y={20}
-              fill="lime"
-              fontSize="12"
-              fontFamily="monospace"
-            >
-              {x}
-            </text>
+            {isMajor && (
+              <text
+                x={x + 2}
+                y={20}
+                fill="lime"
+                fontSize="12"
+                fontFamily="monospace"
+              >
+                {x}
+              </text>
+            )}
           </g>
         );
       })}
-      {/* Horizontal lines every 50px */}
-      {Array.from({ length: Math.floor(totalHeight / 50) + 1 }).map((_, i) => {
-        const y = i * 50;
+      {/* Horizontal lines every 10px */}
+      {Array.from({ length: Math.floor(totalHeight / 10) + 1 }).map((_, i) => {
+        const y = i * 10;
+        const isMajor = y % 50 === 0;
         return (
           <g key={`h-${i}`}>
             <line
@@ -488,18 +492,20 @@ function SuperBowlConnectionLines() {
               y1={y}
               x2={totalWidth}
               y2={y}
-              stroke="rgba(0,255,0,0.3)"
-              strokeWidth="1"
+              stroke={isMajor ? "rgba(0,255,0,0.5)" : "rgba(0,255,0,0.2)"}
+              strokeWidth={isMajor ? "1.5" : "0.5"}
             />
-            <text
-              x={5}
-              y={y - 2}
-              fill="lime"
-              fontSize="12"
-              fontFamily="monospace"
-            >
-              {y}
-            </text>
+            {isMajor && (
+              <text
+                x={5}
+                y={y - 2}
+                fill="lime"
+                fontSize="12"
+                fontFamily="monospace"
+              >
+                {y}
+              </text>
+            )}
           </g>
         );
       })}
