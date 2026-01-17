@@ -363,35 +363,12 @@ apiRouter.get('/health/ready', (_req, res) => {
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * Admin endpoint authentication middleware
- * Only allows access from localhost and server IP for security
- * TODO: In Kubernetes deployment, replace with proper RBAC/service account auth
- */
-function adminAuth(req: Request, res: Response, next: NextFunction) {
-  const ip = req.ip || req.socket.remoteAddress || '';
-  const allowedIps = [
-    '127.0.0.1',
-    '::1',
-    '::ffff:127.0.0.1',
-    '10.1.0.51',           // Production server
-    '::ffff:10.1.0.51',    // IPv6-mapped IPv4
-  ];
-
-  if (!allowedIps.includes(ip)) {
-    logError(`[Security] Unauthorized admin access attempt from ${ip}`);
-    return res.status(403).json({
-      error: 'Forbidden',
-      message: 'Admin endpoints are restricted to authorized IPs only'
-    });
-  }
-
-  next();
-}
-
-/**
  * GET /api/admin - List available admin endpoints
+ *
+ * NOTE: Admin endpoints are open to all IPs as this is an internal tool.
+ * In production Kubernetes deployment, use proper RBAC/service account auth.
  */
-apiRouter.get('/admin', adminAuth, (_req, res) => {
+apiRouter.get('/admin', (_req, res) => {
   res.json({
     available_endpoints: [
       {
@@ -426,7 +403,7 @@ apiRouter.get('/admin', adminAuth, (_req, res) => {
  * Use this if you know ESPN is back online but the circuit breaker
  * hasn't auto-recovered yet (e.g., after a long outage)
  */
-apiRouter.post('/admin/reset-circuit', adminAuth, (_req, res) => {
+apiRouter.post('/admin/reset-circuit', (_req, res) => {
   espnProxy.resetCircuitBreaker();
   res.json({
     success: true,
@@ -443,7 +420,7 @@ apiRouter.post('/admin/reset-circuit', adminAuth, (_req, res) => {
  *
  * Use with caution - will cause a burst of API requests as cache refills
  */
-apiRouter.post('/admin/clear-cache', adminAuth, (req, res) => {
+apiRouter.post('/admin/clear-cache', (req, res) => {
   const { service } = req.query;
 
   if (service === 'espn' || !service) {
@@ -466,7 +443,7 @@ apiRouter.post('/admin/clear-cache', adminAuth, (req, res) => {
  * Use during emergencies to immediately stop all outgoing requests
  * (e.g., if ESPN is causing timeouts that block shutdown)
  */
-apiRouter.post('/admin/cancel-requests', adminAuth, (_req, res) => {
+apiRouter.post('/admin/cancel-requests', (_req, res) => {
   espnProxy.cancelAllRequests();
   res.json({
     success: true,
