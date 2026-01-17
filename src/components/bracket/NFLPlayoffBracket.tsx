@@ -1,10 +1,42 @@
+import { useState, useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { isNFLGame } from '../../types/game';
 import type { NFLGame, PlayoffMatchup, PlayoffTeam, PlayoffBracket } from '../../types/nfl';
+import { fetchAllPlayoffGames } from '../../services/espnApi';
 
 export function NFLPlayoffBracket() {
   const currentGame = useGameStore((state) => state.currentGame);
   const availableGames = useGameStore((state) => state.availableGames);
+  const [allPlayoffGames, setAllPlayoffGames] = useState<NFLGame[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch all playoff rounds when component mounts
+  useEffect(() => {
+    async function loadAllPlayoffGames() {
+      if (!currentGame || !isNFLGame(currentGame)) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const year = currentGame.startTime ? new Date(currentGame.startTime).getFullYear() : new Date().getFullYear();
+        const playoffGames = await fetchAllPlayoffGames(year);
+        const nflPlayoffGames = playoffGames.filter(isNFLGame);
+
+        console.log(`[Playoff Bracket] Loaded ${nflPlayoffGames.length} NFL playoff games`);
+        setAllPlayoffGames(nflPlayoffGames);
+      } catch (error) {
+        console.error('[Playoff Bracket] Error loading playoff games:', error);
+        // Fallback to available games from store
+        setAllPlayoffGames(availableGames.filter(isNFLGame));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadAllPlayoffGames();
+  }, [currentGame, availableGames]);
 
   if (!currentGame || !isNFLGame(currentGame)) {
     return (
@@ -14,8 +46,19 @@ export function NFLPlayoffBracket() {
     );
   }
 
-  // Build playoff bracket from available games
-  const bracket = buildPlayoffBracket(availableGames.filter(isNFLGame), currentGame);
+  if (isLoading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-slate-900">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/50 text-xl">Loading playoff bracket...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Build playoff bracket from all playoff games
+  const bracket = buildPlayoffBracket(allPlayoffGames, currentGame);
 
   return (
     <div className="h-full w-full bg-slate-900 flex items-center justify-center overflow-hidden">

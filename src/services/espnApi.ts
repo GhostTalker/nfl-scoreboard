@@ -122,7 +122,7 @@ export async function fetchScoreboard(): Promise<Game[]> {
 async function fetchScheduleWeek(year: number, seasonType: number, week: number): Promise<Game[]> {
   try {
     const url = `${API_ENDPOINTS.schedule}?year=${year}&seasonType=${seasonType}&week=${week}`;
-    
+
     const response = await fetch(url);
     if (!response.ok) {
       return [];
@@ -130,6 +130,31 @@ async function fetchScheduleWeek(year: number, seasonType: number, week: number)
     const data = await response.json();
     return parseScoreboardResponse(data);
   } catch {
+    return [];
+  }
+}
+
+// Fetch all playoff games (Wild Card, Divisional, Conference, Super Bowl)
+export async function fetchAllPlayoffGames(year?: number): Promise<Game[]> {
+  const currentYear = year || new Date().getFullYear();
+  const playoffWeeks = [1, 2, 3, 5]; // Wild Card, Divisional, Conference, Super Bowl
+
+  try {
+    // Fetch all playoff weeks in parallel
+    const allWeeksPromises = playoffWeeks.map(week =>
+      fetchScheduleWeek(currentYear, 3, week)
+    );
+
+    const allWeeksResults = await Promise.all(allWeeksPromises);
+
+    // Flatten and combine all games
+    const allPlayoffGames = allWeeksResults.flat();
+
+    console.log(`[ESPN API] Fetched ${allPlayoffGames.length} playoff games across all rounds`);
+
+    return allPlayoffGames;
+  } catch (error) {
+    console.error('Error fetching all playoff games:', error);
     return [];
   }
 }
