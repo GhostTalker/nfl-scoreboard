@@ -368,10 +368,10 @@ function BracketConnectionsLeft() {
   // X coordinates (in viewBox units, 340 = 100%)
   const scale = 100 / 340;
   const wcRight = 108 * scale;       // Right edge of WC column (~31.8)
-  const gapMid1 = 112 * scale;       // Midpoint of gap between WC and DIV (~32.9)
+  const gapMid1 = 111 * scale;       // Midpoint of gap between WC and DIV (adjusted -1px)
   const divLeft = 116 * scale;       // Left edge of DIV column (~34.1)
   const divRight = 222 * scale;      // Right edge of DIV column (~65.3)
-  const gapMid2 = 226 * scale;       // Midpoint of gap between DIV and CONF (~66.5)
+  const gapMid2 = 224 * scale;       // Midpoint of gap between DIV and CONF (adjusted -2px)
   const confLeft = 230 * scale;      // Left edge of CONF column (~67.6)
   const confRight = 340 * scale;     // Right edge of CONF column (100)
 
@@ -442,10 +442,10 @@ function BracketConnectionsRight() {
   const scale = 100 / 340;
   const confLeft = 0;                    // Left edge of container
   const confRight = 116 * scale;         // Right edge of CONF column (~34.1)
-  const gapMid1 = 120 * scale;           // Midpoint of first gap (~35.3)
+  const gapMid1 = 118 * scale;           // Midpoint of first gap (adjusted -2px)
   const divLeft = 124 * scale;           // Left edge of DIV column (~36.5)
   const divRight = 230 * scale;          // Right edge of DIV column (~67.6)
-  const gapMid2 = 234 * scale;           // Midpoint of second gap (~68.8)
+  const gapMid2 = 232 * scale;           // Midpoint of second gap (adjusted -2px)
   const wcLeft = 238 * scale;            // Left edge of WC column (~70)
 
   return (
