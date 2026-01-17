@@ -370,10 +370,8 @@ function BracketConnectionsLeft() {
   // With mx-2 (8px margin): WC box(8-102), DIV box(122-216), CONF box(236-338)
   const scale = 100 / 340;
   const wcRight = 102 * scale;       // Right edge of WC box with margin (30)
-  const gapMid1 = 112 * scale;       // Midpoint of gap between WC and DIV (~32.9)
   const divLeft = 122 * scale;       // Left edge of DIV box with margin (35.88)
   const divRight = 216 * scale;      // Right edge of DIV box with margin (63.53)
-  const gapMid2 = 226 * scale;       // Midpoint of gap between DIV and CONF (~66.5)
   const confLeft = 236 * scale;      // Left edge of CONF box with margin (69.41)
   const confRight = 338 * scale;     // Right edge of CONF box with margin (99.41)
 
@@ -385,41 +383,35 @@ function BracketConnectionsLeft() {
       preserveAspectRatio="none"
     >
       {/* === Wild Card to Divisional - Top pair === */}
-      {/* wc1 (BYE at 30) + wc2 (68) -> div1 (50) */}
-      {/* Horizontal from wc1 to gapMid1 */}
-      <line x1={wcRight} y1={wc1} x2={gapMid1} y2={wc1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from wc2 to gapMid1 */}
-      <line x1={wcRight} y1={wc2} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc1 to wc2 */}
-      <line x1={gapMid1} y1={wc1} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from gapMid1 to div1 */}
-      <line x1={gapMid1} y1={div1} x2={divLeft} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* wc1 (BYE at 30) + wc2 (68) -> div1 (51) */}
+      {/* Horizontal from wc1 to divLeft */}
+      <line x1={wcRight} y1={wc1} x2={divLeft} y2={wc1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from wc2 to divLeft */}
+      <line x1={wcRight} y1={wc2} x2={divLeft} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at divLeft from wc1 to wc2 */}
+      <line x1={divLeft} y1={wc1} x2={divLeft} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Wild Card to Divisional - Bottom pair === */}
-      {/* wc3 (103) + wc4 (147) -> div2 (129) */}
-      {/* Horizontal from wc3 to gapMid1 */}
-      <line x1={wcRight} y1={wc3} x2={gapMid1} y2={wc3} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from wc4 to gapMid1 */}
-      <line x1={wcRight} y1={wc4} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc3 to wc4 */}
-      <line x1={gapMid1} y1={wc3} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from gapMid1 to div2 */}
-      <line x1={gapMid1} y1={div2} x2={divLeft} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* wc3 (108) + wc4 (147) -> div2 (128) */}
+      {/* Horizontal from wc3 to divLeft */}
+      <line x1={wcRight} y1={wc3} x2={divLeft} y2={wc3} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from wc4 to divLeft */}
+      <line x1={wcRight} y1={wc4} x2={divLeft} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at divLeft from wc3 to wc4 */}
+      <line x1={divLeft} y1={wc3} x2={divLeft} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Conference === */}
-      {/* div1 (50) + div2 (129) -> conf (90) */}
-      {/* Horizontal from div1 to gapMid2 */}
-      <line x1={divRight} y1={div1} x2={gapMid2} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from div2 to gapMid2 */}
-      <line x1={divRight} y1={div2} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from div1 to div2 */}
-      <line x1={gapMid2} y1={div1} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from gapMid2 to conf */}
-      <line x1={gapMid2} y1={conf} x2={confLeft} y2={conf} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* div1 (51) + div2 (128) -> conf (90) */}
+      {/* Horizontal from div1 to confLeft */}
+      <line x1={divRight} y1={div1} x2={confLeft} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from div2 to confLeft */}
+      <line x1={divRight} y1={div2} x2={confLeft} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at confLeft from div1 to div2 */}
+      <line x1={confLeft} y1={div1} x2={confLeft} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Conference to Super Bowl === */}
       {/* conf (90) -> Super Bowl (extends beyond right edge) */}
-      <line x1={confRight} y1={conf} x2={104} y2={conf} stroke="#fbbf24" strokeWidth="0.8" opacity="0.8" />
+      <line x1={confRight} y1={conf} x2={104} y2={conf} stroke="#ef4444" strokeWidth="0.8" opacity="0.8" />
     </svg>
   );
 }
@@ -445,10 +437,8 @@ function BracketConnectionsRight() {
   const scale = 100 / 340;
   const confBoxLeft = 8 * scale;         // Left edge of CONF box with margin (2.35)
   const confRight = 110 * scale;         // Right edge of CONF box with margin (32.35)
-  const gapMid1 = 116 * scale;           // Midpoint of first gap (~34.12)
   const divLeft = 130 * scale;           // Left edge of DIV box with margin (38.24)
   const divRight = 224 * scale;          // Right edge of DIV box with margin (65.88)
-  const gapMid2 = 230 * scale;           // Midpoint of second gap (~67.65)
   const wcLeft = 244 * scale;            // Left edge of WC box with margin (71.76)
 
   return (
@@ -460,40 +450,34 @@ function BracketConnectionsRight() {
     >
       {/* === Super Bowl to Conference === */}
       {/* Super Bowl (extends beyond left edge) -> conf box left edge */}
-      <line x1="-4" y1={conf} x2={confBoxLeft} y2={conf} stroke="#fbbf24" strokeWidth="0.8" opacity="0.8" />
+      <line x1="-4" y1={conf} x2={confBoxLeft} y2={conf} stroke="#60a5fa" strokeWidth="0.8" opacity="0.8" />
 
       {/* === Conference to Divisional === */}
-      {/* div1 (50) + div2 (129) -> conf (90) */}
-      {/* Horizontal from conf to gapMid1 */}
-      <line x1={confRight} y1={conf} x2={gapMid1} y2={conf} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from div1 to div2 */}
-      <line x1={gapMid1} y1={div1} x2={gapMid1} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV1 */}
-      <line x1={gapMid1} y1={div1} x2={divLeft} y2={div1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV2 */}
-      <line x1={gapMid1} y1={div2} x2={divLeft} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* div1 (51) + div2 (128) -> conf (90) */}
+      {/* Horizontal from conf to divLeft */}
+      <line x1={confRight} y1={div1} x2={divLeft} y2={div1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from conf to divLeft */}
+      <line x1={confRight} y1={div2} x2={divLeft} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at divLeft from div1 to div2 */}
+      <line x1={divLeft} y1={div1} x2={divLeft} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Wild Card - Top pair === */}
-      {/* wc1 (BYE at 30) + wc2 (68) -> div1 (50) */}
-      {/* Horizontal from div1 to gapMid2 */}
-      <line x1={divRight} y1={div1} x2={gapMid2} y2={div1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc1 to wc2 */}
-      <line x1={gapMid2} y1={wc1} x2={gapMid2} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to BYE (wc1) */}
-      <line x1={gapMid2} y1={wc1} x2={wcLeft} y2={wc1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC1 (wc2) */}
-      <line x1={gapMid2} y1={wc2} x2={wcLeft} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* wc1 (BYE at 30) + wc2 (68) -> div1 (51) */}
+      {/* Horizontal from div1 to wcLeft */}
+      <line x1={divRight} y1={wc1} x2={wcLeft} y2={wc1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from div1 to wcLeft */}
+      <line x1={divRight} y1={wc2} x2={wcLeft} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at wcLeft from wc1 to wc2 */}
+      <line x1={wcLeft} y1={wc1} x2={wcLeft} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Wild Card - Bottom pair === */}
-      {/* wc3 (103) + wc4 (147) -> div2 (129) */}
-      {/* Horizontal from div2 to gapMid2 */}
-      <line x1={divRight} y1={div2} x2={gapMid2} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc3 to wc4 */}
-      <line x1={gapMid2} y1={wc3} x2={gapMid2} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC2 (wc3) */}
-      <line x1={gapMid2} y1={wc3} x2={wcLeft} y2={wc3} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC3 (wc4) */}
-      <line x1={gapMid2} y1={wc4} x2={wcLeft} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* wc3 (108) + wc4 (147) -> div2 (128) */}
+      {/* Horizontal from div2 to wcLeft */}
+      <line x1={divRight} y1={wc3} x2={wcLeft} y2={wc3} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Horizontal from div2 to wcLeft */}
+      <line x1={divRight} y1={wc4} x2={wcLeft} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical connector at wcLeft from wc3 to wc4 */}
+      <line x1={wcLeft} y1={wc3} x2={wcLeft} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
     </svg>
   );
 }
