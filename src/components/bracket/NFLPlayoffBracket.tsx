@@ -350,51 +350,24 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
   );
 }
 
-// Connection lines for AFC bracket (left side) - flows left to right
+// Connection lines for AFC bracket (left side) - TEMPORARY MEASUREMENT LINES
 // Uses viewBox for consistent coordinate system matching actual layout
 function BracketConnectionsLeft() {
   // Container is 340px wide, height varies but we use viewBox 0-100 for Y
   // Column layout: WC=110px (0-110), gap=4px, DIV=110px (114-224), gap=4px, CONF=118px (228-340)
-  // (gap-1 = 4px in Tailwind)
-
-  // IMPORTANT: Lines should connect at the CENTER of each game box (at the divider line between team rows)
-  // Each game box has ~6-8% height in viewBox units, so center = boxTop + 3%
-  const boxCenterOffset = 3;
-
-  // Box TOP positions (where justify-around places them)
-  // Corrected based on precise user measurements from screenshot analysis
-  // WC column: 4 items (BYE + 3 WC games) with justify-around
-  const wc1Top = 23;   // BYE team box top (was 29)
-  const wc2Top = 42;   // first WC game top (was 45)
-  const wc3Top = 59;   // second WC game top (was 60)
-  const wc4Top = 81;   // third WC game top (was 83)
-
-  // DIV column: 2 items with justify-around
-  const div1Top = 38;  // first divisional game top (stays same)
-  const div2Top = 70;  // second divisional game top (was 72)
-
-  // CONF column: 1 item centered (uses flex items-center)
-  const confTop = 52;  // conference game top
-
-  // CONNECTION POINTS - at the CENTER of each box (top + offset)
-  const wc1 = wc1Top + boxCenterOffset;   // BYE center at ~26%
-  const wc2 = wc2Top + boxCenterOffset;   // WC1 center at ~45%
-  const wc3 = wc3Top + boxCenterOffset;   // WC2 center at ~62%
-  const wc4 = wc4Top + boxCenterOffset;   // WC3 center at ~84%
-  const div1 = div1Top + boxCenterOffset; // DIV1 center at ~41%
-  const div2 = div2Top + boxCenterOffset; // DIV2 center at ~73%
-  const conf = confTop + boxCenterOffset; // CONF center at ~55%
 
   // X coordinates (in viewBox units, 340 = 100%)
-  // Scale: 340px container, viewBox 0-100
   const scale = 100 / 340;
   const wcRight = 108 * scale;       // Right edge of WC column (~31.8)
-  const gapMid1 = 112 * scale;       // Midpoint of first gap (~32.9)
   const divLeft = 116 * scale;       // Left edge of DIV column (~34.1)
-  const divRight = 222 * scale;      // Right edge of DIV column (~65.3)
-  const gapMid2 = 226 * scale;       // Midpoint of second gap (~66.5)
-  const confLeft = 230 * scale;      // Left edge of CONF column (~67.6)
-  const confRight = 100;             // Right edge of container
+
+  // Y positions to mark
+  const wc1 = 26;   // BYE connection point
+  const wc2 = 45;   // BUF vs JAX connection point
+  const wc3 = 62;   // LAC vs NE connection point
+  const wc4 = 84;   // HOU vs PIT connection point
+  const div1 = 41;  // BUF vs DEN connection point
+  const div2 = 73;  // HOU vs NE connection point
 
   return (
     <svg
@@ -403,41 +376,39 @@ function BracketConnectionsLeft() {
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
     >
-      {/* === Wild Card to Divisional - Top pair === */}
-      {/* BYE (wc1) + WC1 (wc2) -> DIV1 */}
-      {/* Horizontal from BYE center */}
-      <line x1={wcRight} y1={wc1} x2={gapMid1} y2={wc1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from WC1 center */}
-      <line x1={wcRight} y1={wc2} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc1 to wc2 */}
-      <line x1={gapMid1} y1={wc1} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV1 center */}
-      <line x1={gapMid1} y1={div1} x2={divLeft} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* === VERTICAL MEASUREMENT LINES at X positions === */}
+      {/* Vertical line at wcRight (where Wild Card boxes end) */}
+      <line x1={wcRight} y1={0} x2={wcRight} y2={100} stroke="#ff00ff" strokeWidth="0.5" opacity="0.8" />
+      <text x={wcRight + 1} y={5} fill="#ff00ff" fontSize="3">wcRight ({wcRight.toFixed(1)})</text>
 
-      {/* === Wild Card to Divisional - Bottom pair === */}
-      {/* WC2 (wc3) + WC3 (wc4) -> DIV2 */}
-      {/* Horizontal from WC2 center */}
-      <line x1={wcRight} y1={wc3} x2={gapMid1} y2={wc3} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from WC3 center */}
-      <line x1={wcRight} y1={wc4} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from wc3 to wc4 */}
-      <line x1={gapMid1} y1={wc3} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV2 center */}
-      <line x1={gapMid1} y1={div2} x2={divLeft} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* Vertical line at divLeft (where Divisional boxes start) */}
+      <line x1={divLeft} y1={0} x2={divLeft} y2={100} stroke="#00ffff" strokeWidth="0.5" opacity="0.8" />
+      <text x={divLeft + 1} y={8} fill="#00ffff" fontSize="3">divLeft ({divLeft.toFixed(1)})</text>
 
-      {/* === Divisional to Conference === */}
-      {/* DIV1 + DIV2 -> CONF */}
-      {/* Horizontal from DIV1 center */}
-      <line x1={divRight} y1={div1} x2={gapMid2} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from DIV2 center */}
-      <line x1={divRight} y1={div2} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from div1 to div2 */}
-      <line x1={gapMid2} y1={div1} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to CONF center */}
-      <line x1={gapMid2} y1={conf} x2={confLeft} y2={conf} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
+      {/* === HORIZONTAL MEASUREMENT LINES at Y positions === */}
+      {/* wc1 (26) - BYE connection point */}
+      <line x1={0} y1={wc1} x2={100} y2={wc1} stroke="#00ff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={50} y={wc1 - 1} fill="#00ff00" fontSize="3" textAnchor="middle">{wc1} (wc1 - BYE)</text>
 
-      {/* === Conference to Super Bowl === */}
-      <line x1={confRight} y1={conf} x2="102" y2={conf} stroke="#fbbf24" strokeWidth="0.8" opacity="0.8" />
+      {/* wc2 (45) - BUF vs JAX connection point */}
+      <line x1={0} y1={wc2} x2={100} y2={wc2} stroke="#00ff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={50} y={wc2 - 1} fill="#00ff00" fontSize="3" textAnchor="middle">{wc2} (wc2 - BUF vs JAX)</text>
+
+      {/* wc3 (62) - LAC vs NE connection point */}
+      <line x1={0} y1={wc3} x2={100} y2={wc3} stroke="#00ff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={50} y={wc3 - 1} fill="#00ff00" fontSize="3" textAnchor="middle">{wc3} (wc3 - LAC vs NE)</text>
+
+      {/* wc4 (84) - HOU vs PIT connection point */}
+      <line x1={0} y1={wc4} x2={100} y2={wc4} stroke="#00ff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={50} y={wc4 - 1} fill="#00ff00" fontSize="3" textAnchor="middle">{wc4} (wc4 - HOU vs PIT)</text>
+
+      {/* div1 (41) - BUF vs DEN connection point */}
+      <line x1={0} y1={div1} x2={100} y2={div1} stroke="#ffff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={75} y={div1 - 1} fill="#ffff00" fontSize="3" textAnchor="middle">{div1} (div1 - BUF vs DEN)</text>
+
+      {/* div2 (73) - HOU vs NE connection point */}
+      <line x1={0} y1={div2} x2={100} y2={div2} stroke="#ffff00" strokeWidth="0.5" opacity="0.8" />
+      <text x={75} y={div2 - 1} fill="#ffff00" fontSize="3" textAnchor="middle">{div2} (div2 - HOU vs NE)</text>
     </svg>
   );
 }
