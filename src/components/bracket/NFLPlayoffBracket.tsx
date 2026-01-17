@@ -440,10 +440,10 @@ function SuperBowlConnectionLines() {
   const afcGapMid = 342;    // Middle of gap between CONF (332) and SB box (356)
   const sbBoxLeft = 356;    // Left edge of SB box (extended 3px: 353 + 3)
 
-  // NFC side (right line shortened from both ends: 15px left, 14px right)
-  const nfcConfLeft = 605;  // Left edge of NFC CONF box (shortened 15px: 620 - 15)
-  const nfcGapMid = 602;    // Middle of gap between SB box and CONF
-  const sbBoxRight = 567;   // Right edge of SB box (shortened 14px: 581 - 14)
+  // NFC side (precise coordinates from user measurement)
+  const nfcConfLeft = 614;  // Left edge of NFC CONF box (user specified)
+  const nfcGapMid = 607;    // Middle of gap between SB box (600) and CONF (614)
+  const sbBoxRight = 600;   // Right edge of SB box (user specified)
 
   return (
     <svg
@@ -502,53 +502,6 @@ function SuperBowlConnectionLines() {
         strokeWidth="1.5"
         opacity="0.7"
         strokeLinecap="butt"
-      />
-
-      {/* DEBUG GRID - Extended to cover SB box and NFC area */}
-      {/* Vertical lines every 5px from 300 to 700 */}
-      {Array.from({ length: 81 }, (_, i) => {
-        const x = 300 + i * 5;
-        const showLabel = x % 50 === 0;
-        return (
-          <g key={`grid-${x}`}>
-            <line
-              x1={x}
-              y1={280}
-              x2={x}
-              y2={420}
-              stroke="#00ff00"
-              strokeWidth={showLabel ? '3' : (x % 10 === 0 ? '2' : '1')}
-              opacity={showLabel ? '1' : (x % 10 === 0 ? '0.7' : '0.4')}
-            />
-            {showLabel && (
-              <text
-                x={x}
-                y={270}
-                fill="#00ff00"
-                fontSize="24"
-                textAnchor="middle"
-                fontWeight="bold"
-                stroke="#000000"
-                strokeWidth="3"
-                paintOrder="stroke"
-              >
-                {x}
-              </text>
-            )}
-          </g>
-        );
-      })}
-
-      {/* Horizontal reference line at confY */}
-      <line
-        x1={350}
-        y1={confY}
-        x2={650}
-        y2={confY}
-        stroke="#ff00ff"
-        strokeWidth="2"
-        opacity="0.8"
-        strokeDasharray="10,5"
       />
     </svg>
   );
