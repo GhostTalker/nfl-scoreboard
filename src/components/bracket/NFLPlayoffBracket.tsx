@@ -440,10 +440,10 @@ function SuperBowlConnectionLines() {
   const afcGapMid = 342;    // Middle of gap between CONF (332) and SB box (356)
   const sbBoxLeft = 356;    // Left edge of SB box (extended 3px: 353 + 3)
 
-  // NFC side (right line shortened from both ends: 5px left, 4px right)
-  const nfcConfLeft = 615;  // Left edge of NFC CONF box (shortened 5px: 620 - 5)
+  // NFC side (right line shortened from both ends: 15px left, 14px right)
+  const nfcConfLeft = 605;  // Left edge of NFC CONF box (shortened 15px: 620 - 15)
   const nfcGapMid = 602;    // Middle of gap between SB box and CONF
-  const sbBoxRight = 577;   // Right edge of SB box (shortened 4px: 581 - 4)
+  const sbBoxRight = 567;   // Right edge of SB box (shortened 14px: 581 - 14)
 
   return (
     <svg
