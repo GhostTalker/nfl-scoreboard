@@ -424,23 +424,24 @@ function BracketConnectionsLeft() {
 function SuperBowlConnectionLines() {
   // Total width: AFC(340) + gap(16) + SB(240) + gap(16) + NFC(340) = 952px
   // Total height: 620px
-  // Conference Championship box center Y position
-  // Looking at the screenshot, the CONF boxes are centered around 360px from top
+  // Use same Y position as Conference Championship in bracket (conf = 90 in viewBox 0-200)
+  // Bracket height: 620 - 44 (header) = 576px
+  // Y = 44 + (90/200) * 576 = 44 + 259.2 = 303.2px
 
   const totalWidth = 952;
   const totalHeight = 620;
-  const confY = 365; // Conference Championship vertical position - center of TBD boxes
+  const confY = 303; // Same Y as Conference Championship boxes
 
-  // X positions - these need to match the actual box edges
-  // AFC bracket: 340px wide, CONF column starts at 228px (with 8px margin = 236px to box edge)
-  // NFC bracket starts at 612px, CONF column at 612px (with 8px margin = 620px to box edge)
-  const afcConfRight = 332; // Right edge of AFC CONF box (340 - 8px margin)
-  const nfcConfLeft = 620; // Left edge of NFC CONF box (612 + 8px margin)
+  // X positions - SHORT LINES like other connections (box edge to box edge only)
+  // AFC bracket: CONF box ends at 332px (340 - 8px margin)
+  // NFC bracket: CONF box starts at 620px (612 + 8px margin)
+  const afcConfRight = 332; // Right edge of AFC CONF box
+  const nfcConfLeft = 620; // Left edge of NFC CONF box
 
-  // Super Bowl box: centered in 240px area, roughly 200px wide
-  // Starts at 356 (AFC 340 + gap 16), box starts ~20px in
-  const sbBoxLeft = 396; // Left edge of SB box content
-  const sbBoxRight = 556; // Right edge of SB box content
+  // Super Bowl box edges (with padding ~20px from SB area edges)
+  // SB area: 356 to 596 (240px wide)
+  const sbBoxLeft = 376; // Left edge of SB box (356 + 20px padding)
+  const sbBoxRight = 576; // Right edge of SB box (596 - 20px padding)
 
   return (
     <svg
