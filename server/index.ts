@@ -138,9 +138,10 @@ if (process.env.NODE_ENV === 'production') {
 // ═══════════════════════════════════════════════════════════════════════
 // SECURITY: Bind to LAN-only IP address (not 0.0.0.0)
 // ═══════════════════════════════════════════════════════════════════════
-// Production: Bind to 10.1.0.51 (LAN-only, not exposed to internet)
-// Development: Use 0.0.0.0 for easier local testing
-const BIND_ADDRESS = process.env.NODE_ENV === 'production' ? '10.1.0.51' : '0.0.0.0';
+// Server bind address: 0.0.0.0 for LAN access
+// Note: This server is for internal LAN use only (10.1.0.x network)
+// Use firewall rules for additional security if needed
+const BIND_ADDRESS = '0.0.0.0';
 
 // Store server reference for graceful shutdown
 const server: Server = app.listen(PORT, BIND_ADDRESS, () => {
