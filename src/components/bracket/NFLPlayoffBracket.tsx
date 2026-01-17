@@ -191,25 +191,26 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
 
 // Connection lines for left bracket (AFC)
 function BracketConnectionsLeft() {
-  // justify-around positioning for 4 items (BYE + 3 WC): ~12%, 31%, 51%, 70%
-  // justify-around positioning for 2 items (DIV): ~40%, 60%
+  // justify-around positioning for 4 items (BYE + 3 WC): 12.5%, 37.5%, 62.5%, 87.5%
+  // justify-around positioning for 2 items (DIV): 25%, 75%
   return (
     <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-      {/* Wild Card to Divisional - Top pair (WC game 1 @ 31% + WC game 2 @ 51% -> DIV game 1 @ 40%) */}
-      <line x1="33%" y1="31%" x2="50%" y2="31%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="33%" y1="51%" x2="50%" y2="51%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="31%" x2="50%" y2="51%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="41%" x2="66%" y2="40%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      {/* Wild Card to Divisional - Top pair (WC game 1 @ 37.5% + WC game 2 @ 62.5% -> DIV game 1 @ 25%) */}
+      <line x1="33%" y1="37.5%" x2="50%" y2="37.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="33%" y1="62.5%" x2="50%" y2="62.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="37.5%" x2="50%" y2="62.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="50%" x2="66%" y2="25%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
 
-      {/* Wild Card to Divisional - Bottom pair (WC game 3 @ 70% -> DIV game 2 @ 60%) */}
-      <line x1="33%" y1="70%" x2="50%" y2="70%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="51%" x2="50%" y2="70%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="60.5%" x2="66%" y2="60%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      {/* Wild Card to Divisional - Bottom pair (BYE @ 12.5% + WC game 3 @ 87.5% -> DIV game 2 @ 75%) */}
+      <line x1="33%" y1="12.5%" x2="50%" y2="12.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="33%" y1="87.5%" x2="50%" y2="87.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="12.5%" x2="50%" y2="87.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="50%" x2="66%" y2="75%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
 
       {/* Divisional to Conference */}
-      <line x1="66%" y1="40%" x2="83%" y2="40%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="66%" y1="60%" x2="83%" y2="60%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="83%" y1="40%" x2="83%" y2="60%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="66%" y1="25%" x2="83%" y2="25%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="66%" y1="75%" x2="83%" y2="75%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="83%" y1="25%" x2="83%" y2="75%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
       <line x1="83%" y1="50%" x2="100%" y2="50%" stroke="#475569" strokeWidth="2" opacity="0.5" />
     </svg>
   );
@@ -217,26 +218,27 @@ function BracketConnectionsLeft() {
 
 // Connection lines for right bracket (NFC - mirrored)
 function BracketConnectionsRight() {
-  // justify-around positioning for 4 items (BYE + 3 WC): ~12%, 31%, 51%, 70%
-  // justify-around positioning for 2 items (DIV): ~40%, 60%
+  // justify-around positioning for 4 items (BYE + 3 WC): 12.5%, 37.5%, 62.5%, 87.5%
+  // justify-around positioning for 2 items (DIV): 25%, 75%
   return (
     <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
       {/* Conference to Divisional */}
       <line x1="0%" y1="50%" x2="17%" y2="50%" stroke="#475569" strokeWidth="2" opacity="0.5" />
-      <line x1="17%" y1="40%" x2="17%" y2="60%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="17%" y1="40%" x2="34%" y2="40%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="17%" y1="60%" x2="34%" y2="60%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="17%" y1="25%" x2="17%" y2="75%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="17%" y1="25%" x2="34%" y2="25%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="17%" y1="75%" x2="34%" y2="75%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
 
-      {/* Divisional to Wild Card - Top pair (DIV game 1 @ 40% -> WC game 1 @ 31% + WC game 2 @ 51%) */}
-      <line x1="34%" y1="40%" x2="50%" y2="41%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="31%" x2="50%" y2="51%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="31%" x2="67%" y2="31%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="51%" x2="67%" y2="51%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      {/* Divisional to Wild Card - Top pair (DIV game 1 @ 25% -> WC game 1 @ 37.5% + WC game 2 @ 62.5%) */}
+      <line x1="34%" y1="25%" x2="50%" y2="50%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="37.5%" x2="50%" y2="62.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="37.5%" x2="67%" y2="37.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="62.5%" x2="67%" y2="62.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
 
-      {/* Divisional to Wild Card - Bottom pair (DIV game 2 @ 60% -> WC game 3 @ 70%) */}
-      <line x1="34%" y1="60%" x2="50%" y2="60.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="51%" x2="50%" y2="70%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
-      <line x1="50%" y1="70%" x2="67%" y2="70%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      {/* Divisional to Wild Card - Bottom pair (DIV game 2 @ 75% -> BYE @ 12.5% + WC game 3 @ 87.5%) */}
+      <line x1="34%" y1="75%" x2="50%" y2="50%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="12.5%" x2="50%" y2="87.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="12.5%" x2="67%" y2="12.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
+      <line x1="50%" y1="87.5%" x2="67%" y2="87.5%" stroke="#475569" strokeWidth="1.5" opacity="0.4" />
     </svg>
   );
 }
