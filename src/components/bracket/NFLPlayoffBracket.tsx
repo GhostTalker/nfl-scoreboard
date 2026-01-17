@@ -366,18 +366,18 @@ function BracketConnectionsLeft() {
   // Content area starts after the header (~7%) and items are centered within their slots
 
   // WC column: 4 items (BYE + 3 WC games) with justify-around
-  // Y coordinates based on visual analysis of screenshot positions
-  const wc1 = 30;   // BYE team box (~30% from top)
-  const wc2 = 47;   // first WC game (~47% from top)
-  const wc3 = 64;   // second WC game (~64% from top)
-  const wc4 = 84;   // third WC game (~84% from top)
+  // Y coordinates based on precise analysis of screenshot positions
+  const wc1 = 29;   // BYE team box (~29% from top)
+  const wc2 = 45;   // first WC game (~45% from top)
+  const wc3 = 60;   // second WC game (~60% from top)
+  const wc4 = 83;   // third WC game (~83% from top)
 
   // DIV column: 2 items with justify-around
-  const div1 = 40;  // first divisional game (~40% from top)
-  const div2 = 75;  // second divisional game (~75% from top)
+  const div1 = 36;  // first divisional game (~36% from top)
+  const div2 = 68;  // second divisional game (~68% from top)
 
   // CONF column: 1 item centered (uses flex items-center)
-  const conf = 57;  // conference game (~57% from top)
+  const conf = 52;  // conference game (~52% from top)
 
   // X coordinates (in viewBox units, 340 = 100%)
   // Scale: 340px container, viewBox 0-100
@@ -446,18 +446,18 @@ function BracketConnectionsRight() {
   // Same as AFC since the layout structure is identical
 
   // WC column: 4 items (BYE + 3 WC games) with justify-around
-  // Y coordinates based on visual analysis of screenshot positions
-  const wc1 = 30;   // BYE team box (~30% from top)
-  const wc2 = 47;   // first WC game (~47% from top)
-  const wc3 = 64;   // second WC game (~64% from top)
-  const wc4 = 84;   // third WC game (~84% from top)
+  // Y coordinates based on precise analysis of screenshot positions
+  const wc1 = 29;   // BYE team box (~29% from top)
+  const wc2 = 45;   // first WC game (~45% from top)
+  const wc3 = 60;   // second WC game (~60% from top)
+  const wc4 = 83;   // third WC game (~83% from top)
 
   // DIV column: 2 items with justify-around
-  const div1 = 40;  // first divisional game (~40% from top)
-  const div2 = 75;  // second divisional game (~75% from top)
+  const div1 = 36;  // first divisional game (~36% from top)
+  const div2 = 68;  // second divisional game (~68% from top)
 
   // CONF column: 1 item centered
-  const conf = 57;  // conference game (~57% from top)
+  const conf = 52;  // conference game (~52% from top)
 
   // X coordinates (in viewBox units, 340 = 100%)
   // NFC layout: CONF(0-118) | gap | DIV(122-232) | gap | WC(236-340)
