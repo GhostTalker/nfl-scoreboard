@@ -11,14 +11,14 @@ const BASE_NAVIGATION: Record<View, Record<string, View | null>> = {
   scoreboard: {
     up: 'stats',
     down: null,
-    left: null, // Will be 'table' for Bundesliga or 'settings' otherwise
-    right: null, // Will be 'bracket' for NFL playoffs
+    left: 'settings', // Always settings
+    right: null, // Will be 'table' for Bundesliga or 'bracket' for NFL playoffs
   },
   stats: {
     up: null,
     down: 'scoreboard',
     left: 'settings',
-    right: null, // Will be 'bracket' for NFL playoffs
+    right: null,
   },
   settings: {
     up: null,
@@ -35,8 +35,8 @@ const BASE_NAVIGATION: Record<View, Record<string, View | null>> = {
   table: {
     up: null,
     down: null,
-    left: null,
-    right: 'scoreboard', // Go to scoreboard
+    left: 'scoreboard', // Go back to scoreboard
+    right: null,
   },
 };
 
@@ -65,22 +65,16 @@ export function useSwipe() {
     // Get dynamic navigation based on current game
     const navigation = { ...BASE_NAVIGATION[currentView] };
 
-    // Enable bracket navigation for NFL playoffs
-    if (isBracketAvailable) {
-      if (currentView === 'scoreboard' || currentView === 'stats') {
-        navigation.right = 'bracket';
-      }
-    }
-
-    // Enable table navigation for Bundesliga (left from scoreboard)
+    // Enable table navigation for Bundesliga (right from scoreboard)
     if (isTableAvailable) {
       if (currentView === 'scoreboard') {
-        navigation.left = 'table';
+        navigation.right = 'table';
       }
-    } else {
-      // For non-Bundesliga games, left goes to settings
-      if (currentView === 'scoreboard') {
-        navigation.left = 'settings';
+    }
+    // Enable bracket navigation for NFL playoffs (right from scoreboard)
+    else if (isBracketAvailable) {
+      if (currentView === 'scoreboard' || currentView === 'stats') {
+        navigation.right = 'bracket';
       }
     }
 

@@ -11,14 +11,14 @@ const BASE_NAVIGATION: Record<View, Record<string, View | null>> = {
   scoreboard: {
     ArrowUp: 'stats',
     ArrowDown: null,
-    ArrowLeft: null, // Will be 'table' for Bundesliga or 'settings' otherwise
-    ArrowRight: null, // Will be 'bracket' for NFL playoffs
+    ArrowLeft: 'settings', // Always settings
+    ArrowRight: null, // Will be 'table' for Bundesliga or 'bracket' for NFL playoffs
   },
   stats: {
     ArrowUp: null,
     ArrowDown: 'scoreboard',
     ArrowLeft: 'settings',
-    ArrowRight: null, // Will be 'bracket' for NFL playoffs
+    ArrowRight: null,
   },
   settings: {
     ArrowUp: null,
@@ -37,8 +37,8 @@ const BASE_NAVIGATION: Record<View, Record<string, View | null>> = {
   table: {
     ArrowUp: null,
     ArrowDown: null,
-    ArrowLeft: null,
-    ArrowRight: 'scoreboard',
+    ArrowLeft: 'scoreboard',
+    ArrowRight: null,
     Escape: 'scoreboard',
   },
 };
@@ -85,22 +85,16 @@ export function useKeyboardNavigation() {
       const isTableAvailableMulti = viewMode === 'multi' && availableGames.some((game) => isBundesligaGame(game));
       const isTableAvailable = isTableAvailableSingle || isTableAvailableMulti;
 
-      // Enable bracket navigation for NFL playoffs
-      if (isBracketAvailable) {
-        if (currentView === 'scoreboard' || currentView === 'stats') {
-          navigation.ArrowRight = 'bracket';
-        }
-      }
-
-      // Enable table navigation for Bundesliga (left from scoreboard)
+      // Enable table navigation for Bundesliga (right from scoreboard)
       if (isTableAvailable) {
         if (currentView === 'scoreboard') {
-          navigation.ArrowLeft = 'table';
+          navigation.ArrowRight = 'table';
         }
-      } else {
-        // For non-Bundesliga games, left goes to settings
-        if (currentView === 'scoreboard') {
-          navigation.ArrowLeft = 'settings';
+      }
+      // Enable bracket navigation for NFL playoffs (right from scoreboard)
+      else if (isBracketAvailable) {
+        if (currentView === 'scoreboard' || currentView === 'stats') {
+          navigation.ArrowRight = 'bracket';
         }
       }
 
