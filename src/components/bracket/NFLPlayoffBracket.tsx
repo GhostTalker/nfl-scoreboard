@@ -357,27 +357,32 @@ function BracketConnectionsLeft() {
   // Column layout: WC=110px (0-110), gap=4px, DIV=110px (114-224), gap=4px, CONF=118px (228-340)
   // (gap-1 = 4px in Tailwind)
 
-  // Each column has:
-  // - Header: ~28px (text-center mb-2 with py-1 inside)
-  // - Content area: remaining height with flex-1 flex-col justify-around
+  // IMPORTANT: Lines should connect at the CENTER of each game box (at the divider line between team rows)
+  // Each game box has ~10% height in viewBox units, so center = boxTop + 5%
+  const boxCenterOffset = 5;
 
-  // Y coordinates adjusted to match actual rendered positions of game boxes
-  // The game boxes are distributed with justify-around within the content area
-  // Content area starts after the header (~7%) and items are centered within their slots
-
+  // Box TOP positions (where justify-around places them)
   // WC column: 4 items (BYE + 3 WC games) with justify-around
-  // Y coordinates based on precise analysis of screenshot positions
-  const wc1 = 29;   // BYE team box (~29% from top)
-  const wc2 = 45;   // first WC game (~45% from top)
-  const wc3 = 60;   // second WC game (~60% from top)
-  const wc4 = 83;   // third WC game (~83% from top)
+  const wc1Top = 29;   // BYE team box top
+  const wc2Top = 45;   // first WC game top
+  const wc3Top = 60;   // second WC game top
+  const wc4Top = 83;   // third WC game top
 
   // DIV column: 2 items with justify-around
-  const div1 = 38;  // first divisional game (~38% from top)
-  const div2 = 72;  // second divisional game (~72% from top)
+  const div1Top = 38;  // first divisional game top
+  const div2Top = 72;  // second divisional game top
 
   // CONF column: 1 item centered (uses flex items-center)
-  const conf = 52;  // conference game (~52% from top)
+  const confTop = 52;  // conference game top
+
+  // CONNECTION POINTS - at the CENTER of each box (top + offset)
+  const wc1 = wc1Top + boxCenterOffset;   // BYE center at ~34%
+  const wc2 = wc2Top + boxCenterOffset;   // WC1 center at ~50%
+  const wc3 = wc3Top + boxCenterOffset;   // WC2 center at ~65%
+  const wc4 = wc4Top + boxCenterOffset;   // WC3 center at ~88%
+  const div1 = div1Top + boxCenterOffset; // DIV1 center at ~43%
+  const div2 = div2Top + boxCenterOffset; // DIV2 center at ~77%
+  const conf = confTop + boxCenterOffset; // CONF center at ~57%
 
   // X coordinates (in viewBox units, 340 = 100%)
   // Scale: 340px container, viewBox 0-100
@@ -399,35 +404,35 @@ function BracketConnectionsLeft() {
     >
       {/* === Wild Card to Divisional - Top pair === */}
       {/* BYE (wc1) + WC1 (wc2) -> DIV1 */}
-      {/* Horizontal from BYE at Y=wc1 */}
+      {/* Horizontal from BYE center */}
       <line x1={wcRight} y1={wc1} x2={gapMid1} y2={wc1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from WC1 at Y=wc2 */}
+      {/* Horizontal from WC1 center */}
       <line x1={wcRight} y1={wc2} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
       {/* Vertical connector from wc1 to wc2 */}
       <line x1={gapMid1} y1={wc1} x2={gapMid1} y2={wc2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV1 at Y=div1 (actual div1 position, intersects vertical connector) */}
+      {/* Horizontal to DIV1 center */}
       <line x1={gapMid1} y1={div1} x2={divLeft} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Wild Card to Divisional - Bottom pair === */}
       {/* WC2 (wc3) + WC3 (wc4) -> DIV2 */}
-      {/* Horizontal from WC2 at Y=wc3 */}
+      {/* Horizontal from WC2 center */}
       <line x1={wcRight} y1={wc3} x2={gapMid1} y2={wc3} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from WC3 at Y=wc4 */}
+      {/* Horizontal from WC3 center */}
       <line x1={wcRight} y1={wc4} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
       {/* Vertical connector from wc3 to wc4 */}
       <line x1={gapMid1} y1={wc3} x2={gapMid1} y2={wc4} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV2 at Y=div2 (actual div2 position, intersects vertical connector) */}
+      {/* Horizontal to DIV2 center */}
       <line x1={gapMid1} y1={div2} x2={divLeft} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Conference === */}
       {/* DIV1 + DIV2 -> CONF */}
-      {/* Horizontal from DIV1 at Y=div1 */}
+      {/* Horizontal from DIV1 center */}
       <line x1={divRight} y1={div1} x2={gapMid2} y2={div1} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal from DIV2 at Y=div2 */}
+      {/* Horizontal from DIV2 center */}
       <line x1={divRight} y1={div2} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
       {/* Vertical connector from div1 to div2 */}
       <line x1={gapMid2} y1={div1} x2={gapMid2} y2={div2} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to CONF at Y=conf (actual conf position, intersects vertical connector) */}
+      {/* Horizontal to CONF center */}
       <line x1={gapMid2} y1={conf} x2={confLeft} y2={conf} stroke="#ef4444" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Conference to Super Bowl === */}
@@ -442,22 +447,32 @@ function BracketConnectionsRight() {
   // Container is 340px wide, height varies but we use viewBox 0-100 for Y
   // NFC column layout (reversed): CONF=118px (0-118), gap=4px, DIV=110px (122-232), gap=4px, WC=110px (236-340)
 
-  // Y coordinates adjusted to match actual rendered positions of game boxes
-  // Same as AFC since the layout structure is identical
+  // IMPORTANT: Lines should connect at the CENTER of each game box (at the divider line between team rows)
+  // Each game box has ~10% height in viewBox units, so center = boxTop + 5%
+  const boxCenterOffset = 5;
 
+  // Box TOP positions (where justify-around places them)
   // WC column: 4 items (BYE + 3 WC games) with justify-around
-  // Y coordinates based on precise analysis of screenshot positions
-  const wc1 = 29;   // BYE team box (~29% from top)
-  const wc2 = 45;   // first WC game (~45% from top)
-  const wc3 = 60;   // second WC game (~60% from top)
-  const wc4 = 83;   // third WC game (~83% from top)
+  const wc1Top = 29;   // BYE team box top
+  const wc2Top = 45;   // first WC game top
+  const wc3Top = 60;   // second WC game top
+  const wc4Top = 83;   // third WC game top
 
   // DIV column: 2 items with justify-around
-  const div1 = 38;  // first divisional game (~38% from top)
-  const div2 = 72;  // second divisional game (~72% from top)
+  const div1Top = 38;  // first divisional game top
+  const div2Top = 72;  // second divisional game top
 
   // CONF column: 1 item centered
-  const conf = 52;  // conference game (~52% from top)
+  const confTop = 52;  // conference game top
+
+  // CONNECTION POINTS - at the CENTER of each box (top + offset)
+  const wc1 = wc1Top + boxCenterOffset;   // BYE center at ~34%
+  const wc2 = wc2Top + boxCenterOffset;   // WC1 center at ~50%
+  const wc3 = wc3Top + boxCenterOffset;   // WC2 center at ~65%
+  const wc4 = wc4Top + boxCenterOffset;   // WC3 center at ~88%
+  const div1 = div1Top + boxCenterOffset; // DIV1 center at ~43%
+  const div2 = div2Top + boxCenterOffset; // DIV2 center at ~77%
+  const conf = confTop + boxCenterOffset; // CONF center at ~57%
 
   // X coordinates (in viewBox units, 340 = 100%)
   // NFC layout: CONF(0-118) | gap | DIV(122-232) | gap | WC(236-340)
@@ -482,35 +497,35 @@ function BracketConnectionsRight() {
 
       {/* === Conference to Divisional === */}
       {/* CONF -> DIV1 + DIV2 */}
-      {/* Horizontal from CONF at Y=conf */}
+      {/* Horizontal from CONF center */}
       <line x1={confRight} y1={conf} x2={gapMid1} y2={conf} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Vertical connector from div1 to div2 (passes through conf) */}
+      {/* Vertical connector from div1 to div2 */}
       <line x1={gapMid1} y1={div1} x2={gapMid1} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV1 at Y=div1 */}
+      {/* Horizontal to DIV1 center */}
       <line x1={gapMid1} y1={div1} x2={divLeft} y2={div1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to DIV2 at Y=div2 */}
+      {/* Horizontal to DIV2 center */}
       <line x1={gapMid1} y1={div2} x2={divLeft} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Wild Card - Top pair === */}
       {/* DIV1 -> BYE (wc1) + WC1 (wc2) */}
-      {/* Horizontal from DIV1 at Y=div1 (actual div1 position, intersects vertical connector) */}
+      {/* Horizontal from DIV1 center */}
       <line x1={divRight} y1={div1} x2={gapMid2} y2={div1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
       {/* Vertical connector from wc1 to wc2 */}
       <line x1={gapMid2} y1={wc1} x2={gapMid2} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to BYE at Y=wc1 */}
+      {/* Horizontal to BYE center */}
       <line x1={gapMid2} y1={wc1} x2={wcLeft} y2={wc1} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC1 at Y=wc2 */}
+      {/* Horizontal to WC1 center */}
       <line x1={gapMid2} y1={wc2} x2={wcLeft} y2={wc2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
 
       {/* === Divisional to Wild Card - Bottom pair === */}
       {/* DIV2 -> WC2 (wc3) + WC3 (wc4) */}
-      {/* Horizontal from DIV2 at Y=div2 (actual div2 position, intersects vertical connector) */}
+      {/* Horizontal from DIV2 center */}
       <line x1={divRight} y1={div2} x2={gapMid2} y2={div2} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
       {/* Vertical connector from wc3 to wc4 */}
       <line x1={gapMid2} y1={wc3} x2={gapMid2} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC2 at Y=wc3 */}
+      {/* Horizontal to WC2 center */}
       <line x1={gapMid2} y1={wc3} x2={wcLeft} y2={wc3} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
-      {/* Horizontal to WC3 at Y=wc4 */}
+      {/* Horizontal to WC3 center */}
       <line x1={gapMid2} y1={wc4} x2={wcLeft} y2={wc4} stroke="#60a5fa" strokeWidth="0.6" opacity="0.7" />
     </svg>
   );
@@ -555,7 +570,7 @@ function MatchupCard({ matchup, compact }: MatchupCardProps) {
   );
 }
 
-// Bye Team Card - displays the #1 seed with BYE as opponent (styled like MatchupCard)
+// Bye Team Card - displays the #1 seed with BYE as opponent (styled exactly like MatchupCard with compact)
 interface ByeTeamCardProps {
   team: PlayoffTeam | null;
   conference: 'AFC' | 'NFC';
@@ -563,10 +578,10 @@ interface ByeTeamCardProps {
 
 function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
   if (!team) {
-    // Placeholder when team not yet determined
+    // Placeholder when team not yet determined - matches TeamRow TBD structure
     return (
       <div className="bg-slate-800/80 rounded p-1 border border-slate-700/50 relative z-10">
-        {/* Placeholder Team Row */}
+        {/* Placeholder Team Row - matches TeamRow with compact */}
         <div className="flex items-center gap-1 py-0.5">
           <div className="w-4 h-4 bg-slate-700/50 rounded"></div>
           <div className="flex-1">
@@ -574,14 +589,14 @@ function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
           </div>
         </div>
 
-        {/* Divider */}
+        {/* Divider - matches MatchupCard */}
         <div className="h-px bg-slate-700/50 my-0.5"></div>
 
-        {/* BYE Row */}
+        {/* BYE Row - matches TeamRow structure */}
         <div className="flex items-center gap-1 py-0.5">
-          <div className="w-4 h-4 bg-slate-700/30 rounded"></div>
+          <div className="w-4 h-4 bg-slate-700/50 rounded"></div>
           <div className="flex-1">
-            <span className="text-white/30 text-[10px]">BYE</span>
+            <span className="text-white/20 text-[10px]">BYE</span>
           </div>
         </div>
       </div>
@@ -590,7 +605,7 @@ function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
 
   return (
     <div className="bg-slate-800/80 rounded p-1 border border-slate-700/50 relative z-10">
-      {/* #1 Seed Team Row */}
+      {/* #1 Seed Team Row - matches TeamRow with compact */}
       <div className="flex items-center gap-1 py-0.5">
         {/* Team Logo */}
         <div className="w-4 h-4 flex-shrink-0">
@@ -604,24 +619,28 @@ function ByeTeamCard({ team, conference: _conference }: ByeTeamCardProps) {
           />
         </div>
 
-        {/* Team Info */}
-        <div className="flex-1 min-w-0 flex items-center">
+        {/* Team Info - matches TeamRow structure with seed + abbreviation */}
+        <div className="flex-1 min-w-0 flex items-center gap-0.5">
+          {team.seed && (
+            <span className="text-[9px] text-white/30">#{team.seed}</span>
+          )}
           <span className="text-[11px] font-semibold text-white truncate">
             {team.abbreviation}
           </span>
         </div>
       </div>
 
-      {/* Divider */}
+      {/* Divider - matches MatchupCard */}
       <div className="h-px bg-slate-700/50 my-0.5"></div>
 
-      {/* BYE Row (opponent placeholder) */}
+      {/* BYE Row - styled like TeamRow but for BYE opponent */}
       <div className="flex items-center gap-1 py-0.5">
-        <div className="w-4 h-4 bg-slate-700/30 rounded flex items-center justify-center">
-          <span className="text-white/20 text-[6px]">-</span>
-        </div>
-        <div className="flex-1">
-          <span className="text-[11px] text-white/40 font-medium">BYE</span>
+        {/* Empty logo placeholder matching TeamRow w-4 h-4 */}
+        <div className="w-4 h-4 flex-shrink-0 bg-slate-700/30 rounded"></div>
+
+        {/* BYE text matching TeamRow text styling */}
+        <div className="flex-1 min-w-0 flex items-center gap-0.5">
+          <span className="text-[11px] font-semibold text-white/40 truncate">BYE</span>
         </div>
       </div>
     </div>
@@ -636,7 +655,11 @@ interface TeamRowProps {
 }
 
 function TeamRow({ team, isWinner, status, compact }: TeamRowProps) {
-  if (!team) {
+  // Treat null teams AND teams with TBD/empty abbreviation as placeholders
+  // This ensures consistent display whether the API returns null or a TBD placeholder team
+  const isTBDTeam = !team || !team.abbreviation || team.abbreviation === 'TBD';
+
+  if (isTBDTeam) {
     return (
       <div className={`flex items-center gap-1 ${compact ? 'py-0.5' : 'py-1'}`}>
         <div className="w-4 h-4 bg-slate-700/50 rounded"></div>
