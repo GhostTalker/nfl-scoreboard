@@ -358,8 +358,8 @@ function BracketConnectionsLeft() {
   // (gap-1 = 4px in Tailwind)
 
   // IMPORTANT: Lines should connect at the CENTER of each game box (at the divider line between team rows)
-  // Each game box has ~10% height in viewBox units, so center = boxTop + 5%
-  const boxCenterOffset = 5;
+  // Each game box has ~6-8% height in viewBox units, so center = boxTop + 3%
+  const boxCenterOffset = 3;
 
   // Box TOP positions (where justify-around places them)
   // WC column: 4 items (BYE + 3 WC games) with justify-around
@@ -448,8 +448,8 @@ function BracketConnectionsRight() {
   // NFC column layout (reversed): CONF=118px (0-118), gap=4px, DIV=110px (122-232), gap=4px, WC=110px (236-340)
 
   // IMPORTANT: Lines should connect at the CENTER of each game box (at the divider line between team rows)
-  // Each game box has ~10% height in viewBox units, so center = boxTop + 5%
-  const boxCenterOffset = 5;
+  // Each game box has ~6-8% height in viewBox units, so center = boxTop + 3%
+  const boxCenterOffset = 3;
 
   // Box TOP positions (where justify-around places them)
   // WC column: 4 items (BYE + 3 WC games) with justify-around
