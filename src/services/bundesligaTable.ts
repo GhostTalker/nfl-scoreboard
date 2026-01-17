@@ -142,10 +142,13 @@ export function calculateLiveTable(
  * Get position zone (Champions League, Europa League, Relegation, etc.)
  */
 export function getPositionZone(position: number): {
-  zone: 'ucl' | 'uel' | 'uecl' | 'relegation' | 'safe';
+  zone: 'champion' | 'ucl' | 'uel' | 'uecl' | 'relegation' | 'safe';
   color: string;
   label: string;
 } {
+  if (position === 1) {
+    return { zone: 'champion', color: '#9333EA', label: 'Meister' };
+  }
   if (position <= 4) {
     return { zone: 'ucl', color: '#0066CC', label: 'Champions League' };
   }

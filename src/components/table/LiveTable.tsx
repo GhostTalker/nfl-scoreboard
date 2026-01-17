@@ -59,7 +59,7 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
 
       {/* Scrollable Table */}
       <div className="flex-1 overflow-y-auto min-h-0">
-        <div className="space-y-0.5">
+        <div className="space-y-0.5 max-w-2xl mx-auto">
           {liveTable.map((entry) => {
             const zone = getPositionZone(entry.position);
             const hasPositionChange = entry.previousPosition !== entry.position;
@@ -96,7 +96,7 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
                 {/* Team Logo */}
                 <div className="w-5 h-5 flex-shrink-0">
                   <img
-                    src={getBestLogoUrl(entry.teamIconUrl, entry.teamName)}
+                    src={entry.teamId === 80 ? '/logos/union.png' : getBestLogoUrl(entry.teamIconUrl, entry.teamName)}
                     alt={entry.shortName}
                     className="w-full h-full object-contain"
                     onError={(e) => {
@@ -111,13 +111,18 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
                 </div>
 
                 {/* Stats - Compact */}
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-1.5 text-xs">
                   {/* Games */}
                   <div className="text-white/50 w-5 text-center">{entry.played}</div>
 
+                  {/* W-D-L */}
+                  <div className="text-white/40 text-[10px] w-12 text-center">
+                    {entry.won}-{entry.draw}-{entry.lost}
+                  </div>
+
                   {/* Goal Difference */}
                   <div
-                    className={`w-8 text-center font-mono ${
+                    className={`w-7 text-center font-mono ${
                       entry.liveGoalDifference > 0
                         ? 'text-green-400'
                         : entry.liveGoalDifference < 0
@@ -130,7 +135,7 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
                   </div>
 
                   {/* Points */}
-                  <div className="w-10 text-right">
+                  <div className="w-9 text-right">
                     {hasLivePoints ? (
                       <div className="flex items-center gap-0.5 justify-end">
                         <span className="text-white/30 line-through text-[10px]">
@@ -151,22 +156,26 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
 
       {/* Compact Legend */}
       <div className="mt-2 pt-2 border-t border-white/10 flex-shrink-0">
-        <div className="text-[10px] text-white/40 grid grid-cols-2 gap-x-4 gap-y-0.5">
+        <div className="text-[10px] text-white/40 grid grid-cols-2 gap-x-4 gap-y-0.5 max-w-2xl mx-auto">
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded" style={{ backgroundColor: '#0066CC' }}></div>
-            <span>CL (1-4)</span>
+            <div className="w-2 h-2 rounded" style={{ backgroundColor: '#9333EA' }}></div>
+            <span>Meister (1)</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded" style={{ backgroundColor: '#FFAA00' }}></div>
             <span>Relegation (16)</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded" style={{ backgroundColor: '#FF6600' }}></div>
-            <span>EL (5)</span>
+            <div className="w-2 h-2 rounded" style={{ backgroundColor: '#0066CC' }}></div>
+            <span>CL (2-4)</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded" style={{ backgroundColor: '#CC0000' }}></div>
             <span>Abstieg (17-18)</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded" style={{ backgroundColor: '#FF6600' }}></div>
+            <span>EL (5)</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded" style={{ backgroundColor: '#00CC66' }}></div>
