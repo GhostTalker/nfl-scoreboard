@@ -504,29 +504,29 @@ function SuperBowlConnectionLines() {
         strokeLinecap="butt"
       />
 
-      {/* DEBUG GRID - Right side only (NFC area) */}
-      {/* Vertical lines every 10px from 500 to 700 */}
-      {Array.from({ length: 21 }, (_, i) => {
-        const x = 500 + i * 10;
+      {/* DEBUG GRID - Extended to cover SB box and NFC area */}
+      {/* Vertical lines every 5px from 350 to 650 */}
+      {Array.from({ length: 61 }, (_, i) => {
+        const x = 350 + i * 5;
         return (
           <g key={`grid-${x}`}>
             <line
               x1={x}
-              y1={0}
+              y1={300}
               x2={x}
-              y2={totalHeight}
-              stroke={x % 50 === 0 ? '#00ff00' : '#00ff00'}
-              strokeWidth={x % 50 === 0 ? '2' : '1'}
-              opacity={x % 50 === 0 ? '0.8' : '0.4'}
+              y2={400}
+              stroke="#00ff00"
+              strokeWidth={x % 10 === 0 ? '2' : '1'}
+              opacity={x % 10 === 0 ? '0.9' : '0.5'}
             />
             {x % 10 === 0 && (
               <text
                 x={x}
-                y={20}
+                y={290}
                 fill="#00ff00"
-                fontSize="12"
+                fontSize="16"
                 textAnchor="middle"
-                style={{ fontWeight: 'bold' }}
+                style={{ fontWeight: 'bold', textShadow: '0 0 3px black' }}
               >
                 {x}
               </text>
@@ -537,14 +537,14 @@ function SuperBowlConnectionLines() {
 
       {/* Horizontal reference line at confY */}
       <line
-        x1={500}
+        x1={350}
         y1={confY}
-        x2={700}
+        x2={650}
         y2={confY}
         stroke="#ff00ff"
-        strokeWidth="1"
-        opacity="0.6"
-        strokeDasharray="5,5"
+        strokeWidth="2"
+        opacity="0.8"
+        strokeDasharray="10,5"
       />
     </svg>
   );
