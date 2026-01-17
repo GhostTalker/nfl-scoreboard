@@ -247,6 +247,10 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
   const divSlots = Array(2).fill(null).map((_, i) => divisional[i] || createPlaceholderMatchup('divisional', conference, i));
   const confSlot = conferenceGame || createPlaceholderMatchup('conference', conference, 0);
 
+  // Check if all games in a round are complete
+  const wildCardComplete = wildCard.every(m => m.status === 'final');
+  const divisionalComplete = divisional.every(m => m.status === 'final');
+
   return (
     <div className="relative h-full flex gap-0.5">
       {/* Column 1: Wild Card (with BYE) - Fixed width */}
@@ -261,7 +265,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
           </div>
           {wcSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact conference={conference} />
+              <MatchupCard matchup={matchup} compact conference={conference} previousRoundComplete={true} />
             </div>
           ))}
         </div>
@@ -275,7 +279,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
         <div className="flex-1 flex flex-col justify-around">
           {divSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact conference={conference} />
+              <MatchupCard matchup={matchup} compact conference={conference} previousRoundComplete={wildCardComplete} />
             </div>
           ))}
         </div>
@@ -288,7 +292,7 @@ function ConferenceBracketLeft({ conference, wildCard, divisional, conferenceGam
         </div>
         <div className="flex-1 flex items-center">
           <div className="mx-2 w-full">
-            <MatchupCard matchup={confSlot} compact conference={conference} />
+            <MatchupCard matchup={confSlot} compact conference={conference} previousRoundComplete={divisionalComplete} />
           </div>
         </div>
       </div>
@@ -305,6 +309,10 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
   const divSlots = Array(2).fill(null).map((_, i) => divisional[i] || createPlaceholderMatchup('divisional', conference, i));
   const confSlot = conferenceGame || createPlaceholderMatchup('conference', conference, 0);
 
+  // Check if all games in a round are complete
+  const wildCardComplete = wildCard.every(m => m.status === 'final');
+  const divisionalComplete = divisional.every(m => m.status === 'final');
+
   return (
     <div className="relative h-full flex gap-0.5">
       {/* Column 3: Conference Championship - Fixed width */}
@@ -314,7 +322,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
         </div>
         <div className="flex-1 flex items-center">
           <div className="mx-2 w-full">
-            <MatchupCard matchup={confSlot} compact conference={conference} />
+            <MatchupCard matchup={confSlot} compact conference={conference} previousRoundComplete={divisionalComplete} />
           </div>
         </div>
       </div>
@@ -327,7 +335,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
         <div className="flex-1 flex flex-col justify-around">
           {divSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact conference={conference} />
+              <MatchupCard matchup={matchup} compact conference={conference} previousRoundComplete={wildCardComplete} />
             </div>
           ))}
         </div>
@@ -345,7 +353,7 @@ function ConferenceBracketRight({ conference, wildCard, divisional, conferenceGa
           </div>
           {wcSlots.map((matchup, idx) => (
             <div key={idx} className="mx-2">
-              <MatchupCard matchup={matchup} compact conference={conference} />
+              <MatchupCard matchup={matchup} compact conference={conference} previousRoundComplete={true} />
             </div>
           ))}
         </div>
@@ -580,9 +588,10 @@ interface MatchupCardProps {
   matchup: PlayoffMatchup;
   compact?: boolean;
   conference?: 'AFC' | 'NFC';
+  previousRoundComplete?: boolean;
 }
 
-function MatchupCard({ matchup, compact, conference }: MatchupCardProps) {
+function MatchupCard({ matchup, compact, conference, previousRoundComplete = true }: MatchupCardProps) {
   const isLive = matchup.status === 'in_progress';
   const isFinal = matchup.status === 'final';
   const isCurrent = matchup.status === 'scheduled' || matchup.status === 'in_progress';
@@ -597,8 +606,8 @@ function MatchupCard({ matchup, compact, conference }: MatchupCardProps) {
     if (isFinal) {
       // Static glow for finished games
       glowStyle = { boxShadow: '0 0 15px rgba(239,68,68,0.4)' };
-    } else if (isCurrent) {
-      // Pulsing glow for current games
+    } else if (isCurrent && previousRoundComplete) {
+      // Pulsing glow ONLY if previous round is complete
       glowClass = 'playoff-game-pulse-afc';
     }
   } else if (conference === 'NFC') {
@@ -606,8 +615,8 @@ function MatchupCard({ matchup, compact, conference }: MatchupCardProps) {
     if (isFinal) {
       // Static glow for finished games
       glowStyle = { boxShadow: '0 0 15px rgba(96,165,250,0.4)' };
-    } else if (isCurrent) {
-      // Pulsing glow for current games
+    } else if (isCurrent && previousRoundComplete) {
+      // Pulsing glow ONLY if previous round is complete
       glowClass = 'playoff-game-pulse-nfc';
     }
   }
