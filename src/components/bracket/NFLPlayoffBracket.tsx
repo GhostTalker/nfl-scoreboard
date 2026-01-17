@@ -452,64 +452,6 @@ function SuperBowlConnectionLines() {
       viewBox={`0 0 ${totalWidth} ${totalHeight}`}
       preserveAspectRatio="none"
     >
-      {/* DEBUG GRID - Finer grid at 10px intervals */}
-      {/* Vertical lines every 10px */}
-      {Array.from({ length: Math.floor(totalWidth / 10) + 1 }).map((_, i) => {
-        const x = i * 10;
-        const isMajor = x % 50 === 0;
-        return (
-          <g key={`v-${i}`}>
-            <line
-              x1={x}
-              y1={0}
-              x2={x}
-              y2={totalHeight}
-              stroke={isMajor ? "rgba(0,255,0,0.5)" : "rgba(0,255,0,0.2)"}
-              strokeWidth={isMajor ? "1.5" : "0.5"}
-            />
-            {isMajor && (
-              <text
-                x={x + 2}
-                y={20}
-                fill="lime"
-                fontSize="12"
-                fontFamily="monospace"
-              >
-                {x}
-              </text>
-            )}
-          </g>
-        );
-      })}
-      {/* Horizontal lines every 10px */}
-      {Array.from({ length: Math.floor(totalHeight / 10) + 1 }).map((_, i) => {
-        const y = i * 10;
-        const isMajor = y % 50 === 0;
-        return (
-          <g key={`h-${i}`}>
-            <line
-              x1={0}
-              y1={y}
-              x2={totalWidth}
-              y2={y}
-              stroke={isMajor ? "rgba(0,255,0,0.5)" : "rgba(0,255,0,0.2)"}
-              strokeWidth={isMajor ? "1.5" : "0.5"}
-            />
-            {isMajor && (
-              <text
-                x={5}
-                y={y - 2}
-                fill="lime"
-                fontSize="12"
-                fontFamily="monospace"
-              >
-                {y}
-              </text>
-            )}
-          </g>
-        );
-      })}
-
       {/* AFC to Super Bowl - Red pulsing lines with short pattern */}
       {/* Short horizontal from CONF box edge to gap middle */}
       <line
