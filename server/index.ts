@@ -29,6 +29,19 @@ const log = (msg: string) => process.stdout.write(msg + '\n');
 const logError = (msg: string) => process.stderr.write(msg + '\n');
 
 // ═══════════════════════════════════════════════════════════════════════
+// SECURITY: Health Check Bypass (BEFORE CORS)
+// ═══════════════════════════════════════════════════════════════════════
+// Health check endpoints MUST bypass CORS for monitoring tools
+// These endpoints need to be accessible without Origin headers
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/health')) {
+    // Skip to next middleware, but mark as health check to bypass CORS
+    req.headers['x-health-check'] = 'true';
+  }
+  next();
+});
+
+// ═══════════════════════════════════════════════════════════════════════
 // SECURITY: CORS Configuration
 // ═══════════════════════════════════════════════════════════════════════
 // Restrict to known origins for private LAN deployment
@@ -40,29 +53,36 @@ const allowedOrigins = [
   'http://localhost:5173',      // Vite dev server
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // SECURITY: In production, reject requests with no Origin header
-    // This prevents direct API access from tools like curl/Postman
-    // Development: Allow no-origin requests for testing
-    if (!origin) {
-      if (process.env.NODE_ENV === 'production') {
-        logError('[SECURITY] Blocked request with no Origin header in production');
-        return callback(new Error('Not allowed by CORS - Origin header required'));
+app.use((req, res, next) => {
+  cors({
+    origin: (origin, callback) => {
+      // SECURITY: Health check endpoints bypass CORS checks
+      if (req.headers['x-health-check'] === 'true') {
+        return callback(null, true);
       }
-      return callback(null, true);
-    }
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      logError(`[SECURITY] Blocked CORS request from unauthorized origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST'],  // GET for data, POST for admin endpoints
-  credentials: true,
-}));
+      // SECURITY: In production, reject requests with no Origin header
+      // This prevents direct API access from tools like curl/Postman
+      // Development: Allow no-origin requests for testing
+      if (!origin) {
+        if (process.env.NODE_ENV === 'production') {
+          logError('[SECURITY] Blocked request with no Origin header in production');
+          return callback(new Error('Not allowed by CORS - Origin header required'));
+        }
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logError(`[SECURITY] Blocked CORS request from unauthorized origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST'],  // GET for data, POST for admin endpoints
+    credentials: true,
+  })(req, res, next);
+});
 
 // ═══════════════════════════════════════════════════════════════════════
 // SECURITY: API Rate Limiting
