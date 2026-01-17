@@ -29,20 +29,7 @@ const log = (msg: string) => process.stdout.write(msg + '\n');
 const logError = (msg: string) => process.stderr.write(msg + '\n');
 
 // ═══════════════════════════════════════════════════════════════════════
-// SECURITY: Health Check Bypass (BEFORE CORS)
-// ═══════════════════════════════════════════════════════════════════════
-// Health check endpoints MUST bypass CORS for monitoring tools
-// These endpoints need to be accessible without Origin headers
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api/health')) {
-    // Skip to next middleware, but mark as health check to bypass CORS
-    req.headers['x-health-check'] = 'true';
-  }
-  next();
-});
-
-// ═══════════════════════════════════════════════════════════════════════
-// SECURITY: CORS Configuration
+// SECURITY: CORS Configuration (API routes only)
 // ═══════════════════════════════════════════════════════════════════════
 // Restrict to known origins for private LAN deployment
 // Production: http://10.1.0.51:3001 (video wall server)
@@ -53,36 +40,30 @@ const allowedOrigins = [
   'http://localhost:5173',      // Vite dev server
 ];
 
-app.use((req, res, next) => {
-  cors({
-    origin: (origin, callback) => {
-      // SECURITY: Health check endpoints bypass CORS checks
-      if (req.headers['x-health-check'] === 'true') {
-        return callback(null, true);
+// CORS configuration factory - will be applied to /api routes only
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // SECURITY: Health check endpoints bypass CORS checks
+    // These endpoints need to be accessible for monitoring tools
+    // Development: Allow no-origin requests for testing
+    if (!origin) {
+      if (process.env.NODE_ENV === 'production') {
+        logError('[SECURITY] Blocked request with no Origin header in production');
+        return callback(new Error('Not allowed by CORS - Origin header required'));
       }
+      return callback(null, true);
+    }
 
-      // SECURITY: In production, reject requests with no Origin header
-      // This prevents direct API access from tools like curl/Postman
-      // Development: Allow no-origin requests for testing
-      if (!origin) {
-        if (process.env.NODE_ENV === 'production') {
-          logError('[SECURITY] Blocked request with no Origin header in production');
-          return callback(new Error('Not allowed by CORS - Origin header required'));
-        }
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        logError(`[SECURITY] Blocked CORS request from unauthorized origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST'],  // GET for data, POST for admin endpoints
-    credentials: true,
-  })(req, res, next);
-});
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      logError(`[SECURITY] Blocked CORS request from unauthorized origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],  // GET for data, POST for admin endpoints
+  credentials: true,
+};
 
 // ═══════════════════════════════════════════════════════════════════════
 // SECURITY: API Rate Limiting
@@ -132,8 +113,16 @@ app.use((req, res, next) => {
 });
 
 // API Routes (proxy to ESPN) - MUST be before static files
-// Apply rate limiting ONLY to API routes (not static assets)
-app.use('/api', apiLimiter, apiRouter);
+// Apply CORS and rate limiting ONLY to API routes (not static assets)
+// EXCEPTION: Health check endpoints bypass CORS for monitoring tools
+app.use('/api', (req, res, next) => {
+  // Health check endpoints skip CORS (monitoring tools don't send Origin)
+  if (req.path.startsWith('/health')) {
+    return next();
+  }
+  // All other API routes require CORS validation
+  cors(corsOptions)(req, res, next);
+}, apiLimiter, apiRouter);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
