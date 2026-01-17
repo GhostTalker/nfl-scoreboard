@@ -430,20 +430,20 @@ function SuperBowlConnectionLines() {
 
   const totalWidth = 952;
   const totalHeight = 620;
-  const confY = 348; // Y position for Super Bowl connection lines
+  const confY = 347; // Y position for Super Bowl connection lines (moved up 1px)
 
   // X positions - SHORT LINES pattern like other connections
   // Pattern: Box edge → short line → Gap middle → short line → SB box edge
 
-  // AFC side
+  // AFC side (left line 3px wider - extends further into SB box)
   const afcConfRight = 332; // Right edge of AFC CONF box
-  const afcGapMid = 342;    // Middle of gap between CONF (332) and SB box (353): (332+353)/2
-  const sbBoxLeft = 353;    // Left edge of SB box (actual position)
+  const afcGapMid = 342;    // Middle of gap between CONF (332) and SB box (356)
+  const sbBoxLeft = 356;    // Left edge of SB box (extended 3px: 353 + 3)
 
-  // NFC side
+  // NFC side (right line 4px shorter - stops 4px earlier)
   const nfcConfLeft = 620;  // Left edge of NFC CONF box
-  const nfcGapMid = 602;    // Middle of gap between SB box (585) and CONF (620): (585+620)/2
-  const sbBoxRight = 585;   // Right edge of SB box (actual position)
+  const nfcGapMid = 602;    // Middle of gap between SB box (581) and CONF (620)
+  const sbBoxRight = 581;   // Right edge of SB box (shortened 4px: 585 - 4)
 
   return (
     <svg
