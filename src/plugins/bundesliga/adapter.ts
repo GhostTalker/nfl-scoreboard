@@ -471,16 +471,24 @@ export class BundesligaAdapter implements SportAdapter {
       }
 
       // Determine period based on calculated match minute
-      if (matchMinute <= 45) {
-        // Check if we're in halftime based on elapsed time
-        // First half + potential Nachspielzeit typically ends around 47-50 real minutes
-        if (elapsedMinutes >= 47 && elapsedMinutes < 62) {
+      if (matchMinute < 45) {
+        period = 'first_half';
+      } else if (matchMinute >= 45 && matchMinute <= 50 && elapsedMinutes < 62) {
+        // First half including Nachspielzeit (45' to ~50')
+        // Only consider it halftime if elapsed time suggests a break (47-62 real minutes)
+        // AND we don't have recent API data showing a higher minute
+        // If matchMinute is exactly 45 and enough time passed, it might be halftime
+        if (matchMinute === 45 && elapsedMinutes >= 47) {
           period = 'halftime';
-          matchMinute = 45;
         } else {
+          // Still in first half (Nachspielzeit)
           period = 'first_half';
         }
-      } else if (matchMinute <= 90) {
+      } else if (matchMinute > 50 && elapsedMinutes < 62) {
+        // Edge case: too much Nachspielzeit or data lag, assume halftime
+        period = 'halftime';
+        matchMinute = 45;
+      } else if (matchMinute <= 90 || (matchMinute > 50 && elapsedMinutes >= 62)) {
         period = 'second_half';
       } else if (isDFBPokal && matchMinute > 90) {
         period = 'extra_time';
