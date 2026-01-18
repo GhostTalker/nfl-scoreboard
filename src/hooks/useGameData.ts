@@ -143,12 +143,30 @@ export function useGameData() {
             gameToShow = currentGame;
           }
         }
+      } else {
+        // No user selection - auto-select first live game, then first scheduled game
+        // NOTE: 'end_period' is treated as live (e.g., end of 4th quarter before OT)
+        const liveGame = games.find((g) =>
+          g.status === 'in_progress' ||
+          g.status === 'halftime' ||
+          g.status === 'end_period'
+        );
+
+        if (liveGame) {
+          gameToShow = liveGame;
+        } else {
+          // No live game - show first scheduled game, or first final game if no scheduled
+          const scheduledGame = games.find((g) => g.status === 'scheduled');
+          gameToShow = scheduledGame || games[0] || null;
+        }
       }
 
       if (gameToShow) {
         // Fetch details for live AND final games (for stats)
+        // NOTE: 'end_period' needs details too (e.g., end of regulation before OT)
         const needsDetails = gameToShow.status === 'in_progress' ||
                              gameToShow.status === 'halftime' ||
+                             gameToShow.status === 'end_period' ||
                              gameToShow.status === 'final';
 
         if (needsDetails) {

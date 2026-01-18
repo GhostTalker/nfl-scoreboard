@@ -83,7 +83,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       return;
     }
 
-    const isLive = game?.status === 'in_progress' || game?.status === 'halftime';
+    const isLive = game?.status === 'in_progress' || game?.status === 'halftime' || game?.status === 'end_period';
 
     // Only update previousScores if this is a NEW game (different ID)
     // This prevents celebration triggers when switching games
@@ -103,7 +103,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   // Explicit user confirmation - ONLY way to select a game
   confirmGameSelection: (game) => {
-    const isLive = game.status === 'in_progress' || game.status === 'halftime';
+    const isLive = game.status === 'in_progress' || game.status === 'halftime' || game.status === 'end_period';
     set({
       currentGame: game,
       isLive,

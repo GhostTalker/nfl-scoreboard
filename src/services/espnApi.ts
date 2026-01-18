@@ -34,7 +34,11 @@ export async function fetchScoreboard(signal?: AbortSignal): Promise<Game[]> {
 
     // Check if we have upcoming games - if not, try to fetch next week(s)
     const hasUpcoming = games.some((g) => g.status === 'scheduled');
-    const hasLive = games.some((g) => g.status === 'in_progress' || g.status === 'halftime');
+    const hasLive = games.some((g) =>
+      g.status === 'in_progress' ||
+      g.status === 'halftime' ||
+      g.status === 'end_period'
+    );
 
     if (!hasUpcoming && !hasLive) {
       // Get current season info
