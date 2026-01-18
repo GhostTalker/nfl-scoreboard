@@ -133,16 +133,9 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
 
                   {/* Points */}
                   <div className="w-9 text-right">
-                    {hasLivePoints ? (
-                      <div className="flex items-center gap-0.5 justify-end">
-                        <span className="text-white/30 line-through text-[10px]">
-                          {entry.points}
-                        </span>
-                        <span className="text-blue-400 font-bold text-xs">{entry.livePoints}</span>
-                      </div>
-                    ) : (
-                      <span className="text-white font-bold text-xs">{entry.points}</span>
-                    )}
+                    <span className={`font-bold text-xs ${hasLivePoints ? 'text-blue-400' : 'text-white'}`}>
+                      {entry.livePoints}
+                    </span>
                   </div>
                 </div>
               </div>
