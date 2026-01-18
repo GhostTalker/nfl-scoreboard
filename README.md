@@ -326,8 +326,8 @@ For developers and testing:
 
 ### Step 1: Clone repository
 ```bash
-git clone https://github.com/GhostTalker/nfl-scoreboard.git
-cd nfl-scoreboard
+git clone https://github.com/GhostTalker/sport-scoreboard.git
+cd sport-scoreboard
 ```
 
 ### Step 2: Install dependencies
@@ -486,8 +486,8 @@ ssh scoreboard-app@linux-server
 
 # Clone project
 cd /srv/GhostGit
-git clone https://github.com/GhostTalker/nfl-scoreboard.git
-cd nfl-scoreboard
+git clone https://github.com/GhostTalker/sport-scoreboard.git
+cd sport-scoreboard
 
 # Install dependencies
 npm install
@@ -615,7 +615,7 @@ Use the Feedback button in Settings to report issues. The mailto link automatica
 ## 📁 Project Structure
 
 ```
-nfl-scoreboard/
+sport-scoreboard/
 ├── public/                  # Static Assets
 │   ├── videos/              # Celebration Videos
 │   │   ├── touchdown.mp4
@@ -891,7 +891,7 @@ This project is licensed under the **MIT License**.
 **GhostTalker**
 
 - GitHub: [@GhostTalker](https://github.com/GhostTalker)
-- Repository: [nfl-scoreboard](https://github.com/GhostTalker/nfl-scoreboard)
+- Repository: [sport-scoreboard](https://github.com/GhostTalker/sport-scoreboard)
 
 ---
 
