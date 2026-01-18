@@ -48,8 +48,8 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
 
   return (
     <div className="h-full flex flex-col bg-slate-900 px-3 py-2">
-      {/* Compact Header */}
-      <div className="mb-2 flex-shrink-0">
+      {/* Centered Header */}
+      <div className="mb-2 flex-shrink-0 text-center">
         <h2 className="text-lg font-bold text-white">⚡ Blitztabelle</h2>
         <p className="text-xs text-white/50">Live basierend auf aktuellen Spielständen</p>
       </div>
