@@ -70,7 +70,9 @@ export class UEFAAdapter extends BaseSoccerAdapter {
   readonly defaultColor = '0066CC'; // UEFA blue
   readonly canHaveExtraTime = true; // Champions League has extra time in knockout rounds
 
-  async fetchScoreboard(): Promise<Game[]> {
+  async fetchScoreboard(signal?: AbortSignal): Promise<Game[]> {
+    this.setRecoveryState(true);
+
     try {
       // Calculate season year
       const now = new Date();
@@ -83,15 +85,36 @@ export class UEFAAdapter extends BaseSoccerAdapter {
       const leagueCode = `ucl${season}`;
 
       const allGames: Game[] = [];
+      let hasStaleData = false;
+      let staleError: string | null = null;
+      let staleCacheAge: number | null = null;
 
       // Fetch UEFA Champions League games
       try {
-        const uefaGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=${leagueCode}`);
+        // RACE CONDITION FIX: Pass abort signal
+        const uefaGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=${leagueCode}`, { signal });
+        const uefaGroupCacheInfo = this.parseCacheHeaders(uefaGroupResponse);
+
+        if (uefaGroupCacheInfo.isStale) {
+          hasStaleData = true;
+          staleError = uefaGroupCacheInfo.apiError;
+          staleCacheAge = uefaGroupCacheInfo.cacheAge;
+        }
+
         if (uefaGroupResponse.ok) {
           const uefaGroup: OpenLigaDBCurrentGroup = await uefaGroupResponse.json();
           const uefaMatchesResponse = await fetch(
-            `${API_ENDPOINTS.bundesligaMatchday(uefaGroup.groupOrderID)}?season=${season}&league=${leagueCode}`
+            `${API_ENDPOINTS.bundesligaMatchday(uefaGroup.groupOrderID)}?season=${season}&league=${leagueCode}`,
+            { signal }
           );
+
+          const uefaMatchesCacheInfo = this.parseCacheHeaders(uefaMatchesResponse);
+          if (uefaMatchesCacheInfo.isStale) {
+            hasStaleData = true;
+            staleError = uefaMatchesCacheInfo.apiError || staleError;
+            staleCacheAge = uefaMatchesCacheInfo.cacheAge || staleCacheAge;
+          }
+
           if (uefaMatchesResponse.ok) {
             const uefaMatches: OpenLigaDBMatch[] = await uefaMatchesResponse.json();
             allGames.push(...uefaMatches.map((match) => this.transformMatch(match)));
@@ -99,18 +122,28 @@ export class UEFAAdapter extends BaseSoccerAdapter {
         }
       } catch (err) {
         console.warn('Error fetching UEFA Champions League games:', err);
+        hasStaleData = true;
+        staleError = err instanceof Error ? err.message : 'Unknown error';
       }
 
+      // Update cache status
+      if (hasStaleData) {
+        this.setCacheStale(staleError, staleCacheAge);
+      } else {
+        this.setCacheFresh(allGames);
+      }
+
+      this.setRecoveryState(false);
       return allGames;
     } catch (error) {
-      console.error('Error fetching UEFA scoreboard:', error);
-      throw error;
+      return this.handleFetchError(error, 'UEFA');
     }
   }
 
-  async fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }> {
+  async fetchGameDetails(gameId: string, signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }> {
     try {
-      const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId));
+      // RACE CONDITION FIX: Pass abort signal
+      const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId), { signal });
       if (!response.ok) {
         throw new Error(`OpenLigaDB error: ${response.statusText}`);
       }

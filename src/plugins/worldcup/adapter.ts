@@ -20,22 +20,43 @@ export class WorldCupAdapter extends BaseSoccerAdapter {
   readonly defaultColor = '0066CC'; // Default blue
   readonly canHaveExtraTime = true; // World Cup has extra time in knockout rounds
 
-  async fetchScoreboard(): Promise<Game[]> {
+  async fetchScoreboard(_signal?: AbortSignal): Promise<Game[]> {
+    this.setRecoveryState(true);
+
     try {
       // FIFA World Cup 2026
       const season = 2026;
       const leagueCode = 'wm26';
 
       const allGames: Game[] = [];
+      let hasStaleData = false;
+      let staleError: string | null = null;
+      let staleCacheAge: number | null = null;
 
       // Fetch World Cup games
       try {
         const wcGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=${leagueCode}`);
+        const wcGroupCacheInfo = this.parseCacheHeaders(wcGroupResponse);
+
+        if (wcGroupCacheInfo.isStale) {
+          hasStaleData = true;
+          staleError = wcGroupCacheInfo.apiError;
+          staleCacheAge = wcGroupCacheInfo.cacheAge;
+        }
+
         if (wcGroupResponse.ok) {
           const wcGroup: { groupOrderID: number } = await wcGroupResponse.json();
           const wcMatchesResponse = await fetch(
             `${API_ENDPOINTS.bundesligaMatchday(wcGroup.groupOrderID)}?season=${season}&league=${leagueCode}`
           );
+
+          const wcMatchesCacheInfo = this.parseCacheHeaders(wcMatchesResponse);
+          if (wcMatchesCacheInfo.isStale) {
+            hasStaleData = true;
+            staleError = wcMatchesCacheInfo.apiError || staleError;
+            staleCacheAge = wcMatchesCacheInfo.cacheAge || staleCacheAge;
+          }
+
           if (wcMatchesResponse.ok) {
             const wcMatches: TournamentMatch[] = await wcMatchesResponse.json();
             allGames.push(...wcMatches.map((match) => this.transformMatch(match)));
@@ -43,16 +64,25 @@ export class WorldCupAdapter extends BaseSoccerAdapter {
         }
       } catch (err) {
         console.warn('Error fetching FIFA World Cup games:', err);
+        hasStaleData = true;
+        staleError = err instanceof Error ? err.message : 'Unknown error';
       }
 
+      // Update cache status
+      if (hasStaleData) {
+        this.setCacheStale(staleError, staleCacheAge);
+      } else {
+        this.setCacheFresh(allGames);
+      }
+
+      this.setRecoveryState(false);
       return allGames;
     } catch (error) {
-      console.error('Error fetching World Cup scoreboard:', error);
-      throw error;
+      return this.handleFetchError(error, 'World Cup');
     }
   }
 
-  async fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }> {
+  async fetchGameDetails(gameId: string, _signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }> {
     try {
       const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId));
       if (!response.ok) {

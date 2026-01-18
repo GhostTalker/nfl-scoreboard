@@ -5,16 +5,28 @@ import { useCurrentPlugin } from './usePlugin';
 import { POLLING_INTERVALS, BUNDESLIGA_POLLING_INTERVAL } from '../constants/api';
 import { isNFLGame, isBundesligaGame, isUEFAGame } from '../types/game';
 
+/**
+ * Request metadata for deduplication and validation
+ */
+interface FetchRequest {
+  sport: string;
+  competition: string;
+  timestamp: number;
+}
+
 export function useGameData() {
   // Get current plugin and adapter
   const plugin = useCurrentPlugin();
   const adapter = plugin?.adapter;
   const currentCompetition = useSettingsStore(state => state.currentCompetition);
+  const currentSport = useSettingsStore(state => state.currentSport);
 
   const intervalRef = useRef<number | null>(null);
   const isFirstFetch = useRef(true);
   const isFetching = useRef(false);
   const hasInitialized = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const lastFetchRequestRef = useRef<FetchRequest | null>(null);
 
   // useLayoutEffect for SYNCHRONOUS reset BEFORE any rendering
   // This prevents Zustand store from keeping state between StrictMode mounts
@@ -40,7 +52,7 @@ export function useGameData() {
     }
   }, []);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (signal?: AbortSignal) => {
     // Early return if adapter not loaded yet
     if (!adapter) {
       return;
@@ -73,6 +85,14 @@ export function useGameData() {
     const store = useGameStore.getState();
     const { userConfirmedGameId, setAvailableGames, setCurrentGame, setGameStats, setLoading, setError } = store;
 
+    // Track this fetch request for deduplication
+    const fetchRequest: FetchRequest = {
+      sport: currentSport,
+      competition: currentCompetition || 'nfl', // Default to 'nfl' if not set
+      timestamp: Date.now(),
+    };
+    lastFetchRequestRef.current = fetchRequest;
+
     try {
       if (isFirstFetch.current) {
         setLoading(true);
@@ -80,7 +100,8 @@ export function useGameData() {
       setError(null);
 
       // Fetch scoreboard (all games) using sport adapter
-      const games = await adapter.fetchScoreboard();
+      // RACE CONDITION FIX: Pass abort signal to adapter
+      const games = await adapter.fetchScoreboard(signal);
 
       // Debug logging for game loading
       console.log(`[useGameData] Fetched ${games.length} games for ${adapter.sport}:`, games.map(g => ({
@@ -89,6 +110,20 @@ export function useGameData() {
         teams: `${g.awayTeam.abbreviation} @ ${g.homeTeam.abbreviation}`,
         status: g.status
       })));
+
+      // RACE CONDITION FIX #1: Validate request is still current
+      // If user switched sports/competition during fetch, this validation catches it
+      const currentRequest = lastFetchRequestRef.current;
+      if (!currentRequest ||
+          currentRequest.sport !== currentSport ||
+          currentRequest.competition !== currentCompetition) {
+        console.log(
+          `[useGameData] Fetch result rejected: sport/competition mismatch. ` +
+          `Requested: ${currentRequest?.sport}/${currentRequest?.competition}, ` +
+          `Current: ${currentSport}/${currentCompetition}`
+        );
+        return;
+      }
 
       // Show all games for the sport (don't filter by competition)
       // This allows showing both Bundesliga + DFB-Pokal games together
@@ -118,7 +153,8 @@ export function useGameData() {
 
         if (needsDetails) {
           try {
-            const details = await adapter.fetchGameDetails(gameToShow.id);
+            // Pass abort signal to game details fetch
+            const details = await adapter.fetchGameDetails(gameToShow.id, signal);
 
             // Re-check selection before updating - user may have changed selection during async fetch
             const currentSelection = useGameStore.getState().userConfirmedGameId;
@@ -133,6 +169,11 @@ export function useGameData() {
 
               // Preserve sport-specific fields
               if (isNFLGame(gameToShow) && isNFLGame(details.game)) {
+                // RACE CONDITION FIX #2: Double-check sport matches before merge
+                if (gameToShow.sport !== currentSport) {
+                  console.warn(`Sport mismatch on merge: ${gameToShow.sport} vs current ${currentSport}, ignoring`);
+                  return;
+                }
                 const mergedNFLGame = {
                   ...details.game,
                   status: gameToShow.status,
@@ -147,6 +188,11 @@ export function useGameData() {
                 };
                 setCurrentGame(mergedNFLGame);
               } else if (isBundesligaGame(gameToShow) && isBundesligaGame(details.game)) {
+                // RACE CONDITION FIX #2: Double-check sport matches before merge
+                if (gameToShow.sport !== currentSport) {
+                  console.warn(`Sport mismatch on merge: ${gameToShow.sport} vs current ${currentSport}, ignoring`);
+                  return;
+                }
                 const mergedBLGame = {
                   ...details.game,
                   status: gameToShow.status,
@@ -158,6 +204,11 @@ export function useGameData() {
                 };
                 setCurrentGame(mergedBLGame);
               } else if (isUEFAGame(gameToShow) && isUEFAGame(details.game)) {
+                // RACE CONDITION FIX #2: Double-check sport matches before merge
+                if (gameToShow.sport !== currentSport) {
+                  console.warn(`Sport mismatch on merge: ${gameToShow.sport} vs current ${currentSport}, ignoring`);
+                  return;
+                }
                 const mergedUEFAGame = {
                   ...details.game,
                   status: gameToShow.status,
@@ -205,14 +256,20 @@ export function useGameData() {
         });
       }
     } catch (error) {
-      console.error('Error fetching game data:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch game data');
+      // RACE CONDITION FIX #3: Handle AbortError gracefully (request cancelled due to sport switch)
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log(`[useGameData] Fetch aborted for ${currentSport} (likely sport switched)`);
+        // Don't set error - this is expected behavior, not a real error
+      } else {
+        console.error('Error fetching game data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch game data');
+      }
     } finally {
       setLoading(false);
       isFirstFetch.current = false;
       isFetching.current = false;
     }
-  }, [adapter]);
+  }, [adapter, currentSport, currentCompetition]);
 
   // Set up polling - refetch when sport changes OR when adapter becomes available
   useEffect(() => {
@@ -231,6 +288,14 @@ export function useGameData() {
 
     console.log(`[useGameData] Adapter loaded for ${adapter.sport}, competition: ${currentCompetition}. Starting fetch...`);
 
+    // RACE CONDITION FIX #4: Cancel previous request when adapter changes (sport switch)
+    if (abortControllerRef.current) {
+      console.log(`[useGameData] Aborting previous fetch for sport switch`);
+      abortControllerRef.current.abort();
+    }
+    // Create new AbortController for this sport/adapter
+    abortControllerRef.current = new AbortController();
+
     // Reset initialization flag when adapter changes (e.g., sport switch)
     hasInitialized.current = false;
     isFirstFetch.current = true;
@@ -240,7 +305,8 @@ export function useGameData() {
     // The setTimeout(0) ensures the state is fully updated before fetching
     const immediateTimeout = setTimeout(() => {
       console.log(`[useGameData] Triggering immediate fetch for ${adapter.sport}`);
-      fetchData();
+      // Pass the abort signal to fetchData
+      fetchData(abortControllerRef.current?.signal);
     }, 0);
 
     const setupInterval = () => {
@@ -262,7 +328,10 @@ export function useGameData() {
         }
       }
 
-      intervalRef.current = window.setInterval(fetchData, interval);
+      // RACE CONDITION FIX #5: Pass abort signal to polling fetches
+      intervalRef.current = window.setInterval(() => {
+        fetchData(abortControllerRef.current?.signal);
+      }, interval);
     };
 
     // Set up polling after initial fetch completes
@@ -309,6 +378,10 @@ export function useGameData() {
       clearTimeout(pollSetupTimeout);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+      }
+      // RACE CONDITION FIX #6: Abort pending requests on cleanup
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
       unsubscribe();
       unsubscribeSport();

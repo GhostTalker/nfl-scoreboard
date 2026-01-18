@@ -8,12 +8,14 @@ import { fetchScoreboard as fetchNFLScoreboard, fetchGameDetails as fetchNFLGame
 export class NFLAdapter implements SportAdapter {
   sport = 'nfl' as const;
 
-  async fetchScoreboard(): Promise<Game[]> {
-    return fetchNFLScoreboard();
+  async fetchScoreboard(signal?: AbortSignal): Promise<Game[]> {
+    // RACE CONDITION FIX: Pass abort signal to ESPN API
+    // Signal will abort request if sport switches during fetch
+    return fetchNFLScoreboard(signal);
   }
 
-  async fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }> {
-    const result = await fetchNFLGameDetails(gameId);
+  async fetchGameDetails(gameId: string, signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }> {
+    const result = await fetchNFLGameDetails(gameId, signal);
     return result || { game: null as any, stats: null };
   }
 

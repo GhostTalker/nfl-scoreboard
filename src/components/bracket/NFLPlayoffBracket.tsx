@@ -3,6 +3,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { isNFLGame } from '../../types/game';
 import type { NFLGame, PlayoffMatchup, PlayoffTeam, PlayoffBracket } from '../../types/nfl';
 import { fetchAllPlayoffGames } from '../../services/espnApi';
+import { NFLPlayoffBracketSkeleton } from '../LoadingSkeleton';
 
 export function NFLPlayoffBracket() {
   const currentGame = useGameStore((state) => state.currentGame);
@@ -150,14 +151,7 @@ export function NFLPlayoffBracket() {
   }
 
   if (isLoading) {
-    return (
-      <div className="h-full w-full flex items-center justify-center bg-slate-900">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white/50 text-xl">Loading playoff bracket...</p>
-        </div>
-      </div>
-    );
+    return <NFLPlayoffBracketSkeleton />;
   }
 
   // Build playoff bracket from all playoff games

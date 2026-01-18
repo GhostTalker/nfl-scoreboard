@@ -13,13 +13,14 @@ import {
 } from './cacheService';
 
 // Fetch scoreboard data (all games for current week + upcoming weeks)
-export async function fetchScoreboard(): Promise<Game[]> {
+export async function fetchScoreboard(signal?: AbortSignal): Promise<Game[]> {
   const cacheStore = useCacheStore.getState();
 
   try {
     cacheStore.setRecovery(true);
 
-    const response = await fetch(API_ENDPOINTS.scoreboard);
+    // RACE CONDITION FIX: Pass abort signal to fetch
+    const response = await fetch(API_ENDPOINTS.scoreboard, { signal });
 
     // Parse cache headers from backend
     const cacheInfo = parseCacheHeaders(response);
@@ -46,7 +47,8 @@ export async function fetchScoreboard(): Promise<Game[]> {
         // Try fetching next few playoff weeks
         for (let week = currentWeek + 1; week <= 5; week++) {
           try {
-            const futureGames = await fetchScheduleWeek(year, 3, week);
+            // Pass abort signal to nested fetches
+            const futureGames = await fetchScheduleWeek(year, 3, week, signal);
             if (futureGames.length > 0) {
               games = [...games, ...futureGames];
             }
@@ -59,7 +61,8 @@ export async function fetchScoreboard(): Promise<Game[]> {
       // If regular season week 18 and all games final, fetch playoff week 1 (Wild Card)
       if (seasonType === 2 && currentWeek >= 18) {
         try {
-          const playoffGames = await fetchScheduleWeek(year, 3, 1);
+          // Pass abort signal to nested fetches
+          const playoffGames = await fetchScheduleWeek(year, 3, 1, signal);
           if (playoffGames.length > 0) {
             games = [...games, ...playoffGames];
           }
@@ -76,7 +79,7 @@ export async function fetchScoreboard(): Promise<Game[]> {
         isStale: true,
         cacheAge: cacheInfo.cacheAge,
         apiError: cacheInfo.apiError,
-        lastSuccessfulFetch: getScoreboardCacheTimestamp(),
+        lastSuccessfulFetch: getScoreboardCacheTimestamp('nfl'),
       });
       cacheStore.incrementRetry();
     } else {
@@ -96,7 +99,7 @@ export async function fetchScoreboard(): Promise<Game[]> {
       console.log('[ESPN API] Using cached scoreboard data due to fetch error');
 
       // Calculate cache age from localStorage timestamp
-      const cacheTimestamp = getScoreboardCacheTimestamp();
+      const cacheTimestamp = getScoreboardCacheTimestamp('nfl');
       const cacheAge = cacheTimestamp
         ? Math.floor((Date.now() - cacheTimestamp.getTime()) / 1000)
         : null;
@@ -119,11 +122,12 @@ export async function fetchScoreboard(): Promise<Game[]> {
 }
 
 // Fetch games for a specific week
-async function fetchScheduleWeek(year: number, seasonType: number, week: number): Promise<Game[]> {
+async function fetchScheduleWeek(year: number, seasonType: number, week: number, signal?: AbortSignal): Promise<Game[]> {
   try {
     const url = `${API_ENDPOINTS.schedule}?year=${year}&seasonType=${seasonType}&week=${week}`;
 
-    const response = await fetch(url);
+    // RACE CONDITION FIX: Pass abort signal
+    const response = await fetch(url, { signal });
     if (!response.ok) {
       return [];
     }
@@ -160,11 +164,12 @@ export async function fetchAllPlayoffGames(year?: number): Promise<Game[]> {
 }
 
 // Fetch single game with detailed stats
-export async function fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null } | null> {
+export async function fetchGameDetails(gameId: string, signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null } | null> {
   const cacheStore = useCacheStore.getState();
 
   try {
-    const response = await fetch(API_ENDPOINTS.game(gameId));
+    // RACE CONDITION FIX: Pass abort signal
+    const response = await fetch(API_ENDPOINTS.game(gameId), { signal });
 
     // Parse cache headers from backend
     const cacheInfo = parseCacheHeaders(response);
@@ -178,7 +183,7 @@ export async function fetchGameDetails(gameId: string): Promise<{ game: Game; st
 
     // Cache the result if fresh
     if (result && !cacheInfo.isStale) {
-      saveGameDetailsToCache(gameId, result.game, result.stats);
+      saveGameDetailsToCache(gameId, result.game, result.stats, 'nfl');
     }
 
     // If stale, update cache status (but don't override scoreboard stale status)
@@ -195,7 +200,7 @@ export async function fetchGameDetails(gameId: string): Promise<{ game: Game; st
     console.error('Error fetching game details:', error);
 
     // Try to return cached game details on error
-    const cachedDetails = getGameDetailsFromCache(gameId);
+    const cachedDetails = getGameDetailsFromCache(gameId, 'nfl');
     if (cachedDetails) {
       console.log('[ESPN API] Using cached game details due to fetch error');
       return cachedDetails;

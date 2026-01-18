@@ -7,6 +7,14 @@ import type { GameStatus, Team } from '../types/base';
 import type { SoccerClock, Goal } from '../types/bundesliga';
 import type { GameStats } from '../types/stats';
 import { getBestLogoUrl } from '../utils/logoFallback';
+import { useCacheStore } from '../stores/cacheStore';
+import {
+  parseCacheHeaders,
+  saveScoreboardToCache,
+  getScoreboardFromCache,
+  getScoreboardCacheTimestamp,
+  type ResponseCacheInfo,
+} from '../services/cacheService';
 
 /**
  * OpenLigaDB Match interface (common structure across all soccer leagues)
@@ -143,6 +151,98 @@ export abstract class BaseSoccerAdapter implements SportAdapter {
    */
   getCelebrationTypes(): CelebrationType[] {
     return ['goal', 'penalty', 'own_goal', 'red_card', 'yellow_red_card'];
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Cache & Error Handling Helpers
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * Parse cache headers from response
+   */
+  protected parseCacheHeaders(response: Response): ResponseCacheInfo {
+    return parseCacheHeaders(response);
+  }
+
+  /**
+   * Save games to localStorage cache
+   */
+  protected saveToCache(games: Game[]): void {
+    saveScoreboardToCache(games, this.sport);
+  }
+
+  /**
+   * Get games from localStorage cache
+   */
+  protected getFromCache(): Game[] | null {
+    return getScoreboardFromCache(this.sport);
+  }
+
+  /**
+   * Get cache timestamp
+   */
+  protected getCacheTimestamp(): Date | null {
+    return getScoreboardCacheTimestamp(this.sport);
+  }
+
+  /**
+   * Mark cache as stale with error info
+   */
+  protected setCacheStale(error: string | null, cacheAge: number | null): void {
+    const cacheStore = useCacheStore.getState();
+    cacheStore.setCacheStatus({
+      isStale: true,
+      cacheAge,
+      apiError: error,
+      lastSuccessfulFetch: this.getCacheTimestamp(),
+    });
+    cacheStore.incrementRetry();
+  }
+
+  /**
+   * Clear stale status and save fresh data
+   */
+  protected setCacheFresh(games: Game[]): void {
+    const cacheStore = useCacheStore.getState();
+    cacheStore.clearStaleStatus();
+    this.saveToCache(games);
+  }
+
+  /**
+   * Set recovery state
+   */
+  protected setRecoveryState(isRecovering: boolean): void {
+    const cacheStore = useCacheStore.getState();
+    cacheStore.setRecovery(isRecovering);
+  }
+
+  /**
+   * Handle fetch error with cache fallback
+   * Returns cached games if available, throws if no cache
+   */
+  protected handleFetchError(error: unknown, sportName: string): Game[] {
+    console.error(`Error fetching ${sportName} scoreboard:`, error);
+
+    const cachedGames = this.getFromCache();
+    if (cachedGames && cachedGames.length > 0) {
+      console.log(`[${sportName}] Using cached scoreboard data due to fetch error`);
+
+      const cacheTimestamp = this.getCacheTimestamp();
+      const cacheAge = cacheTimestamp
+        ? Math.floor((Date.now() - cacheTimestamp.getTime()) / 1000)
+        : null;
+
+      this.setCacheStale(
+        error instanceof Error ? error.message : 'Network error',
+        cacheAge
+      );
+      this.setRecoveryState(false);
+
+      return cachedGames;
+    }
+
+    this.setRecoveryState(false);
+    throw error;
   }
 
   /**

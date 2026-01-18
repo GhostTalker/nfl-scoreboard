@@ -4,6 +4,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUIStore } from '../../stores/uiStore';
 import { getTitleGraphic } from '../../constants/titleGraphics';
+import { MultiGameViewSkeleton } from '../LoadingSkeleton';
 import type { Game, Team } from '../../types/game';
 import { isNFLGame, isBundesligaGame, isUEFAGame } from '../../types/game';
 import { version } from '../../../package.json';
@@ -13,6 +14,7 @@ type ScoreChangeMap = Map<string, { timestamp: number; scoringTeam: 'home' | 'aw
 
 export function MultiGameView() {
   const availableGames = useGameStore((state) => state.availableGames);
+  const isLoading = useGameStore((state) => state.isLoading);
   const confirmGameSelection = useGameStore((state) => state.confirmGameSelection);
   const setViewMode = useSettingsStore((state) => state.setViewMode);
   const multiViewFilters = useSettingsStore((state) => state.multiViewFilters);
@@ -194,6 +196,11 @@ export function MultiGameView() {
     const isRecent = Date.now() - changeData.timestamp < 30000;
     return { hasChange: isRecent, scoringTeam: isRecent ? changeData.scoringTeam : null };
   };
+
+  // Show skeleton during initial loading or when no games are loaded yet
+  if (isLoading || availableGames.length === 0) {
+    return <MultiGameViewSkeleton cardCount={6} />;
+  }
 
   if (allGames.length === 0) {
     return (

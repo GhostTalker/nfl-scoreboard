@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Game } from '../types/game';
 import type { GameStats } from '../types/stats';
+import { useSettingsStore } from './settingsStore';
 
 interface PreviousScores {
   home: number;
@@ -59,6 +60,18 @@ export const useGameStore = create<GameState>((set, get) => ({
   // Auto-set (from polling) - respects user selection
   setCurrentGame: (game) => {
     const { userConfirmedGameId, currentGame: prevGame, previousScores } = get();
+
+    // RACE CONDITION FIX: Validate sport matches current sport
+    // This catches data corruption when sport switches during fetch
+    if (game) {
+      const currentSport = useSettingsStore.getState().currentSport;
+      if (game.sport && game.sport !== currentSport) {
+        console.warn(
+          `[gameStore] Sport mismatch: received ${game.sport} but current sport is ${currentSport}. Rejecting update.`
+        );
+        return;
+      }
+    }
 
     // If user confirmed a game, only update if it's the same game ID
     if (userConfirmedGameId && game && game.id !== userConfirmedGameId) {

@@ -3,6 +3,7 @@ import type { LiveTableEntry } from '../../types/bundesliga';
 import type { Game } from '../../types/game';
 import { fetchBundesligaTable, calculateLiveTable, getPositionZone } from '../../services/bundesligaTable';
 import { getBestLogoUrl } from '../../utils/logoFallback';
+import { LiveTableSkeleton } from '../LoadingSkeleton';
 
 interface LiveTableProps {
   currentGames: Game[];
@@ -34,11 +35,7 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
   }, [currentGames, season]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-white/60 text-lg">Tabelle wird geladen...</div>
-      </div>
-    );
+    return <LiveTableSkeleton />;
   }
 
   if (error) {

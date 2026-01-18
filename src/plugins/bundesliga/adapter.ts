@@ -18,6 +18,13 @@ import type { GameStats } from '../../types/stats';
 import { API_ENDPOINTS } from '../../constants/api';
 import { getBundesligaTeamColor, getBundesligaTeamAlternateColor } from '../../constants/bundesligaTeams';
 import { fetchBundesligaLiveFixtures } from '../../services/apiFootball';
+import { useCacheStore } from '../../stores/cacheStore';
+import {
+  parseCacheHeaders,
+  saveScoreboardToCache,
+  getScoreboardFromCache,
+  getScoreboardCacheTimestamp,
+} from '../../services/cacheService';
 
 interface MinuteState {
   lastApiMinute: number | null;
@@ -149,8 +156,12 @@ export class BundesligaAdapter implements SportAdapter {
     }
   }
 
-  async fetchScoreboard(): Promise<Game[]> {
+  async fetchScoreboard(signal?: AbortSignal): Promise<Game[]> {
+    const cacheStore = useCacheStore.getState();
+
     try {
+      cacheStore.setRecovery(true);
+
       // Calculate season year
       const now = new Date();
       const currentYear = now.getFullYear();
@@ -158,31 +169,61 @@ export class BundesligaAdapter implements SportAdapter {
       const season = currentMonth >= 8 ? currentYear : currentYear - 1;
 
       const allGames: Game[] = [];
+      let hasStaleData = false;
+      let staleError: string | null = null;
+      let staleCacheAge: number | null = null;
 
       // Fetch Bundesliga games
       try {
-        const blGroupResponse = await fetch(API_ENDPOINTS.bundesligaCurrentGroup);
+        // RACE CONDITION FIX: Pass abort signal to fetch calls
+        const blGroupResponse = await fetch(API_ENDPOINTS.bundesligaCurrentGroup, { signal });
+        const blGroupCacheInfo = parseCacheHeaders(blGroupResponse);
+
+        if (blGroupCacheInfo.isStale) {
+          hasStaleData = true;
+          staleError = blGroupCacheInfo.apiError;
+          staleCacheAge = blGroupCacheInfo.cacheAge;
+        }
+
         if (blGroupResponse.ok) {
           const blGroup: OpenLigaDBCurrentGroup = await blGroupResponse.json();
           const blMatchesResponse = await fetch(
-            `${API_ENDPOINTS.bundesligaMatchday(blGroup.groupOrderID)}?season=${season}&league=bl1`
+            `${API_ENDPOINTS.bundesligaMatchday(blGroup.groupOrderID)}?season=${season}&league=bl1`,
+            { signal }
           );
+
+          const blMatchesCacheInfo = parseCacheHeaders(blMatchesResponse);
+          if (blMatchesCacheInfo.isStale) {
+            hasStaleData = true;
+            staleError = blMatchesCacheInfo.apiError || staleError;
+            staleCacheAge = blMatchesCacheInfo.cacheAge || staleCacheAge;
+          }
+
           if (blMatchesResponse.ok) {
             const blMatches: OpenLigaDBMatch[] = await blMatchesResponse.json();
             allGames.push(...blMatches.map((match) => this.transformMatch(match)));
           }
         }
       } catch (err) {
+        // RACE CONDITION FIX: Handle AbortError gracefully
+        if (err instanceof Error && err.name === 'AbortError') {
+          console.log('[BundesligaAdapter] Bundesliga fetch aborted (likely sport switched)');
+          throw err; // Re-throw so outer catch handles it
+        }
         console.warn('Error fetching Bundesliga games:', err);
+        hasStaleData = true;
+        staleError = err instanceof Error ? err.message : 'Unknown error';
       }
 
       // Fetch DFB-Pokal games
       try {
-        const dfbGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=dfb`);
+        // RACE CONDITION FIX: Pass abort signal
+        const dfbGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=dfb`, { signal });
         if (dfbGroupResponse.ok) {
           const dfbGroup: OpenLigaDBCurrentGroup = await dfbGroupResponse.json();
           const dfbMatchesResponse = await fetch(
-            `${API_ENDPOINTS.bundesligaMatchday(dfbGroup.groupOrderID)}?season=${season}&league=dfb`
+            `${API_ENDPOINTS.bundesligaMatchday(dfbGroup.groupOrderID)}?season=${season}&league=dfb`,
+            { signal }
           );
           if (dfbMatchesResponse.ok) {
             const dfbMatches: OpenLigaDBMatch[] = await dfbMatchesResponse.json();
@@ -190,6 +231,11 @@ export class BundesligaAdapter implements SportAdapter {
           }
         }
       } catch (err) {
+        // RACE CONDITION FIX: Handle AbortError gracefully
+        if (err instanceof Error && err.name === 'AbortError') {
+          console.log('[BundesligaAdapter] DFB-Pokal fetch aborted (likely sport switched)');
+          throw err; // Re-throw so outer catch handles it
+        }
         console.warn('Error fetching DFB-Pokal games:', err);
       }
 
@@ -199,16 +245,57 @@ export class BundesligaAdapter implements SportAdapter {
         await this.syncApiFootball();
       }
 
+      // Update cache status based on response headers
+      if (hasStaleData) {
+        cacheStore.setCacheStatus({
+          isStale: true,
+          cacheAge: staleCacheAge,
+          apiError: staleError,
+          lastSuccessfulFetch: getScoreboardCacheTimestamp('bundesliga'),
+        });
+        cacheStore.incrementRetry();
+      } else {
+        // Fresh data - clear stale status and save to localStorage
+        cacheStore.clearStaleStatus();
+        saveScoreboardToCache(allGames, 'bundesliga');
+      }
+
+      cacheStore.setRecovery(false);
       return allGames;
     } catch (error) {
       console.error('Error fetching scoreboard:', error);
+
+      // Try to return cached data on error
+      const cachedGames = getScoreboardFromCache('bundesliga');
+      if (cachedGames && cachedGames.length > 0) {
+        console.log('[Bundesliga] Using cached scoreboard data due to fetch error');
+
+        const cacheTimestamp = getScoreboardCacheTimestamp('bundesliga');
+        const cacheAge = cacheTimestamp
+          ? Math.floor((Date.now() - cacheTimestamp.getTime()) / 1000)
+          : null;
+
+        cacheStore.setCacheStatus({
+          isStale: true,
+          cacheAge,
+          apiError: error instanceof Error ? error.message : 'Network error',
+          lastSuccessfulFetch: cacheTimestamp,
+        });
+        cacheStore.incrementRetry();
+        cacheStore.setRecovery(false);
+
+        return cachedGames;
+      }
+
+      cacheStore.setRecovery(false);
       throw error;
     }
   }
 
-  async fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }> {
+  async fetchGameDetails(gameId: string, signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }> {
     try {
-      const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId));
+      // RACE CONDITION FIX: Pass abort signal
+      const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId), { signal });
       if (!response.ok) {
         throw new Error(`OpenLigaDB error: ${response.statusText}`);
       }
@@ -221,7 +308,12 @@ export class BundesligaAdapter implements SportAdapter {
         stats: null,
       };
     } catch (error) {
-      console.error('Error fetching Bundesliga game details:', error);
+      // RACE CONDITION FIX: Handle AbortError gracefully
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('[BundesligaAdapter] fetchGameDetails aborted (likely sport switched)');
+      } else {
+        console.error('Error fetching Bundesliga game details:', error);
+      }
       throw error;
     }
   }

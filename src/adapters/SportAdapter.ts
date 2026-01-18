@@ -13,8 +13,10 @@ export interface SportAdapter {
   sport: SportType;
 
   // API integration
-  fetchScoreboard(): Promise<Game[]>;
-  fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }>;
+  // NOTE: AbortSignal is optional for backwards compatibility
+  // Pass it to abort long-running requests when sport switches
+  fetchScoreboard(signal?: AbortSignal): Promise<Game[]>;
+  fetchGameDetails(gameId: string, signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }>;
 
   // Score detection
   detectScoreChange(

@@ -20,22 +20,43 @@ export class EuroAdapter extends BaseSoccerAdapter {
   readonly defaultColor = '0066CC'; // Default blue
   readonly canHaveExtraTime = true; // Euro has extra time in knockout rounds
 
-  async fetchScoreboard(): Promise<Game[]> {
+  async fetchScoreboard(_signal?: AbortSignal): Promise<Game[]> {
+    this.setRecoveryState(true);
+
     try {
       // UEFA Euro 2020 (held in 2021)
       const season = 2020;
       const leagueCode = 'em20';
 
       const allGames: Game[] = [];
+      let hasStaleData = false;
+      let staleError: string | null = null;
+      let staleCacheAge: number | null = null;
 
       // Fetch Euro games
       try {
         const euroGroupResponse = await fetch(`${API_ENDPOINTS.bundesligaCurrentGroup}?league=${leagueCode}`);
+        const euroGroupCacheInfo = this.parseCacheHeaders(euroGroupResponse);
+
+        if (euroGroupCacheInfo.isStale) {
+          hasStaleData = true;
+          staleError = euroGroupCacheInfo.apiError;
+          staleCacheAge = euroGroupCacheInfo.cacheAge;
+        }
+
         if (euroGroupResponse.ok) {
           const euroGroup: { groupOrderID: number } = await euroGroupResponse.json();
           const euroMatchesResponse = await fetch(
             `${API_ENDPOINTS.bundesligaMatchday(euroGroup.groupOrderID)}?season=${season}&league=${leagueCode}`
           );
+
+          const euroMatchesCacheInfo = this.parseCacheHeaders(euroMatchesResponse);
+          if (euroMatchesCacheInfo.isStale) {
+            hasStaleData = true;
+            staleError = euroMatchesCacheInfo.apiError || staleError;
+            staleCacheAge = euroMatchesCacheInfo.cacheAge || staleCacheAge;
+          }
+
           if (euroMatchesResponse.ok) {
             const euroMatches: TournamentMatch[] = await euroMatchesResponse.json();
             allGames.push(...euroMatches.map((match) => this.transformMatch(match)));
@@ -43,16 +64,25 @@ export class EuroAdapter extends BaseSoccerAdapter {
         }
       } catch (err) {
         console.warn('Error fetching UEFA Euro games:', err);
+        hasStaleData = true;
+        staleError = err instanceof Error ? err.message : 'Unknown error';
       }
 
+      // Update cache status
+      if (hasStaleData) {
+        this.setCacheStale(staleError, staleCacheAge);
+      } else {
+        this.setCacheFresh(allGames);
+      }
+
+      this.setRecoveryState(false);
       return allGames;
     } catch (error) {
-      console.error('Error fetching Euro scoreboard:', error);
-      throw error;
+      return this.handleFetchError(error, 'Euro');
     }
   }
 
-  async fetchGameDetails(gameId: string): Promise<{ game: Game; stats: GameStats | null }> {
+  async fetchGameDetails(gameId: string, _signal?: AbortSignal): Promise<{ game: Game; stats: GameStats | null }> {
     try {
       const response = await fetch(API_ENDPOINTS.bundesligaMatch(gameId));
       if (!response.ok) {

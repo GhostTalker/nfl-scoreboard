@@ -10,7 +10,7 @@
 
 import { Router, Response, Request, NextFunction } from 'express';
 import { espnProxy, FetchResult } from '../services/espnProxy';
-import { openligadbProxy } from '../services/openligadbProxy';
+import { openligadbProxy, FetchResult as OpenLigaFetchResult } from '../services/openligadbProxy';
 
 // Force stdout/stderr for PM2
 const logError = (msg: string, ...args: unknown[]) => {
@@ -178,9 +178,14 @@ function validateScheduleParams(req: Request, res: Response, next: NextFunction)
  * Adds X-Cache-Status and X-Cache-Age headers so frontend can show
  * "Last updated X mins ago" banners when serving stale data
  */
-function handleFetchResult(res: Response, result: FetchResult): void {
+function handleFetchResult(res: Response, result: FetchResult | OpenLigaFetchResult): void {
   // Add cache metadata headers for frontend awareness
   res.set('X-Cache-Status', result.fromCache ? 'HIT' : 'MISS');
+
+  // Mark as stale if we're returning cached data due to an error
+  if (result.error && result.fromCache) {
+    res.set('X-Cache-Status', 'stale');
+  }
 
   if (result.cacheAge !== undefined && result.cacheAge > 0) {
     res.set('X-Cache-Age', String(Math.round(result.cacheAge / 1000))); // Age in seconds
@@ -311,8 +316,8 @@ apiRouter.get('/team/:teamId', validateTeamId, async (req, res) => {
 apiRouter.get('/bundesliga/current-group', async (req, res) => {
   try {
     const { league = 'bl1' } = req.query;
-    const data = await openligadbProxy.fetchCurrentGroup(league as string);
-    res.json(data);
+    const result = await openligadbProxy.fetchCurrentGroupWithResult(league as string);
+    handleFetchResult(res, result);
   } catch (error) {
     logError('[API Error] Bundesliga current group failed:', error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {
@@ -334,16 +339,17 @@ apiRouter.get('/bundesliga/matchday/:matchday', validateMatchday, async (req, re
     // If season not provided, fetch current group first
     let seasonYear = season as string;
     if (!seasonYear) {
-      const currentGroup = await openligadbProxy.fetchCurrentGroup(league as string) as { GroupYear?: string };
+      const groupResult = await openligadbProxy.fetchCurrentGroupWithResult(league as string);
+      const currentGroup = groupResult.data as { GroupYear?: string };
       seasonYear = currentGroup.GroupYear || new Date().getFullYear().toString();
     }
 
-    const data = await openligadbProxy.fetchMatchday(
+    const result = await openligadbProxy.fetchMatchdayWithResult(
       league as string,
       seasonYear,
       parseInt(matchday)
     );
-    res.json(data);
+    handleFetchResult(res, result);
   } catch (error) {
     logError(`[API Error] Bundesliga matchday ${req.params.matchday} failed:`, error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {
@@ -360,8 +366,8 @@ apiRouter.get('/bundesliga/matchday/:matchday', validateMatchday, async (req, re
 apiRouter.get('/bundesliga/match/:matchId', validateMatchId, async (req, res) => {
   try {
     const { matchId } = req.params;
-    const data = await openligadbProxy.fetchMatch(matchId);
-    res.json(data);
+    const result = await openligadbProxy.fetchMatchWithResult(matchId);
+    handleFetchResult(res, result);
   } catch (error) {
     logError(`[API Error] Bundesliga match ${req.params.matchId} failed:`, error instanceof Error ? error.message : error);
     if (error instanceof Error && error.stack) {

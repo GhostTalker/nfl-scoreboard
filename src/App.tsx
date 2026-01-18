@@ -15,6 +15,7 @@ import { useGameStore } from './stores/gameStore';
 import { useGameData } from './hooks/useGameData';
 import { useScoreChange } from './hooks/useScoreChange';
 import { usePlayByPlay } from './hooks/usePlayByPlay';
+import { useCardEvents } from './hooks/useCardEvents';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { useVideoPreloader } from './hooks/useVideoPreloader';
 
@@ -42,6 +43,10 @@ function App() {
 
   // Watch for play-by-play events (interceptions, sacks, fumbles)
   usePlayByPlay();
+
+  // Watch for red card events in Bundesliga games
+  // (OpenLigaDB doesn't provide cards, so we use API-Football)
+  useCardEvents();
 
   // Keyboard navigation for desktop browsers
   useKeyboardNavigation();

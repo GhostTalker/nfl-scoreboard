@@ -26,7 +26,8 @@ export type {
 } from './bundesliga';
 export type {
   UEFAGame,
-  UEFACelebrationType
+  UEFACelebrationType,
+  AggregateScore
 } from './uefa';
 export type {
   TournamentGame,
