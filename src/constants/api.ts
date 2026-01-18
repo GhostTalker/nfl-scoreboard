@@ -17,6 +17,11 @@ export const API_ENDPOINTS = {
 
   // Bundesliga table (direct OpenLigaDB - no proxy needed, updates infrequently)
   bundesligaTable: 'https://api.openligadb.de/getbltable/bl1',
+
+  // Health Check endpoints
+  health: `${API_BASE_URL}/health`,
+  healthLive: `${API_BASE_URL}/health/live`,
+  healthReady: `${API_BASE_URL}/health/ready`,
 };
 
 // Polling Intervals (in ms)

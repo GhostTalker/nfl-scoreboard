@@ -6,6 +6,7 @@ import { CelebrationSettings } from './CelebrationSettings';
 import { SoundSettings } from './SoundSettings';
 import { DebugControls } from './DebugControls';
 import { LanguageSelector } from './LanguageSelector';
+import { SystemHealth } from './SystemHealth';
 import { useTranslation } from '../../i18n/useTranslation';
 
 export function SettingsMenuTabs() {
@@ -14,6 +15,7 @@ export function SettingsMenuTabs() {
   const [showSoundOverlay, setShowSoundOverlay] = useState(false);
   const [showDebugOverlay, setShowDebugOverlay] = useState(false);
   const [showLanguageOverlay, setShowLanguageOverlay] = useState(false);
+  const [showSystemOverlay, setShowSystemOverlay] = useState(false);
   const debugMode = useUIStore((state) => state.debugMode);
   const soundEffectsEnabled = useSettingsStore((state) => state.soundEffectsEnabled);
   const { t } = useTranslation();
@@ -91,6 +93,24 @@ export function SettingsMenuTabs() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
           <span>{t.settings.language.title}</span>
+        </button>
+
+        {/* System Tab */}
+        <button
+          onClick={() => setShowSystemOverlay(true)}
+          className="
+            flex items-center gap-2
+            px-4 py-2 rounded-t-lg
+            bg-slate-700 hover:bg-slate-600
+            text-white font-medium text-sm
+            transition-all
+            border-b-2 border-transparent hover:border-blue-500
+          "
+        >
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span>System</span>
         </button>
 
         {/* Debug Tab */}
@@ -212,6 +232,32 @@ export function SettingsMenuTabs() {
               </button>
             </div>
             <LanguageSelector />
+          </div>
+        </div>
+      )}
+
+      {/* System Health Overlay */}
+      {showSystemOverlay && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6"
+          onClick={() => setShowSystemOverlay(false)}
+        >
+          <div
+            className="bg-slate-800 rounded-xl p-6 max-w-3xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">System Health</h2>
+              <button
+                onClick={() => setShowSystemOverlay(false)}
+                className="text-white/50 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <SystemHealth />
           </div>
         </div>
       )}
