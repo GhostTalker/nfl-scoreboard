@@ -63,17 +63,24 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
             const positionChange = hasPositionChange
               ? entry.previousPosition! - entry.position
               : 0;
-            const hasLivePoints = entry.livePoints !== entry.points;
+
+            // Check if this team is currently playing in a live game
+            const isPlayingLive = currentGames.some(game => {
+              const isLive = game.status === 'in_progress' || game.status === 'halftime' || game.status === 'end_period';
+              const isTeamInGame = game.homeTeam.id === String(entry.teamId) || game.awayTeam.id === String(entry.teamId);
+              return isLive && isTeamInGame;
+            });
 
             return (
               <div
                 key={entry.teamId}
                 className={`flex items-center gap-2 p-1.5 rounded transition-colors ${
-                  hasLivePoints ? 'bg-blue-500/10 border border-blue-500/30' : 'bg-slate-800/50'
+                  isPlayingLive ? 'animate-pulse' : ''
                 }`}
                 style={{
                   borderLeftWidth: '3px',
                   borderLeftColor: zone.color,
+                  backgroundColor: zone.color + '15', // Add 15% opacity to zone color
                 }}
               >
                 {/* Position */}
@@ -133,7 +140,7 @@ export function LiveTable({ currentGames, season = 2024 }: LiveTableProps) {
 
                   {/* Points */}
                   <div className="w-9 text-right">
-                    <span className={`font-bold text-xs ${hasLivePoints ? 'text-blue-400' : 'text-white'}`}>
+                    <span className="font-bold text-xs text-white">
                       {entry.livePoints}
                     </span>
                   </div>
