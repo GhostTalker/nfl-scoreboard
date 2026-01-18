@@ -47,15 +47,15 @@ export function SportSelectionScreen() {
   };
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <div className="max-w-5xl w-full">
+    <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-y-auto">
+      <div className="max-w-5xl mx-auto pt-8 px-4 pb-4">
         {/* Header with Scoreboard Logo */}
-        <div className="text-center mb-2">
-          <div className="-mb-8 flex justify-center">
+        <div className="text-center mb-4">
+          <div className="-mb-16 flex justify-center">
             <img
               src="/title/scoreboard-logo.png"
               alt="Sport-Scoreboard"
-              className="h-48 w-auto object-contain"
+              className="h-96 w-auto object-contain"
               style={{
                 filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.8))',
               }}
