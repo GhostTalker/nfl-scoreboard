@@ -14,10 +14,10 @@
 #
 # Remote execution:
 #   ssh -i "<path-to-ssh-key>" scoreboard-app@10.1.0.51 \
-#       "cd /srv/GhostGit/nfl-scoreboard && ./deploy.sh"
+#       "cd /srv/repo/sport-scoreboard && ./deploy.sh"
 #
 # Security: This script should be run as the 'scoreboard-app' user,
-# which owns /srv/GhostGit/nfl-scoreboard. Never deploy as root.
+# which owns /srv/repo/sport-scoreboard. Never deploy as root.
 #
 # =============================================================================
 
@@ -28,7 +28,7 @@ set -o pipefail  # Exit on pipe failure
 # Configuration
 # -----------------------------------------------------------------------------
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly APP_NAME="nfl-scoreboard"
+readonly APP_NAME="sport-scoreboard"
 readonly APP_PORT=3001
 readonly HEALTH_ENDPOINT="http://localhost:${APP_PORT}/api/health/ready"
 readonly HEALTH_TIMEOUT=30  # seconds to wait for health check
